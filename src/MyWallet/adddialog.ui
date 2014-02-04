@@ -10,23 +10,23 @@
     <x>0</x>
     <y>0</y>
     <width>549</width>
-    <height>461</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>549</width>
-    <height>461</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Добавить источники</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -42,12 +42,12 @@
    <item row="0" column="1">
     <widget class="QDateEdit" name="_date">
      <property name="displayFormat">
-      <string>dd MMMM yyyy</string>
+      <string>d MMMM yyyy</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="_income_box">
+    <widget class="QGroupBox" name="_rest_box">
      <property name="title">
       <string>Добавить расходы:</string>
      </property>
@@ -59,14 +59,14 @@
      </property>
      <layout class="QFormLayout" name="_rest_layout">
       <item row="0" column="0">
-       <widget class="QLabel" name="_label_summ_rest">
+       <widget class="QLabel" name="_label_rest">
         <property name="text">
          <string>Сумма: </string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="_label_summ_rest_value"/>
+       <widget class="QLineEdit" name="_rest_value"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="_label_description_rest">
@@ -82,7 +82,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QGroupBox" name="_rest_box">
+    <widget class="QGroupBox" name="_income_box">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -97,14 +97,14 @@
      </property>
      <layout class="QFormLayout" name="_income_layout">
       <item row="0" column="0">
-       <widget class="QLabel" name="_label_summ_income">
+       <widget class="QLabel" name="_label_income">
         <property name="text">
          <string>Сумма: </string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="_label_summ_income_value"/>
+       <widget class="QLineEdit" name="_income_value"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="_label_description_income">

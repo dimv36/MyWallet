@@ -12,6 +12,9 @@ class MyWallet : public QMainWindow
 {
     Q_OBJECT
 
+private:
+    Ui::MyWallet* _ui;
+
 public:
     explicit MyWallet(QWidget *parent = 0);
     ~MyWallet();
@@ -20,7 +23,7 @@ private slots:
     void on__action_add_triggered();
 
 private:
-    Ui::MyWallet* _ui;
+    void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
 };
 
 #endif // MYWALLET_H
