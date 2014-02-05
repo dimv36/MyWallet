@@ -9,6 +9,7 @@ AddDialog::AddDialog(QWidget *parent) :
     _ui -> _rest_value -> setValidator(new QIntValidator());
     _ui -> _income_value -> setValidator(new QIntValidator());
     _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(false);
+    _ui -> _button_box -> button(_ui -> _button_box -> Cancel) -> setText("Отмена");
 
     connect(_ui -> _rest_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
     connect(_ui -> _rest_descripton, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));

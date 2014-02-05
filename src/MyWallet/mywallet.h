@@ -2,6 +2,10 @@
 #define MYWALLET_H
 
 #include <QMainWindow>
+#include <QDir>
+#include <QMessageBox>
+#include <QXmlStreamWriter>
+#include <QTableWidgetItem>
 #include "adddialog.h"
 
 namespace Ui {
@@ -24,6 +28,7 @@ private slots:
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
+    void WriteXML() const;
 };
 
 #endif // MYWALLET_H
