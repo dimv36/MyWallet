@@ -12,9 +12,11 @@ MyWallet::MyWallet(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::MyWallet) {
     _ui -> setupUi(this);
+    ReadXML();
 }
 
 MyWallet::~MyWallet() {
+    WriteXML();
     delete _ui;
 }
 
@@ -41,7 +43,7 @@ void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool
         _ui -> _table -> setItem(row_count, INCOME_DESCRIPTION, description_item);
     }
     _ui -> _table -> scrollToBottom();
-    WriteXML();
+//    WriteXML();
 }
 
 
@@ -65,6 +67,25 @@ void MyWallet::on__action_add_triggered() {
 }
 
 
+void MyWallet::ReadXML() {
+    QString file_name = QDir().home().absolutePath() + "/.config/MyWallet/wallet.xml";
+    QFile file(file_name);
+    if (false == file.open(QFile::ReadOnly)) {
+        QMessageBox::warning(0,
+                             tr("MyWallet"),
+                             tr("Невозможно открыть файл %1 \n%2").arg(file_name).arg(file.errorString()),
+                             QMessageBox::Ok);
+        return;
+    }
+    QXmlStreamReader reader(&file);
+    while(false == reader.atEnd()) {
+        reader.readNext();
+        qDebug() << reader.attributes().count();
+    }
+
+}
+
+
 void MyWallet::WriteXML() const {
     QString dir_path = QDir().home().absolutePath() + "/.config/MyWallet";
     if (false == QDir(dir_path).exists())
@@ -74,30 +95,29 @@ void MyWallet::WriteXML() const {
     QFile file(file_name);
     if (false == file.open(QFile::WriteOnly)) {
        QMessageBox::warning(0,
-                            "MyWallet",
-                            QString("Невозможно открыть файл 1 \n%2").arg(file_name).arg(file.errorString()),
+                            tr("MyWallet"),
+                            tr("Невозможно открыть файл %1 \n%2").arg(file_name).arg(file.errorString()),
                             QMessageBox::Ok);
         return;
     }
-    QString file_content;
-    QXmlStreamWriter stream_writer(&file_content);
-    stream_writer.setAutoFormatting(true);
-    stream_writer.writeStartDocument();
-    stream_writer.writeStartElement("mywallet");
+    QXmlStreamWriter writer(&file);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("mywallet");
     for (int i = 0; i < _ui -> _table -> rowCount(); i++) {
-        stream_writer.writeStartElement("data");
-        stream_writer.writeAttribute("date", _ui -> _table -> item(i, DATE_INDEX) -> text());
+        writer.writeStartElement("data");
+        writer.writeAttribute("date", _ui -> _table -> item(i, DATE_INDEX) -> text());
         if (false == _ui -> _table -> item(i, REST_TOTAL) -> text().isEmpty()) {
-            stream_writer.writeAttribute("out", _ui -> _table -> item(i, REST_TOTAL) -> text());
-            stream_writer.writeAttribute("out_description", _ui -> _table -> item(i, REST_DESCRIPTION) -> text());
+            writer.writeAttribute("out", _ui -> _table -> item(i, REST_TOTAL) -> text());
+            writer.writeAttribute("out_description", _ui -> _table -> item(i, REST_DESCRIPTION) -> text());
         }
         if (false == _ui -> _table -> item(i, INCOME_TOTAL) -> text().isEmpty()) {
-            stream_writer.writeAttribute("input", _ui -> _table -> item(i, INCOME_TOTAL) -> text());
-            stream_writer.writeAttribute("input_description", _ui -> _table -> item(i, INCOME_DESCRIPTION) -> text());
+            writer.writeAttribute("input", _ui -> _table -> item(i, INCOME_TOTAL) -> text());
+            writer.writeAttribute("input_description", _ui -> _table -> item(i, INCOME_DESCRIPTION) -> text());
         }
-        stream_writer.writeEndElement();
+        writer.writeEndElement();
     }
-    stream_writer.writeEndElement();
-    stream_writer.writeEndDocument();
-    qDebug() << file_content;
+    writer.writeEndElement();
+    writer.writeEndDocument();
+    file.close();
 }

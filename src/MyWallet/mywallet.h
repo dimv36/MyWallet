@@ -28,6 +28,7 @@ private slots:
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
+    void ReadXML();
     void WriteXML() const;
 };
 

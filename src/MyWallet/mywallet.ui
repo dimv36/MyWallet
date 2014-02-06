@@ -157,13 +157,17 @@
      <x>0</x>
      <y>0</y>
      <width>704</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="_menu_file">
     <property name="title">
      <string>Файл</string>
     </property>
+    <addaction name="_action_open"/>
+    <addaction name="_action_settings"/>
+    <addaction name="separator"/>
+    <addaction name="_action_exit"/>
    </widget>
    <widget class="QMenu" name="_menu_table">
     <property name="title">
@@ -173,14 +177,8 @@
     <addaction name="_action_remove"/>
     <addaction name="_action_edit"/>
    </widget>
-   <widget class="QMenu" name="_menu_settings">
-    <property name="title">
-     <string>Настройки</string>
-    </property>
-   </widget>
    <addaction name="_menu_file"/>
    <addaction name="_menu_table"/>
-   <addaction name="_menu_settings"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -192,6 +190,7 @@
    <addaction name="_action_add"/>
    <addaction name="_action_remove"/>
    <addaction name="_action_edit"/>
+   <addaction name="_action_settings"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="_action_add">
@@ -220,6 +219,36 @@
    </property>
    <property name="text">
     <string>Редактировать строку</string>
+   </property>
+  </action>
+  <action name="_action_open">
+   <property name="icon">
+    <iconset resource="files/resouce.qrc">
+     <normaloff>:/folder_blue.png</normaloff>:/folder_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Открыть кошелёк</string>
+   </property>
+   <property name="toolTip">
+    <string>Открыть</string>
+   </property>
+  </action>
+  <action name="_action_exit">
+   <property name="icon">
+    <iconset resource="files/resouce.qrc">
+     <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="_action_settings">
+   <property name="icon">
+    <iconset resource="files/resouce.qrc">
+     <normaloff>:/kservices.png</normaloff>:/kservices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Настройки</string>
    </property>
   </action>
  </widget>
