@@ -6,15 +6,15 @@ AddDialog::AddDialog(QWidget *parent) :
     _ui(new Ui::AddDialog) {
     _ui -> setupUi(this);
     _ui -> _date -> setDate(QDate::currentDate());
-    _ui -> _rest_value -> setValidator(new QIntValidator());
-    _ui -> _income_value -> setValidator(new QIntValidator());
+    _ui -> _output_value -> setValidator(new QIntValidator());
+    _ui -> _input_value -> setValidator(new QIntValidator());
     _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(false);
     _ui -> _button_box -> button(_ui -> _button_box -> Cancel) -> setText("Отмена");
 
-    connect(_ui -> _rest_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _rest_descripton, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _income_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _income_description, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _output_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _output_descripton, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _input_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _input_description, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
 }
 
 
@@ -28,41 +28,41 @@ QDate AddDialog::get_date() const {
 }
 
 
-int AddDialog::get_rest() const {
-    return _ui -> _rest_value -> text().toInt();
+int AddDialog::get_output() const {
+    return _ui -> _output_value -> text().toInt();
 }
 
 
-QString AddDialog::get_rest_description() const {
-    return _ui -> _rest_descripton -> toPlainText();
+QString AddDialog::get_output_description() const {
+    return _ui -> _output_descripton -> toPlainText();
 }
 
 
-int AddDialog::get_income() const {
-    return _ui -> _income_value -> text().toInt();
+int AddDialog::get_input() const {
+    return _ui -> _input_value -> text().toInt();
 }
 
 
-QString AddDialog::get_income_description() const {
-    return _ui -> _income_description -> toPlainText();
+QString AddDialog::get_input_description() const {
+    return _ui -> _input_description -> toPlainText();
 }
 
 
-bool AddDialog::IsRestFieldsActive() const {
-    return _ui -> _rest_box -> isChecked();
+bool AddDialog::IsOutputFieldsActive() const {
+    return _ui -> _output_box -> isChecked();
 }
 
 
-bool AddDialog::IsIncomeFieldsActive() const {
-    return _ui -> _income_box -> isChecked();
+bool AddDialog::IsInputFieldsActive() const {
+    return _ui -> _input_box -> isChecked();
 }
 
 
 bool AddDialog::IsDataEntered() const {
-    return ((false == _ui -> _rest_value -> text().isEmpty() &&
-            false == _ui -> _rest_descripton -> toPlainText().isEmpty()) ||
-            (false == _ui -> _income_value -> text().isEmpty() &&
-             false == _ui -> _income_description -> toPlainText().isEmpty()));
+    return ((false == _ui -> _output_value -> text().isEmpty() &&
+            false == _ui -> _output_descripton -> toPlainText().isEmpty()) ||
+            (false == _ui -> _input_value -> text().isEmpty() &&
+             false == _ui -> _input_description -> toPlainText().isEmpty()));
 }
 
 

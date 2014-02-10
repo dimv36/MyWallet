@@ -25,11 +25,13 @@ public:
 
 private slots:
     void on__action_add_triggered();
-
     void on__action_exit_triggered();
+    void on__action_remove_triggered();
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
+    void AddNewRowInTable();
+    void CreateNewItem(int row, int column, QString text);
     void ReadXML();
     void WriteXML() const;
 };

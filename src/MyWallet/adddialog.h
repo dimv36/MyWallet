@@ -20,13 +20,13 @@ public:
     ~AddDialog();
 
     QDate get_date() const;
-    int get_rest() const;
-    QString get_rest_description() const;
-    int get_income() const;
-    QString get_income_description() const;
+    int get_output() const;
+    QString get_output_description() const;
+    int get_input() const;
+    QString get_input_description() const;
 
-    bool IsRestFieldsActive() const;
-    bool IsIncomeFieldsActive() const;
+    bool IsOutputFieldsActive() const;
+    bool IsInputFieldsActive() const;
 
 private slots:
     void SlotUpdateForm();

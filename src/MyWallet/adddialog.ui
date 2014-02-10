@@ -47,7 +47,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="_rest_box">
+    <widget class="QGroupBox" name="_output_box">
      <property name="title">
       <string>Добавить расходы:</string>
      </property>
@@ -59,30 +59,30 @@
      </property>
      <layout class="QFormLayout" name="_rest_layout">
       <item row="0" column="0">
-       <widget class="QLabel" name="_label_rest">
+       <widget class="QLabel" name="_label_output">
         <property name="text">
          <string>Сумма: </string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="_rest_value"/>
+       <widget class="QLineEdit" name="_output_value"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="_label_description_rest">
+       <widget class="QLabel" name="_label_description_output">
         <property name="text">
          <string>Источник расходов:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QPlainTextEdit" name="_rest_descripton"/>
+       <widget class="QPlainTextEdit" name="_output_descripton"/>
       </item>
      </layout>
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QGroupBox" name="_income_box">
+    <widget class="QGroupBox" name="_input_box">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -97,24 +97,24 @@
      </property>
      <layout class="QFormLayout" name="_income_layout">
       <item row="0" column="0">
-       <widget class="QLabel" name="_label_income">
+       <widget class="QLabel" name="_label_input">
         <property name="text">
          <string>Сумма: </string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="_income_value"/>
+       <widget class="QLineEdit" name="_input_value"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="_label_description_income">
+       <widget class="QLabel" name="_label_description_input">
         <property name="text">
          <string>Источник доходов:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QTextEdit" name="_income_description"/>
+       <widget class="QTextEdit" name="_input_description"/>
       </item>
      </layout>
     </widget>
