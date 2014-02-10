@@ -40,7 +40,6 @@ void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool
         _ui -> _table -> setItem(row_count, INPUT_DESCRIPTION_INDEX, description_item);
     }
     _ui -> _table -> scrollToBottom();
-    _ui -> _table -> sortItems(DATE_INDEX);
 }
 
 
@@ -95,7 +94,9 @@ void MyWallet::ReadXML() {
                     CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, QString());
                 }
             }
-       }
+        }
+        _ui -> _table -> scrollToBottom();
+        _ui -> _table -> item(0, DATE_INDEX) -> setSelected(false);
     } else
         return;
 }
@@ -177,5 +178,10 @@ void MyWallet::on__action_exit_triggered() {
 
 
 void MyWallet::on__action_remove_triggered() {
-
+    if (false == _ui -> _table -> selectedItems().isEmpty()) {
+        int current_row = _ui -> _table -> currentRow();
+        _ui -> _table -> removeRow(current_row);
+    }
 }
+
+
