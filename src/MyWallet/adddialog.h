@@ -29,7 +29,7 @@ public:
     bool IsInputFieldsActive() const;
 
 private slots:
-    void SlotUpdateForm();
+    void SlotUpdateForm(QString);
 
 private:
     bool IsDataEntered() const;

@@ -96,7 +96,6 @@ void MyWallet::ReadXML() {
             }
         }
         _ui -> _table -> scrollToBottom();
-        _ui -> _table -> item(0, DATE_INDEX) -> setSelected(false);
     } else
         return;
 }

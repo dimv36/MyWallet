@@ -1,5 +1,6 @@
 #include "adddialog.h"
 #include "ui_adddialog.h"
+#include <QDebug>
 
 AddDialog::AddDialog(QWidget *parent) :
     QDialog(parent),
@@ -11,10 +12,10 @@ AddDialog::AddDialog(QWidget *parent) :
     _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(false);
     _ui -> _button_box -> button(_ui -> _button_box -> Cancel) -> setText("Отмена");
 
-    connect(_ui -> _output_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _output_descripton, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _input_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm()));
-    connect(_ui -> _input_description, SIGNAL(textChanged()), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _input_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
+    connect(_ui -> _input_description, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
+    connect(_ui -> _output_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
+    connect(_ui -> _output_description, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
 }
 
 
@@ -34,7 +35,7 @@ int AddDialog::get_output() const {
 
 
 QString AddDialog::get_output_description() const {
-    return _ui -> _output_descripton -> toPlainText();
+    return _ui -> _output_description -> text();
 }
 
 
@@ -44,7 +45,7 @@ int AddDialog::get_input() const {
 
 
 QString AddDialog::get_input_description() const {
-    return _ui -> _input_description -> toPlainText();
+    return _ui -> _input_description -> text();
 }
 
 
@@ -60,12 +61,12 @@ bool AddDialog::IsInputFieldsActive() const {
 
 bool AddDialog::IsDataEntered() const {
     return ((false == _ui -> _output_value -> text().isEmpty() &&
-            false == _ui -> _output_descripton -> toPlainText().isEmpty()) ||
+            false == _ui -> _output_description -> text().isEmpty()) ||
             (false == _ui -> _input_value -> text().isEmpty() &&
-             false == _ui -> _input_description -> toPlainText().isEmpty()));
+             false == _ui -> _input_description -> text().isEmpty()));
 }
 
 
-void AddDialog::SlotUpdateForm() {
+void AddDialog::SlotUpdateForm(QString) {
     _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(IsDataEntered());
 }
