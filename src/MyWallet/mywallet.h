@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include <QTableWidgetItem>
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
 #include "adddialog.h"
 
 namespace Ui {
@@ -23,10 +25,14 @@ public:
     explicit MyWallet(QWidget *parent = 0);
     ~MyWallet();
 
+signals:
+    void SignalUpdate();
+
 private slots:
     void on__action_add_triggered();
     void on__action_exit_triggered();
     void on__action_remove_triggered();
+    void SlotUpdateTotalFields();
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);

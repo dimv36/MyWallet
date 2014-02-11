@@ -12,6 +12,7 @@ MyWallet::MyWallet(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::MyWallet) {
     _ui -> setupUi(this);
+    connect(this, SIGNAL(SignalUpdate()), this, SLOT(SlotUpdateTotalFields()));
     ReadXML();
 }
 
@@ -58,16 +59,15 @@ void MyWallet::CreateNewItem(int row, int column, QString text) {
 void MyWallet::ReadXML() {
     QString file_name = QDir().home().absolutePath() + "/.config/MyWallet/wallet.xml";
     if (true == QFileInfo(file_name).exists()) {
-        QFile file(file_name);
-        if (false == file.open(QFile::ReadOnly)) {
-            QMessageBox::warning(0,
+        QFile wallet_file(file_name);
+        if (false == wallet_file.open(QFile::ReadOnly)) {
+            QMessageBox::warning(this,
                                  tr("MyWallet"),
-                                 tr("Невозможно открыть файл %1 \n%2").arg(file_name).arg(file.errorString()),
+                                 tr("Невозможно открыть файл %1 \n%2").arg(file_name).arg(wallet_file.errorString()),
                                  QMessageBox::Ok);
             return;
-
-            }
-        QXmlStreamReader reader(&file);
+        }
+        QXmlStreamReader reader(&wallet_file);
         QString date;
         while(false == reader.atEnd()) {
             if (true == reader.readNextStartElement()) {
@@ -96,6 +96,7 @@ void MyWallet::ReadXML() {
             }
         }
         _ui -> _table -> scrollToBottom();
+        emit SignalUpdate();
     } else
         return;
 }
@@ -157,7 +158,7 @@ void MyWallet::on__action_add_triggered() {
        bool is_input_fields_active = dialog.IsInputFieldsActive();
        QDate date = dialog.get_date();
        if (true == is_output_fields_active) {
-           int output = dialog.get_input();
+           int output = dialog.get_output();
            QString output_description = dialog.get_output_description();
            CreateTableRow(date, output, output_description, true);
        }
@@ -166,6 +167,7 @@ void MyWallet::on__action_add_triggered() {
             QString input_description = dialog.get_input_description();
             CreateTableRow(date, input, input_description, false);
        }
+       emit SignalUpdate();
     }
 }
 
@@ -180,7 +182,26 @@ void MyWallet::on__action_remove_triggered() {
     if (false == _ui -> _table -> selectedItems().isEmpty()) {
         int current_row = _ui -> _table -> currentRow();
         _ui -> _table -> removeRow(current_row);
+        emit SignalUpdate();
     }
+}
+
+
+void MyWallet::SlotUpdateTotalFields() {
+    int input = 0;
+    int output = 0;
+    for (int i = 0; i < _ui -> _table -> rowCount(); i++) {
+        input += _ui -> _table -> item(i, INPUT_INDEX) -> text().toInt();
+        output += _ui -> _table -> item(i, OUTPUT_INDEX) -> text().toInt();
+    }
+    int total = input - output;
+    _ui -> _label_output_value -> setText(QString::number(output));
+    _ui -> _label_input_value -> setText(QString::number(input));
+    _ui -> _label_total_value -> setText(QString::number(total));
+    if (total >= 0)
+       _ui -> _label_total_value -> setStyleSheet("QLabel { color: green }");
+    else
+       _ui -> _label_total_value -> setStyleSheet("QLabel { color: red }");
 }
 
 

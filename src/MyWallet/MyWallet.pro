@@ -24,3 +24,5 @@ FORMS    += mywallet.ui \
 
 RESOURCES += \
     files/resouce.qrc
+
+OTHER_FILES +=
