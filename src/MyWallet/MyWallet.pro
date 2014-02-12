@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mywallet.cpp \
-    adddialog.cpp
+    adddialog.cpp \
+    settingsdialog.cpp
 
 HEADERS  += mywallet.h \
-    adddialog.h
+    adddialog.h \
+    settingsdialog.h
 
 FORMS    += mywallet.ui \
-    adddialog.ui
+    adddialog.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     files/resouce.qrc

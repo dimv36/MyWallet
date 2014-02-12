@@ -205,3 +205,12 @@ void MyWallet::SlotUpdateTotalFields() {
 }
 
 
+
+void MyWallet::on__action_open_triggered() {
+    QString file_name = QFileDialog::getOpenFileName(this,
+                                                     tr("Выбрать файл"),
+                                                     QDir::current().path(),
+                                                     tr("XML-файлы (*.xml)"));
+
+
+}
