@@ -103,6 +103,8 @@ void MyWallet::ReadXML() {
 
 
 void MyWallet::WriteXML() const {
+    if (0 == _ui -> _table -> rowCount())
+        return;
     QString dir_path = QDir().home().absolutePath() + "/.config/MyWallet";
     if (false == QDir(dir_path).exists())
         QDir().mkdir(dir_path);
