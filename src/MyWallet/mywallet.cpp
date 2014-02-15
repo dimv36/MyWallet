@@ -2,13 +2,14 @@
 #include "ui_mywallet.h"
 
 #include <QDebug>
-#define MAIN_SETTINGS "MyWallet"
 #define DEFAULT_FILE_NAME "wallet.xml"
+#define MAIN_SETTINGS "MyWallet"
 #define DATE_INDEX 0
 #define OUTPUT_INDEX 1
 #define OUTPUT_DESCRIPTION_INDEX 2
 #define INPUT_INDEX 3
 #define INPUT_DESCRIPTION_INDEX 4
+
 
 MyWallet::MyWallet(QWidget *parent) :
     QMainWindow(parent),
@@ -20,6 +21,7 @@ MyWallet::MyWallet(QWidget *parent) :
     _wallet_name = DEFAULT_FILE_NAME;
     ReadSettings();
     ReadXML();
+    _ui -> _table -> setCurrentItem(0);
 }
 
 MyWallet::~MyWallet() {
@@ -64,7 +66,7 @@ void MyWallet::CreateNewItem(int row, int column, QString text) {
 
 
 void MyWallet::ReadXML() {
-    _ui -> _table -> clearContents();
+    _ui -> _table -> setRowCount(0);
     QString file_name = _current_path + "/" + _wallet_name;
     if (true == QFileInfo(file_name).exists()) {
         QFile wallet_file(file_name);
@@ -244,9 +246,7 @@ void MyWallet::on__action_open_triggered() {
                                                      tr("XML-файлы (*.xml)"));
     WriteXML();
     _current_path = QFileInfo(file_name).dir().path();
-    qDebug() << _current_path;
     _wallet_name = QFileInfo(file_name).fileName();
-    qDebug() << _wallet_name;
     ReadXML();
 }
 
@@ -265,6 +265,16 @@ void MyWallet::on__action_settings_triggered() {
 
 
 void MyWallet::SlotUpdateWindowHeader() {
-    setWindowTitle(_current_path + "/" + _wallet_name);
+    setWindowTitle(_current_path + "/" + _wallet_name + " - [MyWallet]");
 }
 
+
+void MyWallet::on__action_edit_triggered() {
+    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
+    if (0 == current_item)
+        return;
+    else {
+        int current_column = _ui -> _table -> currentColumn();
+    }
+
+}

@@ -44,6 +44,8 @@ private slots:
     void on__action_settings_triggered();
     void SlotUpdateWindowHeader();
 
+    void on__action_edit_triggered();
+
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
     void AddNewRowInTable();
