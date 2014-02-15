@@ -9,6 +9,7 @@
 #include <QTableWidgetItem>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
+#include <QSettings>
 #include "adddialog.h"
 
 namespace Ui {
@@ -21,7 +22,9 @@ class MyWallet : public QMainWindow
 
 private:
     Ui::MyWallet* _ui;
-    QString _default_file_name;
+    QString _current_path;
+    QString _wallet_name;
+    QSettings _settings;
 
 public:
     explicit MyWallet(QWidget *parent = 0);
@@ -35,8 +38,8 @@ private slots:
     void on__action_exit_triggered();
     void on__action_remove_triggered();
     void SlotUpdateTotalFields();
-
     void on__action_open_triggered();
+    void on__action_settings_triggered();
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
@@ -44,6 +47,8 @@ private:
     void CreateNewItem(int row, int column, QString text);
     void ReadXML(/*const QString file_name*/);
     void WriteXML() const;
+    void WirteSettings() const;
+    void ReadSettings();
 };
 
 #endif // MYWALLET_H

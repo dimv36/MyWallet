@@ -2,6 +2,7 @@
 #include "ui_mywallet.h"
 
 #include <QDebug>
+#define MAIN_SETTINGS "MyWallet"
 #define DATE_INDEX 0
 #define OUTPUT_INDEX 1
 #define OUTPUT_DESCRIPTION_INDEX 2
@@ -153,6 +154,19 @@ void MyWallet::WriteXML() const {
 }
 
 
+void MyWallet::WirteSettings() {
+    _settings.beginGroup(MAIN_SETTINGS);
+    _settings.setValue("position", pos());
+    _settings.setValue("size", size());
+    _settings.endGroup();
+}
+
+
+void MyWallet::ReadSettings() const {
+
+}
+
+
 void MyWallet::on__action_add_triggered() {
     AddDialog dialog(this);
     if (QDialog::Accepted == dialog.exec()) {
@@ -207,12 +221,16 @@ void MyWallet::SlotUpdateTotalFields() {
 }
 
 
-
 void MyWallet::on__action_open_triggered() {
     QString file_name = QFileDialog::getOpenFileName(this,
                                                      tr("Выбрать файл"),
                                                      QDir::current().path(),
                                                      tr("XML-файлы (*.xml)"));
 
+
+}
+
+
+void MyWallet::on__action_settings_triggered() {
 
 }
