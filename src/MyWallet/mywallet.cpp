@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #define MAIN_SETTINGS "MyWallet"
+#define DEFAULT_FILE_NAME "wallet.xml"
 #define DATE_INDEX 0
 #define OUTPUT_INDEX 1
 #define OUTPUT_DESCRIPTION_INDEX 2
@@ -14,10 +15,15 @@ MyWallet::MyWallet(QWidget *parent) :
     _ui(new Ui::MyWallet) {
     _ui -> setupUi(this);
     connect(this, SIGNAL(SignalUpdate()), this, SLOT(SlotUpdateTotalFields()));
+    connect(this, SIGNAL(SignalWalletWasOpen()), this, SLOT(SlotUpdateWindowHeader()));
+    _current_path = QDir().home().path() + "/.MyWallet";
+    _wallet_name = DEFAULT_FILE_NAME;
+    ReadSettings();
     ReadXML();
 }
 
 MyWallet::~MyWallet() {
+    WriteSettings();
     WriteXML();
     delete _ui;
 }
@@ -58,7 +64,8 @@ void MyWallet::CreateNewItem(int row, int column, QString text) {
 
 
 void MyWallet::ReadXML() {
-    QString file_name = QDir().home().absolutePath() + "/.config/MyWallet/wallet.xml";
+    _ui -> _table -> clearContents();
+    QString file_name = _current_path + "/" + _wallet_name;
     if (true == QFileInfo(file_name).exists()) {
         QFile wallet_file(file_name);
         if (false == wallet_file.open(QFile::ReadOnly)) {
@@ -98,6 +105,7 @@ void MyWallet::ReadXML() {
         }
         _ui -> _table -> scrollToBottom();
         emit SignalUpdate();
+        emit SignalWalletWasOpen();
     } else
         return;
 }
@@ -106,16 +114,14 @@ void MyWallet::ReadXML() {
 void MyWallet::WriteXML() const {
     if (0 == _ui -> _table -> rowCount())
         return;
-    QString dir_path = QDir().home().absolutePath() + "/.config/MyWallet";
-    if (false == QDir(dir_path).exists())
-        QDir().mkdir(dir_path);
-    QDir().setCurrent(dir_path);
-    QString file_name("wallet.xml");
-    QFile file(file_name);
+    if (false == QDir(_current_path).exists())
+        QDir().mkdir(_current_path);
+    QDir().setCurrent(_current_path);
+    QFile file(_wallet_name);
     if (false == file.open(QFile::WriteOnly)) {
        QMessageBox::warning(0,
                             tr("MyWallet"),
-                            tr("Невозможно открыть файл %1 \n%2").arg(file_name).arg(file.errorString()),
+                            tr("Невозможно открыть файл %1 \n%2").arg(_wallet_name).arg(file.errorString()),
                             QMessageBox::Ok);
         return;
     }
@@ -154,16 +160,25 @@ void MyWallet::WriteXML() const {
 }
 
 
-void MyWallet::WirteSettings() {
+void MyWallet::WriteSettings()  {
     _settings.beginGroup(MAIN_SETTINGS);
     _settings.setValue("position", pos());
     _settings.setValue("size", size());
+    _settings.setValue("path", _current_path);
+    _settings.setValue("wallet_name", _wallet_name);
     _settings.endGroup();
 }
 
 
-void MyWallet::ReadSettings() const {
-
+void MyWallet::ReadSettings() {
+    _settings.beginGroup(MAIN_SETTINGS);
+    resize(_settings.value("size").toSize());
+    move(_settings.value("position").toPoint());
+    if ((false ==_settings.value("path").toString().isEmpty()) && (false == _settings.value("wallet_name").toString().isEmpty())) {
+        _current_path = _settings.value("path").toString();
+        _wallet_name = _settings.value("wallet_name").toString();
+    }
+    _settings.endGroup();
 }
 
 
@@ -189,6 +204,7 @@ void MyWallet::on__action_add_triggered() {
 
 
 void MyWallet::on__action_exit_triggered() {
+    WriteSettings();
     WriteXML();
     exit(0);
 }
@@ -226,11 +242,29 @@ void MyWallet::on__action_open_triggered() {
                                                      tr("Выбрать файл"),
                                                      QDir::current().path(),
                                                      tr("XML-файлы (*.xml)"));
-
-
+    WriteXML();
+    _current_path = QFileInfo(file_name).dir().path();
+    qDebug() << _current_path;
+    _wallet_name = QFileInfo(file_name).fileName();
+    qDebug() << _wallet_name;
+    ReadXML();
 }
 
 
 void MyWallet::on__action_settings_triggered() {
-
+    SettingsDialog dialog(this);
+    dialog.set_directory(_current_path);
+    dialog.set_wallet_name(_wallet_name);
+    if (QDialog::Accepted == dialog.exec()) {
+        if (true == dialog.IsWalletBoxIsActive()) {
+            _current_path = dialog.get_directory() + "/";
+            _wallet_name = dialog.get_wallet_name();
+        }
+    }
 }
+
+
+void MyWallet::SlotUpdateWindowHeader() {
+    setWindowTitle(_current_path + "/" + _wallet_name);
+}
+

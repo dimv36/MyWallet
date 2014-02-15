@@ -11,6 +11,7 @@
 #include <QXmlSchemaValidator>
 #include <QSettings>
 #include "adddialog.h"
+#include "settingsdialog.h"
 
 namespace Ui {
 class MyWallet;
@@ -32,6 +33,7 @@ public:
 
 signals:
     void SignalUpdate();
+    void SignalWalletWasOpen();
 
 private slots:
     void on__action_add_triggered();
@@ -40,6 +42,7 @@ private slots:
     void SlotUpdateTotalFields();
     void on__action_open_triggered();
     void on__action_settings_triggered();
+    void SlotUpdateWindowHeader();
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
@@ -47,7 +50,7 @@ private:
     void CreateNewItem(int row, int column, QString text);
     void ReadXML(/*const QString file_name*/);
     void WriteXML() const;
-    void WirteSettings() const;
+    void WriteSettings();
     void ReadSettings();
 };
 
