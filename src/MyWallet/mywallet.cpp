@@ -9,6 +9,10 @@
 #define OUTPUT_DESCRIPTION_INDEX 2
 #define INPUT_INDEX 3
 #define INPUT_DESCRIPTION_INDEX 4
+#define DATE_FORMAT "d MMMM yyyy"
+#define YEAR_INDEX 2
+#define MONTH_INDEX 1
+#define DAY_INDEX 0
 
 
 MyWallet::MyWallet(QWidget *parent) :
@@ -34,7 +38,7 @@ MyWallet::~MyWallet() {
 void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool isRest) {
     _ui -> _table -> setRowCount(_ui -> _table -> rowCount() + 1);
     int row_count = _ui -> _table -> rowCount() - 1;
-    CreateNewItem(row_count, DATE_INDEX, date.toString("d MMMM yyyy"));
+    CreateNewItem(row_count, DATE_INDEX, date.toString(DATE_FORMAT));
     QTableWidgetItem *total_item = new QTableWidgetItem(QString::number(total));
     QTableWidgetItem *description_item = new QTableWidgetItem(description);
     total_item -> setTextAlignment(Qt::AlignCenter);
@@ -119,7 +123,7 @@ void MyWallet::WriteXML() const {
     if (false == QDir(_current_path).exists())
         QDir().mkdir(_current_path);
     QDir().setCurrent(_current_path);
-    QFile file(_wallet_name);
+    QFile file("test.xml");
     if (false == file.open(QFile::WriteOnly)) {
        QMessageBox::warning(0,
                             tr("MyWallet"),
@@ -133,29 +137,40 @@ void MyWallet::WriteXML() const {
     writer.writeStartElement("mywallet");
     int element_index = 0;
     while(true) {
-        QTableWidgetItem* current_item = _ui -> _table -> item(element_index, DATE_INDEX);
-        int item_count = _ui -> _table -> findItems(current_item -> text(), Qt::MatchCaseSensitive).count();
-        writer.writeStartElement("note");
-        writer.writeAttribute("date", current_item -> text());
-        for (int i = element_index; i < element_index + item_count; i++) {
-            if (false == _ui -> _table -> item(i, OUTPUT_INDEX) -> text().isEmpty()) {
-                writer.writeStartElement("out");
-                writer.writeAttribute("value", _ui -> _table -> item(i, OUTPUT_INDEX) -> text());
-                writer.writeAttribute("description", _ui -> _table -> item(i, OUTPUT_DESCRIPTION_INDEX) -> text());
-                writer.writeEndElement();
-            }
-            if (false == _ui -> _table -> item(i, INPUT_INDEX) -> text().isEmpty()) {
-                writer.writeStartElement("in");
-                writer.writeAttribute("value", _ui -> _table -> item(i, INPUT_INDEX) -> text());
-                writer.writeAttribute("description", _ui -> _table -> item(i, INPUT_DESCRIPTION_INDEX) -> text());
-                writer.writeEndElement();
-            }
-        }
-        writer.writeEndElement();
-        element_index += item_count;
-        if (element_index >= _ui -> _table -> rowCount())
-            break;
+        QString current_date = _ui -> _table -> item(element_index, DATE_INDEX) -> text();
+        QString current_year = tr("[0-9]* [а-я]* %1").arg(current_date.split(' ').at(YEAR_INDEX));
+        QString current_month = tr("[0-9]* %1 [0-9]*").arg(current_date.split(' ').at(MONTH_INDEX));
+        QString current_day = tr("%1 [а-я]* [0-9]*").arg(current_date.split(' ').at(DAY_INDEX));
+        int year_items_count = _ui -> _table -> findItems(current_year, Qt::MatchRegExp).count();
+        int month_items_count = _ui -> _table -> findItems(current_month, Qt::MatchRegExp).count();
+        int day_items_count = _ui -> _table -> findItems(current_day, Qt::MatchRegExp).count();
+
+        break;
     }
+//    while(true) {
+//        QTableWidgetItem* current_item = _ui -> _table -> item(element_index, DATE_INDEX);
+//        int item_count = _ui -> _table -> findItems(current_item -> text(), Qt::MatchCaseSensitive).count();
+//        writer.writeStartElement("note");
+//        writer.writeAttribute("date", current_item -> text());
+//        for (int i = element_index; i < element_index + item_count; i++) {
+//            if (false == _ui -> _table -> item(i, OUTPUT_INDEX) -> text().isEmpty()) {
+//                writer.writeStartElement("out");
+//                writer.writeAttribute("value", _ui -> _table -> item(i, OUTPUT_INDEX) -> text());
+//                writer.writeAttribute("description", _ui -> _table -> item(i, OUTPUT_DESCRIPTION_INDEX) -> text());
+//                writer.writeEndElement();
+//            }
+//            if (false == _ui -> _table -> item(i, INPUT_INDEX) -> text().isEmpty()) {
+//                writer.writeStartElement("in");
+//                writer.writeAttribute("value", _ui -> _table -> item(i, INPUT_INDEX) -> text());
+//                writer.writeAttribute("description", _ui -> _table -> item(i, INPUT_DESCRIPTION_INDEX) -> text());
+//                writer.writeEndElement();
+//            }
+//        }
+//        writer.writeEndElement();
+//        element_index += item_count;
+//        if (element_index >= _ui -> _table -> rowCount())
+//            break;
+//    }
     writer.writeEndElement();
     writer.writeEndDocument();
     file.close();
