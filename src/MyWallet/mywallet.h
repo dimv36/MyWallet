@@ -12,6 +12,7 @@
 #include <QSettings>
 #include "adddialog.h"
 #include "settingsdialog.h"
+#include "restmonthdialog.h"
 
 namespace Ui {
 class MyWallet;
@@ -55,6 +56,7 @@ private:
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();
+    void ChangeMonthRest();
 };
 
 #endif // MYWALLET_H

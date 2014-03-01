@@ -10,9 +10,6 @@
 #define INPUT_INDEX 3
 #define INPUT_DESCRIPTION_INDEX 4
 #define DATE_FORMAT "d MMMM yyyy"
-#define YEAR_INDEX 2
-#define MONTH_INDEX 1
-#define DAY_INDEX 0
 
 
 MyWallet::MyWallet(QWidget *parent) :
@@ -26,6 +23,8 @@ MyWallet::MyWallet(QWidget *parent) :
     ReadSettings();
     ReadXML();
     _ui -> _table -> setCurrentItem(0);
+    if (_ui -> _label_rest_value -> text().toInt() == 0)
+        ChangeMonthRest();
 }
 
 MyWallet::~MyWallet() {
@@ -82,27 +81,39 @@ void MyWallet::ReadXML() {
             return;
         }
         QXmlStreamReader reader(&wallet_file);
-        QString date;
+        int year = 0;
+        int month = 0;
+        int day = 0;
+        QDate date;
         while(false == reader.atEnd()) {
             if (true == reader.readNextStartElement()) {
-                if ("note" == reader.name())
-                    date = reader.attributes().value("date").toString();
+                if ("year" == reader.name())
+                    year = reader.attributes().value("value").toInt();
+                if ("month" == reader.name()) {
+                    month = reader.attributes().value("value").toInt();
+                    QString rest = reader.attributes().value("rest").toString();
+                    _ui -> _label_rest_value -> setText(rest);
+                }
+                if ("day" == reader.name())
+                    day = reader.attributes().value("value").toInt();
                 if ("in" == reader.name()) {
                     QString input = reader.attributes().value("value").toString();
                     QString description = reader.attributes().value("description").toString();
                     AddNewRowInTable();
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date);
+                    date = QDate(year, month, day);
+                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
                     CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, QString());
                     CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, QString());
                     CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, input);
                     CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, description);
                 }
                 if ("out" == reader.name()) {
-                    QString OUTPUT_INDEXput = reader.attributes().value("value").toString();
+                    QString output = reader.attributes().value("value").toString();
                     QString description = reader.attributes().value("description").toString();
                     AddNewRowInTable();
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, OUTPUT_INDEXput);
+                    date = QDate(year, month, day);
+                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
+                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, output);
                     CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, description);
                     CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, QString());
                     CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, QString());
@@ -133,7 +144,7 @@ void MyWallet::WriteXML() const {
     if (false == QDir(_current_path).exists())
         QDir().mkdir(_current_path);
     QDir().setCurrent(_current_path);
-    QFile file("test.xml");
+    QFile file(_wallet_name);
     if (false == file.open(QFile::WriteOnly)) {
        QMessageBox::warning(0,
                             tr("MyWallet"),
@@ -161,6 +172,7 @@ void MyWallet::WriteXML() const {
         if (true == write_month_tag) {
             writer.writeStartElement("month");
             writer.writeAttribute("value", QString::number(current_date.month()));
+            writer.writeAttribute("rest", _ui -> _label_rest_value -> text());
             write_month_tag = false;
         }
         if (true == write_day_tag) {
@@ -229,6 +241,17 @@ void MyWallet::ReadSettings() {
 }
 
 
+void MyWallet::ChangeMonthRest() {
+    RestMonthDialog dialog;
+    dialog.set_rest_month(_ui -> _label_rest_value -> text().toInt());
+    if (QDialog::Accepted == dialog.exec()) {
+        int rest = dialog.get_rest_month();
+        _ui -> _label_rest_value -> setText(QString::number(rest));
+    }
+    emit SignalUpdate();
+}
+
+
 void MyWallet::on__action_add_triggered() {
     AddDialog dialog(this);
     if (QDialog::Accepted == dialog.exec()) {
@@ -269,11 +292,12 @@ void MyWallet::on__action_remove_triggered() {
 void MyWallet::SlotUpdateTotalFields() {
     int input = 0;
     int output = 0;
+    int month_output = _ui -> _label_rest_value -> text().toInt();
     for (int i = 0; i < _ui -> _table -> rowCount(); i++) {
         input += _ui -> _table -> item(i, INPUT_INDEX) -> text().toInt();
         output += _ui -> _table -> item(i, OUTPUT_INDEX) -> text().toInt();
     }
-    int total = input - output;
+    int total = month_output + input - output;
     _ui -> _label_output_value -> setText(QString::number(output));
     _ui -> _label_input_value -> setText(QString::number(input));
     _ui -> _label_total_value -> setText(QString::number(total));
@@ -310,7 +334,7 @@ void MyWallet::on__action_settings_triggered() {
 
 
 void MyWallet::SlotUpdateWindowHeader() {
-    setWindowTitle(_current_path + "/" + _wallet_name + " - [MyWallet]");
+    setWindowTitle(_current_path + _wallet_name + " - [MyWallet]");
 }
 
 
