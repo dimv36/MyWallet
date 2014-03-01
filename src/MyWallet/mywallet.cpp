@@ -117,6 +117,16 @@ void MyWallet::ReadXML() {
 }
 
 
+QTableWidgetItem* MyWallet::GetNextItem(QTableWidgetItem *item) const {
+    int column = item -> column();
+    int row = item -> row();
+    if (_ui -> _table -> rowCount() == row + 1)
+        return 0;
+    else
+        return _ui -> _table -> item(row + 1, column);
+}
+
+
 void MyWallet::WriteXML() const {
     if (0 == _ui -> _table -> rowCount())
         return;
@@ -136,41 +146,61 @@ void MyWallet::WriteXML() const {
     writer.writeStartDocument();
     writer.writeStartElement("mywallet");
     int element_index = 0;
+    bool write_year_tag = true;
+    bool write_month_tag = true;
+    bool write_day_tag = true;
     while(true) {
-        QString current_date = _ui -> _table -> item(element_index, DATE_INDEX) -> text();
-        QString current_year = tr("[0-9]* [а-я]* %1").arg(current_date.split(' ').at(YEAR_INDEX));
-        QString current_month = tr("[0-9]* %1 [0-9]*").arg(current_date.split(' ').at(MONTH_INDEX));
-        QString current_day = tr("%1 [а-я]* [0-9]*").arg(current_date.split(' ').at(DAY_INDEX));
-        int year_items_count = _ui -> _table -> findItems(current_year, Qt::MatchRegExp).count();
-        int month_items_count = _ui -> _table -> findItems(current_month, Qt::MatchRegExp).count();
-        int day_items_count = _ui -> _table -> findItems(current_day, Qt::MatchRegExp).count();
-
-        break;
+        QTableWidgetItem* current_item = _ui -> _table -> item(element_index, DATE_INDEX);
+        QTableWidgetItem* next_item = GetNextItem(current_item);
+        QDate current_date = QDate::fromString(current_item -> text(), DATE_FORMAT);
+        if (true == write_year_tag) {
+            writer.writeStartElement("year");
+            writer.writeAttribute("value", QString::number(current_date.year()));
+            write_year_tag = false;
+        }
+        if (true == write_month_tag) {
+            writer.writeStartElement("month");
+            writer.writeAttribute("value", QString::number(current_date.month()));
+            write_month_tag = false;
+        }
+        if (true == write_day_tag) {
+            writer.writeStartElement("day");
+            writer.writeAttribute("value", QString::number(current_date.day()));
+            write_day_tag = false;
+        }
+        if (false == _ui -> _table -> item(element_index, OUTPUT_INDEX) -> text().isEmpty()) {
+            writer.writeStartElement("out");
+            writer.writeAttribute("value", _ui -> _table -> item(element_index, OUTPUT_INDEX) -> text());
+            writer.writeAttribute("description", _ui -> _table -> item(element_index, OUTPUT_DESCRIPTION_INDEX) -> text());
+            writer.writeEndElement();
+         }
+         if (false == _ui -> _table -> item(element_index, INPUT_INDEX) -> text().isEmpty()) {
+            writer.writeStartElement("in");
+            writer.writeAttribute("value", _ui -> _table -> item(element_index, INPUT_INDEX) -> text());
+            writer.writeAttribute("description", _ui -> _table -> item(element_index, INPUT_DESCRIPTION_INDEX) -> text());
+            writer.writeEndElement();
+        }
+        if (next_item == 0) {
+            writer.writeEndElement();
+            writer.writeEndElement();
+            writer.writeEndElement();
+            break;
+        }
+        QDate next_date = QDate::fromString(next_item -> text(), DATE_FORMAT);
+        if (next_date.day() != current_date.day()) {
+            writer.writeEndElement();
+            write_day_tag = true;
+        }
+        if (next_date.month() != current_date.month()) {
+            writer.writeEndElement();
+            write_month_tag = true;
+        }
+        if (next_date.year() != current_date.year()) {
+            writer.writeEndElement();
+            write_year_tag = true;
+        }
+        element_index += 1;
     }
-//    while(true) {
-//        QTableWidgetItem* current_item = _ui -> _table -> item(element_index, DATE_INDEX);
-//        int item_count = _ui -> _table -> findItems(current_item -> text(), Qt::MatchCaseSensitive).count();
-//        writer.writeStartElement("note");
-//        writer.writeAttribute("date", current_item -> text());
-//        for (int i = element_index; i < element_index + item_count; i++) {
-//            if (false == _ui -> _table -> item(i, OUTPUT_INDEX) -> text().isEmpty()) {
-//                writer.writeStartElement("out");
-//                writer.writeAttribute("value", _ui -> _table -> item(i, OUTPUT_INDEX) -> text());
-//                writer.writeAttribute("description", _ui -> _table -> item(i, OUTPUT_DESCRIPTION_INDEX) -> text());
-//                writer.writeEndElement();
-//            }
-//            if (false == _ui -> _table -> item(i, INPUT_INDEX) -> text().isEmpty()) {
-//                writer.writeStartElement("in");
-//                writer.writeAttribute("value", _ui -> _table -> item(i, INPUT_INDEX) -> text());
-//                writer.writeAttribute("description", _ui -> _table -> item(i, INPUT_DESCRIPTION_INDEX) -> text());
-//                writer.writeEndElement();
-//            }
-//        }
-//        writer.writeEndElement();
-//        element_index += item_count;
-//        if (element_index >= _ui -> _table -> rowCount())
-//            break;
-//    }
     writer.writeEndElement();
     writer.writeEndDocument();
     file.close();
@@ -285,11 +315,11 @@ void MyWallet::SlotUpdateWindowHeader() {
 
 
 void MyWallet::on__action_edit_triggered() {
-    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
-    if (0 == current_item)
-        return;
-    else {
-        int current_column = _ui -> _table -> currentColumn();
-    }
+//    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
+//    if (0 == current_item)
+//        return;
+//    else {
+//        int current_column = _ui -> _table -> currentColumn();
+//    }
 
 }

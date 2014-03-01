@@ -51,6 +51,7 @@ private:
     void AddNewRowInTable();
     void CreateNewItem(int row, int column, QString text);
     void ReadXML(/*const QString file_name*/);
+    QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();
