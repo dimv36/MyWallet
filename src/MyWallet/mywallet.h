@@ -53,6 +53,8 @@ private:
     void CreateNewItem(int row, int column, QString text);
     void ReadXML(/*const QString file_name*/);
     QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
+    QTableWidgetItem* GetPreviousItem(QTableWidgetItem *item) const;
+    int GetCurrentMonthIndex() const;
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();

@@ -1,3 +1,4 @@
+
 #include "mywallet.h"
 #include "ui_mywallet.h"
 
@@ -138,6 +139,16 @@ QTableWidgetItem* MyWallet::GetNextItem(QTableWidgetItem *item) const {
 }
 
 
+QTableWidgetItem* MyWallet::GetPreviousItem(QTableWidgetItem *item) const {
+    int column = item -> column();
+    int row = item -> row();
+    if (row - 1 >= 0)
+        return _ui -> _table -> item(row - 1, column);
+    else
+        return 0;
+}
+
+
 void MyWallet::WriteXML() const {
     if (0 == _ui -> _table -> rowCount())
         return;
@@ -252,6 +263,23 @@ void MyWallet::ChangeMonthRest() {
 }
 
 
+int MyWallet::GetCurrentMonthIndex() const {
+    int current_month = QDate::currentDate().month();
+    int row_count = _ui -> _table -> rowCount();
+    QTableWidgetItem* last_item = _ui -> _table -> item(row_count - 1, DATE_INDEX);
+    int index = 0;
+    for (index = row_count - 1; index >= 0; index--) {
+        QTableWidgetItem* previous_item = GetPreviousItem(last_item);
+        if (0 != previous_item) {
+            int month = QDate::fromString(previous_item -> text(), DATE_FORMAT).month();
+            if (current_month != month)
+                break;
+        }
+    }
+    return index;
+}
+
+
 void MyWallet::on__action_add_triggered() {
     AddDialog dialog(this);
     if (QDialog::Accepted == dialog.exec()) {
@@ -290,10 +318,11 @@ void MyWallet::on__action_remove_triggered() {
 
 
 void MyWallet::SlotUpdateTotalFields() {
+    int current_month_index = GetCurrentMonthIndex();
     int input = 0;
     int output = 0;
     int month_output = _ui -> _label_rest_value -> text().toInt();
-    for (int i = 0; i < _ui -> _table -> rowCount(); i++) {
+    for (int i = current_month_index; i < _ui -> _table -> rowCount(); i++) {
         input += _ui -> _table -> item(i, INPUT_INDEX) -> text().toInt();
         output += _ui -> _table -> item(i, OUTPUT_INDEX) -> text().toInt();
     }
