@@ -86,6 +86,7 @@ void MyWallet::ReadXML() {
         int month = 0;
         int day = 0;
         QDate date;
+        QDate current_date = QDate::currentDate();
         while(false == reader.atEnd()) {
             if (true == reader.readNextStartElement()) {
                 if ("year" == reader.name())
@@ -95,29 +96,31 @@ void MyWallet::ReadXML() {
                     QString rest = reader.attributes().value("rest").toString();
                     _ui -> _label_rest_value -> setText(rest);
                 }
-                if ("day" == reader.name())
-                    day = reader.attributes().value("value").toInt();
-                if ("in" == reader.name()) {
-                    QString input = reader.attributes().value("value").toString();
-                    QString description = reader.attributes().value("description").toString();
-                    AddNewRowInTable();
-                    date = QDate(year, month, day);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, QString());
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, QString());
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, input);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, description);
-                }
-                if ("out" == reader.name()) {
-                    QString output = reader.attributes().value("value").toString();
-                    QString description = reader.attributes().value("description").toString();
-                    AddNewRowInTable();
-                    date = QDate(year, month, day);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, output);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, description);
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, QString());
-                    CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, QString());
+                if (year == current_date.year() && month == current_date.month()) {
+                    if ("day" == reader.name())
+                        day = reader.attributes().value("value").toInt();
+                    if ("in" == reader.name()) {
+                        QString input = reader.attributes().value("value").toString();
+                        QString description = reader.attributes().value("description").toString();
+                        AddNewRowInTable();
+                        date = QDate(year, month, day);
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, QString());
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, QString());
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, input);
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, description);
+                    }
+                    if ("out" == reader.name()) {
+                        QString output = reader.attributes().value("value").toString();
+                        QString description = reader.attributes().value("description").toString();
+                        AddNewRowInTable();
+                        date = QDate(year, month, day);
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, DATE_INDEX, date.toString(DATE_FORMAT));
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_INDEX, output);
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, OUTPUT_DESCRIPTION_INDEX, description);
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_INDEX, QString());
+                        CreateNewItem(_ui -> _table -> rowCount() - 1, INPUT_DESCRIPTION_INDEX, QString());
+                    }
                 }
             }
         }
@@ -263,23 +266,6 @@ void MyWallet::ChangeMonthRest() {
 }
 
 
-int MyWallet::GetCurrentMonthIndex() const {
-    int current_month = QDate::currentDate().month();
-    int row_count = _ui -> _table -> rowCount();
-    QTableWidgetItem* last_item = _ui -> _table -> item(row_count - 1, DATE_INDEX);
-    int index = 0;
-    for (index = row_count - 1; index >= 0; index--) {
-        QTableWidgetItem* previous_item = GetPreviousItem(last_item);
-        if (0 != previous_item) {
-            int month = QDate::fromString(previous_item -> text(), DATE_FORMAT).month();
-            if (current_month != month)
-                break;
-        }
-    }
-    return index;
-}
-
-
 void MyWallet::on__action_add_triggered() {
     AddDialog dialog(this);
     if (QDialog::Accepted == dialog.exec()) {
@@ -318,11 +304,10 @@ void MyWallet::on__action_remove_triggered() {
 
 
 void MyWallet::SlotUpdateTotalFields() {
-    int current_month_index = GetCurrentMonthIndex();
     int input = 0;
     int output = 0;
     int month_output = _ui -> _label_rest_value -> text().toInt();
-    for (int i = current_month_index; i < _ui -> _table -> rowCount(); i++) {
+    for (int i = 0; i < _ui -> _table -> rowCount(); i++) {
         input += _ui -> _table -> item(i, INPUT_INDEX) -> text().toInt();
         output += _ui -> _table -> item(i, OUTPUT_INDEX) -> text().toInt();
     }
