@@ -5,11 +5,10 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QXmlStreamWriter>
 #include <QTableWidgetItem>
-#include <QXmlSchema>
-#include <QXmlSchemaValidator>
 #include <QSettings>
+#include <QDomDocument>
+#include <QXmlStreamReader>
 #include "adddialog.h"
 #include "settingsdialog.h"
 #include "restmonthdialog.h"
