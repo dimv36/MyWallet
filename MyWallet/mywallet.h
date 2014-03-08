@@ -47,13 +47,13 @@ private slots:
     void on__action_edit_triggered();
 
 private:
-    void CreateTableRow(QDate &date, int total, QString &description, bool isRest = true);
+    void CreateTableRow(QDate &date, int total, QString &description, bool is_rest = true);
     void AddNewRowInTable();
     void CreateNewItem(int row, int column, QString text);
     void ReadXML(/*const QString file_name*/);
     QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
     QTableWidgetItem* GetPreviousItem(QTableWidgetItem *item) const;
-    QDomElement GetChildItemByAttribute(QDomElement &element, int value) const;
+    QDomElement GetChildItemByAttribute(QDomElement &element, int value, QString description) const;
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();

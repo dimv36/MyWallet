@@ -1,4 +1,3 @@
-
 #include "mywallet.h"
 #include "ui_mywallet.h"
 
@@ -28,6 +27,7 @@ MyWallet::MyWallet(QWidget *parent) :
         ChangeMonthRest();
 }
 
+
 MyWallet::~MyWallet() {
     WriteSettings();
     WriteXML();
@@ -35,14 +35,15 @@ MyWallet::~MyWallet() {
 }
 
 
-void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool isRest) {
+void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool is_rest) {
     _ui -> _table -> setRowCount(_ui -> _table -> rowCount() + 1);
     int row_count = _ui -> _table -> rowCount() - 1;
     CreateNewItem(row_count, DATE_INDEX, date.toString(DATE_FORMAT));
     QTableWidgetItem *total_item = new QTableWidgetItem(QString::number(total));
     QTableWidgetItem *description_item = new QTableWidgetItem(description);
     total_item -> setTextAlignment(Qt::AlignCenter);
-    if (true == isRest) {
+    description_item -> setTextAlignment(Qt::AlignCenter);
+    if (true == is_rest) {
         _ui -> _table -> setItem(row_count, OUTPUT_INDEX, total_item);
         _ui -> _table -> setItem(row_count, OUTPUT_DESCRIPTION_INDEX, description_item);
         _ui -> _table -> setItem(row_count, INPUT_INDEX, new QTableWidgetItem());
@@ -54,6 +55,7 @@ void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool
         _ui -> _table -> setItem(row_count, INPUT_DESCRIPTION_INDEX, description_item);
     }
     _ui -> _table -> scrollToBottom();
+    _ui -> _table -> sortByColumn(DATE_INDEX);
 }
 
 
@@ -152,13 +154,16 @@ QTableWidgetItem* MyWallet::GetPreviousItem(QTableWidgetItem *item) const {
 }
 
 
-QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value) const {
+QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value, QString description = QString()) const {
     QDomElement result;
+    bool description_is_empty = description.isNull();
     if (true == element.hasChildNodes()) {
         QDomNodeList node_list = element.childNodes();
         for (int index = 0; index < node_list.count(); index++) {
             QDomElement item = node_list.at(index).toElement();
-            if (value == item.attribute("value").toInt())
+            if (true == description_is_empty && value == item.attribute("value").toInt())
+                result = item;
+            if (false == description_is_empty && value == item.attribute("value").toInt() && description == item.attribute("description"))
                 result = item;
         }
     }
@@ -218,16 +223,26 @@ void MyWallet::WriteXML() const {
             month_item.appendChild(day_item);
         }
         if (false == _ui -> _table -> item(row, INPUT_DESCRIPTION_INDEX) -> text().isEmpty()) {
-            QDomElement input = document.createElement("in");
-            input.setAttribute("value", _ui -> _table -> item(row, INPUT_INDEX) -> text());
-            input.setAttribute("description", _ui -> _table -> item(row, INPUT_DESCRIPTION_INDEX) -> text());
-            day_item.appendChild(input);
+            int in = _ui -> _table -> item(row, INPUT_INDEX) -> text().toInt();
+            QString description = _ui -> _table -> item(row, INPUT_DESCRIPTION_INDEX) -> text();
+            QDomElement input = GetChildItemByAttribute(day_item, in, description);
+            if (true == input.isNull()) {
+                input = document.createElement("in");
+                input.setAttribute("value", _ui -> _table -> item(row, INPUT_INDEX) -> text());
+                input.setAttribute("description", _ui -> _table -> item(row, INPUT_DESCRIPTION_INDEX) -> text());
+                day_item.appendChild(input);
+            }
         }
         if (false == _ui -> _table -> item(row, OUTPUT_DESCRIPTION_INDEX) -> text().isEmpty()) {
-            QDomElement output = document.createElement("out");
-            output.setAttribute("value", _ui -> _table -> item(row, OUTPUT_INDEX) -> text());
-            output.setAttribute("description", _ui -> _table -> item(row, OUTPUT_DESCRIPTION_INDEX) -> text());
-            day_item.appendChild(output);
+            int out = _ui -> _table -> item(row, OUTPUT_INDEX) -> text().toInt();
+            QString description = _ui -> _table -> item(row, OUTPUT_DESCRIPTION_INDEX) -> text();
+            QDomElement output = GetChildItemByAttribute(day_item, out, description);
+            if (true == output.isNull()) {
+                output = document.createElement("out");
+                output.setAttribute("value", _ui -> _table -> item(row, OUTPUT_INDEX) -> text());
+                output.setAttribute("description", _ui -> _table -> item(row, OUTPUT_DESCRIPTION_INDEX) -> text());
+                day_item.appendChild(output);
+            }
         }
     }
     document.save(stream, 4);
