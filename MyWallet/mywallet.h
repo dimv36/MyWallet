@@ -53,11 +53,13 @@ private:
     void ReadXML(/*const QString file_name*/);
     QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
     QTableWidgetItem* GetPreviousItem(QTableWidgetItem *item) const;
-    QDomElement GetChildItemByAttribute(QDomElement &element, int value, QString description) const;
+    QDomElement GetChildItemByAttribute(QDomElement &element, int value, QString description = QString()) const;
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();
     void ChangeMonthRest();
+    void DeleteItemFromXML(QDate &date, int value, QString &description, bool is_rest = true);
+
 };
 
 #endif // MYWALLET_H

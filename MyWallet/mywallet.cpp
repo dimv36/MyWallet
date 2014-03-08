@@ -154,7 +154,7 @@ QTableWidgetItem* MyWallet::GetPreviousItem(QTableWidgetItem *item) const {
 }
 
 
-QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value, QString description = QString()) const {
+QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value, QString description) const {
     QDomElement result;
     bool description_is_empty = description.isNull();
     if (true == element.hasChildNodes()) {
@@ -283,6 +283,46 @@ void MyWallet::ChangeMonthRest() {
 }
 
 
+void MyWallet::DeleteItemFromXML(QDate &date, int value, QString &description, bool is_rest) {
+    QDir().setCurrent(_current_path);
+    QFile file(_wallet_name);
+    if (false == file.open(QFile::ReadOnly)) {
+       QMessageBox::warning(0,
+                            tr("MyWallet"),
+                            tr("Невозможно открыть файл %1 \n%2 на чтение").arg(_wallet_name).arg(file.errorString()),
+                            QMessageBox::Ok);
+        return;
+    }
+    QDomDocument document;
+    document.setContent(&file);
+    file.close();
+    if (false == file.open(QFile::WriteOnly)) {
+        QMessageBox::warning(0,
+                             tr("MyWallet"),
+                             tr("Невозможно открыть файл %1 \n%2 на запись").arg(_wallet_name).arg(file.errorString()),
+                             QMessageBox::Ok);
+         return;
+    }
+    QTextStream stream(&file);
+    QDomElement root = document.documentElement();
+    QDomElement year_element = GetChildItemByAttribute(root, date.year());
+    QDomElement month_element = GetChildItemByAttribute(year_element, date.month());
+    QDomElement day_element = GetChildItemByAttribute(month_element, date.day());
+    qDebug() << day_element.tagName();
+    QString tag_name;
+    if (true == is_rest)
+        tag_name = "out";
+    else
+        tag_name = "in";
+    QDomElement delete_element = document.createElement(tag_name);
+    delete_element.setAttribute("value", value);
+    delete_element.setAttribute("description", description);
+    day_element.removeChild(delete_element);
+    document.save(stream, 4);
+    file.close();
+}
+
+
 void MyWallet::on__action_add_triggered() {
     AddDialog dialog(this);
     if (QDialog::Accepted == dialog.exec()) {
@@ -314,6 +354,17 @@ void MyWallet::on__action_exit_triggered() {
 void MyWallet::on__action_remove_triggered() {
     if (false == _ui -> _table -> selectedItems().isEmpty()) {
         int current_row = _ui -> _table -> currentRow();
+        QDate date = QDate::fromString(_ui -> _table -> item(current_row, DATE_INDEX) -> text(), DATE_FORMAT);
+        int value = 0;
+        QString description;
+        if (true == _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text().isEmpty()) {
+            value = _ui -> _table -> item(current_row, INPUT_INDEX) -> text().toInt();
+            description = _ui -> _table -> item(current_row, INPUT_DESCRIPTION_INDEX) -> text().toInt();
+        } else {
+            value = _ui -> _table -> item(current_row, OUTPUT_INDEX) -> text().toInt();
+            description = _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text().toInt();
+        }
+        DeleteItemFromXML(date, value, description);
         _ui -> _table -> removeRow(current_row);
         emit SignalUpdate();
     }
