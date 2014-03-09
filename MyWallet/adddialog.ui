@@ -28,6 +28,10 @@
   <property name="windowTitle">
    <string>Добавить источники</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="files/resouce.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
@@ -140,7 +144,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="files/resouce.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>_button_box</sender>

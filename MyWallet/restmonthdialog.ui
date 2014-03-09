@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Ввести остаток на начало месяца</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="files/resouce.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
   <layout class="QGridLayout" name="_main_layout">
    <item row="0" column="0">
     <widget class="QLineEdit" name="_value"/>
@@ -29,7 +33,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="files/resouce.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>_button_box</sender>

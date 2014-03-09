@@ -6,6 +6,7 @@ RestMonthDialog::RestMonthDialog(QWidget *parent) :
     _ui(new Ui::RestMonthDialog) {
     _ui -> setupUi(this);
     _ui -> _value -> setValidator(new QIntValidator());
+    _ui -> _button_box -> button(_ui -> _button_box -> Cancel) -> setText("Отмена");
 }
 
 

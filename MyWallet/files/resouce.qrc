@@ -6,5 +6,6 @@
         <file>exit.png</file>
         <file>kservices.png</file>
         <file>folder_blue.png</file>
+        <file>kwallet.png</file>
     </qresource>
 </RCC>

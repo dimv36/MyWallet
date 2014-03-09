@@ -53,7 +53,8 @@ private:
     void ReadXML(/*const QString file_name*/);
     QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
     QTableWidgetItem* GetPreviousItem(QTableWidgetItem *item) const;
-    QDomElement GetChildItemByAttribute(QDomElement &element, int value, QString description = QString()) const;
+    QDomElement GetChildItemByAttribute(QDomElement &element, int value) const;
+    QDomElement GetChildItemByAttribute(QDomElement &element, int value, QString &description) const;
     void WriteXML() const;
     void WriteSettings();
     void ReadSettings();

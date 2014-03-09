@@ -2,6 +2,7 @@
 #define RESTMONTHDIALOG_H
 
 #include <QDialog>
+#include <QPushButton>
 
 namespace Ui {
 class RestMonthDialog;

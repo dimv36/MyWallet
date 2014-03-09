@@ -55,7 +55,7 @@ void MyWallet::CreateTableRow(QDate &date, int total, QString &description, bool
         _ui -> _table -> setItem(row_count, INPUT_DESCRIPTION_INDEX, description_item);
     }
     _ui -> _table -> scrollToBottom();
-    _ui -> _table -> sortByColumn(DATE_INDEX);
+    _ui -> _table -> sortByColumn(DATE_INDEX, Qt::AscendingOrder);
 }
 
 
@@ -154,16 +154,27 @@ QTableWidgetItem* MyWallet::GetPreviousItem(QTableWidgetItem *item) const {
 }
 
 
-QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value, QString description) const {
+QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value) const {
+        QDomElement result;
+        if (true == element.hasChildNodes()) {
+            QDomNodeList node_list = element.childNodes();
+            for (int index = 0; index < node_list.count(); index++) {
+                QDomElement item = node_list.at(index).toElement();
+                if (value == item.attribute("value").toInt())
+                    result = item;
+            }
+        }
+        return result;
+}
+
+
+QDomElement MyWallet::GetChildItemByAttribute(QDomElement &element, int value, QString &description) const {
     QDomElement result;
-    bool description_is_empty = description.isNull();
     if (true == element.hasChildNodes()) {
         QDomNodeList node_list = element.childNodes();
         for (int index = 0; index < node_list.count(); index++) {
             QDomElement item = node_list.at(index).toElement();
-            if (true == description_is_empty && value == item.attribute("value").toInt())
-                result = item;
-            if (false == description_is_empty && value == item.attribute("value").toInt() && description == item.attribute("description"))
+            if (value == item.attribute("value").toInt() && description == item.attribute("description"))
                 result = item;
         }
     }
@@ -308,16 +319,19 @@ void MyWallet::DeleteItemFromXML(QDate &date, int value, QString &description, b
     QDomElement year_element = GetChildItemByAttribute(root, date.year());
     QDomElement month_element = GetChildItemByAttribute(year_element, date.month());
     QDomElement day_element = GetChildItemByAttribute(month_element, date.day());
-    qDebug() << day_element.tagName();
     QString tag_name;
     if (true == is_rest)
         tag_name = "out";
     else
         tag_name = "in";
-    QDomElement delete_element = document.createElement(tag_name);
-    delete_element.setAttribute("value", value);
-    delete_element.setAttribute("description", description);
+    QDomElement delete_element = GetChildItemByAttribute(day_element, value, description);
     day_element.removeChild(delete_element);
+    if (false == day_element.hasChildNodes())
+        month_element.removeChild(day_element);
+    if (false == month_element.hasChildNodes())
+        year_element.removeChild(month_element);
+    if (false == year_element.hasChildNodes())
+        root.removeChild(year_element);
     document.save(stream, 4);
     file.close();
 }
@@ -359,10 +373,10 @@ void MyWallet::on__action_remove_triggered() {
         QString description;
         if (true == _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text().isEmpty()) {
             value = _ui -> _table -> item(current_row, INPUT_INDEX) -> text().toInt();
-            description = _ui -> _table -> item(current_row, INPUT_DESCRIPTION_INDEX) -> text().toInt();
+            description = _ui -> _table -> item(current_row, INPUT_DESCRIPTION_INDEX) -> text();
         } else {
             value = _ui -> _table -> item(current_row, OUTPUT_INDEX) -> text().toInt();
-            description = _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text().toInt();
+            description = _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text();
         }
         DeleteItemFromXML(date, value, description);
         _ui -> _table -> removeRow(current_row);
@@ -421,11 +435,39 @@ void MyWallet::SlotUpdateWindowHeader() {
 
 
 void MyWallet::on__action_edit_triggered() {
-//    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
-//    if (0 == current_item)
-//        return;
-//    else {
-//        int current_column = _ui -> _table -> currentColumn();
-//    }
-
+    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
+    int column = current_item -> column();
+    if (0 == current_item)
+        return;
+    else {
+        _ui -> _table -> editItem(current_item);
+//        if _ui -> _table -> edi
+//        while (true) {
+//            QRegExp expression;
+//            switch(column) {
+//                case DATE_INDEX: {
+//                    expression.setPattern("[1-31]+ [а-я]+ 20[0-9]+");
+//                    break;
+//                }
+//                case INPUT_INDEX: {
+//                    expression.setPattern("\\d+");
+//                    break;
+//                }
+//                case INPUT_DESCRIPTION_INDEX: {
+//                    expression.setPattern("\\S+");
+//                    break;
+//                }
+//                case OUTPUT_INDEX: {
+//                    expression.setPattern("\\d+");
+//                    break;
+//                }
+//                case OUTPUT_DESCRIPTION_INDEX: {
+//                    expression.setPattern("\\S+");
+//                    break;
+//                }
+//                if (true == expression.exactMatch(current_item -> text()))
+//                    break;
+//            }
+//        }
+    }
 }

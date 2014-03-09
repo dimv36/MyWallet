@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MyWallet</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="files/resouce.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
   <widget class="QWidget" name="_central_widget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">

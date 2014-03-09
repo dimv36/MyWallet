@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>Настройки</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="files/resouce.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
   <layout class="QGridLayout" name="_main_layout">
    <item row="0" column="0">
     <widget class="QGroupBox" name="_wallet_box">
@@ -35,7 +39,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="_wallet_name_label">
         <property name="text">
-         <string>Кошелек</string>
+         <string>Кошелёк</string>
         </property>
        </widget>
       </item>
@@ -71,7 +75,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="files/resouce.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>_button_box</sender>
