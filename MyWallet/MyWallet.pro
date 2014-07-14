@@ -16,17 +16,22 @@ SOURCES += main.cpp\
         mywallet.cpp \
     adddialog.cpp \
     settingsdialog.cpp \
-    restmonthdialog.cpp
+    restmonthdialog.cpp \
+    editingtabledelegate.cpp \
+    tablewidget.cpp
 
 HEADERS  += mywallet.h \
     adddialog.h \
     settingsdialog.h \
-    restmonthdialog.h
+    restmonthdialog.h \
+    editingtabledelegate.h \
+    tablewidget.h
 
 FORMS    += mywallet.ui \
     adddialog.ui \
     settingsdialog.ui \
-    restmonthdialog.ui
+    restmonthdialog.ui \
+    tablewidget.ui
 
 RESOURCES += \
     files/resouce.qrc

@@ -35,14 +35,7 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="_label_date">
-     <property name="text">
-      <string>Дата:</string>
-     </property>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="_main_layout">
    <item row="0" column="1">
     <widget class="QDateEdit" name="_date">
      <property name="displayFormat">
@@ -50,7 +43,27 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="_label_date">
+     <property name="text">
+      <string>Дата:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QDialogButtonBox" name="_button_box">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="_output_box">
      <property name="title">
       <string>Добавить расходы:</string>
@@ -61,34 +74,14 @@
      <property name="checked">
       <bool>false</bool>
      </property>
-     <layout class="QFormLayout" name="_rest_layout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="_label_output">
-        <property name="text">
-         <string>Сумма: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="_output_value"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="_label_description_output">
-        <property name="text">
-         <string>Источник расходов:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLineEdit" name="_output_description"/>
+     <layout class="QGridLayout" name="_output_box_layout">
+      <item row="2" column="0">
+       <widget class="TableWidget" name="_output_table" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="3">
     <widget class="QGroupBox" name="_input_box">
      <property name="enabled">
       <bool>true</bool>
@@ -102,48 +95,23 @@
      <property name="checked">
       <bool>false</bool>
      </property>
-     <layout class="QFormLayout" name="_income_layout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
+     <layout class="QGridLayout" name="_input_box_laout">
       <item row="0" column="0">
-       <widget class="QLabel" name="_label_input">
-        <property name="text">
-         <string>Сумма: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="_input_value"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="_label_description_input">
-        <property name="text">
-         <string>Источник доходов:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLineEdit" name="_input_description"/>
+       <widget class="TableWidget" name="_input_table" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QDialogButtonBox" name="_button_box">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TableWidget</class>
+   <extends>QWidget</extends>
+   <header>tablewidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="files/resouce.qrc"/>
  </resources>

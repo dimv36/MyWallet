@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QDate>
 #include <QPushButton>
-#include <QTextEdit>
+
+#include "editingtabledelegate.h"
 
 namespace Ui {
 class AddDialog;
@@ -30,6 +31,12 @@ public:
 
 private slots:
     void SlotUpdateForm(QString);
+
+//    void SlotInputAddRow();
+//    void SlotOutputAddRow();
+
+//    void SlotInputDeleteRow();
+//    void SlotOutputDeleteRow();
 
 private:
     bool IsDataEntered() const;
