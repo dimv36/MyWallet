@@ -21,25 +21,14 @@ public:
     ~AddDialog();
 
     QDate get_date() const;
-    int get_output() const;
-    QString get_output_description() const;
-    int get_input() const;
-    QString get_input_description() const;
+    QList<QPair<QString, QString> > get_outputs() const;
+    QList<QPair<QString, QString> > get_inputs() const;
 
     bool IsOutputFieldsActive() const;
     bool IsInputFieldsActive() const;
 
 private slots:
-    void SlotUpdateForm(QString);
-
-//    void SlotInputAddRow();
-//    void SlotOutputAddRow();
-
-//    void SlotInputDeleteRow();
-//    void SlotOutputDeleteRow();
-
-private:
-    bool IsDataEntered() const;
+    void SlotUpdateForm();
 
 };
 

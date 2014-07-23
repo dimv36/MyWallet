@@ -7,24 +7,15 @@ AddDialog::AddDialog(QWidget *parent) :
     _ui(new Ui::AddDialog) {
     _ui -> setupUi(this);
     _ui -> _date -> setDate(QDate::currentDate());
-//    _ui -> _output_value -> setValidator(new QIntValidator());
-//    _ui -> _input_value -> setValidator(new QIntValidator());
+
     _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(false);
     _ui -> _button_box -> button(_ui -> _button_box -> Cancel) -> setText("Отмена");
 
-//    connect(_ui -> _input_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
-//    connect(_ui -> _input_description, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
-//    connect(_ui -> _output_value, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
-//    connect(_ui -> _output_description, SIGNAL(textChanged(QString)), this, SLOT(SlotUpdateForm(QString)));
+    _ui -> _table_input -> set_title(tr("Доходы"));
+    _ui -> _table_output -> set_title(tr("Расходы"));
 
-//    _ui -> _input_table -> setItemDelegate(new EditingTableDelegate());
-//    _ui -> _output_table -> setItemDelegate(new EditingTableDelegate());
-
-//    connect(_ui -> _input_add_row_button, SIGNAL(clicked()), this, SLOT(SlotInputAddRow()));
-//    connect(_ui -> _output_add_row_button, SIGNAL(clicked()), this, SLOT(SlotOutputAddRow()));
-
-//    connect(_ui -> _input_delete_row_button, SIGNAL(clicked()), this, SLOT(SlotInputDeleteRow()));
-//    connect(_ui -> _output_delete_row_button, SIGNAL(clicked()), this, SLOT(SlotOutputDeleteRow()));
+    connect(_ui -> _table_input, SIGNAL(SignalTableWasUpdated()), this, SLOT(SlotUpdateForm()));
+    connect(_ui -> _table_output, SIGNAL(SignalTableWasUpdated()), this, SLOT(SlotUpdateForm()));
 }
 
 
@@ -38,44 +29,27 @@ QDate AddDialog::get_date() const {
 }
 
 
-int AddDialog::get_output() const {
-//    return _ui -> _output_value -> text().toInt();
+QList<QPair<QString, QString> > AddDialog::get_outputs() const {
+    return _ui -> _table_output -> get_rows();
 }
 
 
-QString AddDialog::get_output_description() const {
-//    return _ui -> _output_description -> text();
-}
-
-
-int AddDialog::get_input() const {
-//    return _ui -> _input_value -> text().toInt();
-}
-
-
-QString AddDialog::get_input_description() const {
-//    return _ui -> _input_description -> text();
-}
-
-
-bool AddDialog::IsOutputFieldsActive() const {
-    return _ui -> _output_box -> isChecked();
+QList<QPair<QString, QString> > AddDialog::get_inputs() const {
+    return _ui -> _table_input -> get_rows();
 }
 
 
 bool AddDialog::IsInputFieldsActive() const {
-    return _ui -> _input_box -> isChecked();
+    return _ui -> _table_input -> IsTableEnabled();
 }
 
 
-bool AddDialog::IsDataEntered() const {
-//    return ((false == _ui -> _output_value -> text().isEmpty() &&
-//            false == _ui -> _output_description -> text().isEmpty()) ||
-//            (false == _ui -> _input_value -> text().isEmpty() &&
-//             false == _ui -> _input_description -> text().isEmpty()));
+bool AddDialog::IsOutputFieldsActive() const {
+    return _ui -> _table_output -> IsTableEnabled();
 }
 
 
-void AddDialog::SlotUpdateForm(QString) {
-    _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(IsDataEntered());
+void AddDialog::SlotUpdateForm() {
+    bool is_enabled = _ui -> _table_input -> IsDataCorrect() && _ui -> _table_output -> IsDataCorrect();
+    _ui -> _button_box -> button(_ui -> _button_box -> Ok) -> setEnabled(is_enabled);
 }

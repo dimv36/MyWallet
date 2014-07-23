@@ -8,6 +8,7 @@ EditingTableDelegate::EditingTableDelegate(QObject *parent) :
 
 QWidget* EditingTableDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &/*index*/) const {
     QLineEdit *editor = new QLineEdit(parent);
+    editor -> setValidator(new QIntValidator());
     return editor;
 }
 

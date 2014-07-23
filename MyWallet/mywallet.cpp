@@ -23,6 +23,10 @@ MyWallet::MyWallet(QWidget *parent) :
     ReadSettings();
     ReadXML();
     _ui -> _table -> setCurrentItem(0);
+
+    _ui -> _table -> setItemDelegateForColumn(OUTPUT_INDEX, new EditingTableDelegate);
+    _ui -> _table -> setItemDelegateForColumn(INPUT_INDEX, new EditingTableDelegate);
+
     if (_ui -> _label_rest_value -> text().toInt() == 0)
         ChangeMonthRest();
 }
@@ -344,14 +348,18 @@ void MyWallet::on__action_add_triggered() {
        bool is_input_fields_active = dialog.IsInputFieldsActive();
        QDate date = dialog.get_date();
        if (true == is_output_fields_active) {
-           int output = dialog.get_output();
-           QString output_description = dialog.get_output_description();
-           CreateTableRow(date, output, output_description, true);
+           QList<QPair<QString, QString> > outputs = dialog.get_outputs();
+           for (int i = 0; i < outputs.size(); i++) {
+               QPair<QString, QString> row = outputs.at(i);
+               CreateTableRow(date, row.first.toInt(), row.second, true);
+           }
        }
        if (true == is_input_fields_active) {
-            int input = dialog.get_input();
-            QString input_description = dialog.get_input_description();
-            CreateTableRow(date, input, input_description, false);
+            QList<QPair<QString, QString> > inputs = dialog.get_inputs();
+            for (int i = 0; i < inputs.size(); i++) {
+                QPair<QString, QString> row = inputs.at(i);
+                CreateTableRow(date, row.first.toInt(), row.second, false);
+            }
        }
        emit SignalUpdate();
     }
@@ -433,41 +441,3 @@ void MyWallet::SlotUpdateWindowHeader() {
     setWindowTitle(_current_path + _wallet_name + " - [MyWallet]");
 }
 
-
-void MyWallet::on__action_edit_triggered() {
-    QTableWidgetItem *current_item = _ui -> _table -> currentItem();
-    int column = current_item -> column();
-    if (0 == current_item)
-        return;
-    else {
-        _ui -> _table -> editItem(current_item);
-//        if _ui -> _table -> edi
-//        while (true) {
-//            QRegExp expression;
-//            switch(column) {
-//                case DATE_INDEX: {
-//                    expression.setPattern("[1-31]+ [а-я]+ 20[0-9]+");
-//                    break;
-//                }
-//                case INPUT_INDEX: {
-//                    expression.setPattern("\\d+");
-//                    break;
-//                }
-//                case INPUT_DESCRIPTION_INDEX: {
-//                    expression.setPattern("\\S+");
-//                    break;
-//                }
-//                case OUTPUT_INDEX: {
-//                    expression.setPattern("\\d+");
-//                    break;
-//                }
-//                case OUTPUT_DESCRIPTION_INDEX: {
-//                    expression.setPattern("\\S+");
-//                    break;
-//                }
-//                if (true == expression.exactMatch(current_item -> text()))
-//                    break;
-//            }
-//        }
-    }
-}

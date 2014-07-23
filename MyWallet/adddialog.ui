@@ -63,44 +63,11 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QGroupBox" name="_output_box">
-     <property name="title">
-      <string>Добавить расходы:</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="_output_box_layout">
-      <item row="2" column="0">
-       <widget class="TableWidget" name="_output_table" native="true"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="3">
-    <widget class="QGroupBox" name="_input_box">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="title">
-      <string>Добавить доходы:</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QGridLayout" name="_input_box_laout">
-      <item row="0" column="0">
-       <widget class="TableWidget" name="_input_table" native="true"/>
-      </item>
-     </layout>
-    </widget>
+    <widget class="TableWidget" name="_table_input" native="true"/>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="TableWidget" name="_table_output" native="true"/>
    </item>
   </layout>
  </widget>

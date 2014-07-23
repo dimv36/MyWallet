@@ -24,8 +24,14 @@
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
+      </property>
+      <property name="dragDropOverwriteMode">
+       <bool>false</bool>
+      </property>
       <property name="selectionMode">
-       <enum>QAbstractItemView::ExtendedSelection</enum>
+       <enum>QAbstractItemView::SingleSelection</enum>
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectItems</enum>
@@ -179,7 +185,7 @@
      <x>0</x>
      <y>0</y>
      <width>704</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="_menu_file">
@@ -197,7 +203,6 @@
     </property>
     <addaction name="_action_add"/>
     <addaction name="_action_remove"/>
-    <addaction name="_action_edit"/>
    </widget>
    <addaction name="_menu_file"/>
    <addaction name="_menu_table"/>
@@ -211,7 +216,6 @@
    </attribute>
    <addaction name="_action_add"/>
    <addaction name="_action_remove"/>
-   <addaction name="_action_edit"/>
    <addaction name="_action_settings"/>
   </widget>
   <widget class="QStatusBar" name="_status_bar"/>
@@ -231,19 +235,6 @@
    </property>
    <property name="text">
     <string>Удалить строку</string>
-   </property>
-  </action>
-  <action name="_action_edit">
-   <property name="icon">
-    <iconset>
-     <normalon>:/edit.png</normalon>
-    </iconset>
-   </property>
-   <property name="text">
-    <string>Редактировать строку</string>
-   </property>
-   <property name="toolTip">
-    <string>Редактировать ячейку</string>
    </property>
   </action>
   <action name="_action_open">
