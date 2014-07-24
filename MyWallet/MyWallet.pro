@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     restmonthdialog.cpp \
     editingtabledelegate.cpp \
-    tablewidget.cpp
+    tablewidget.cpp \
+    dateeditingdelegate.cpp
 
 HEADERS  += mywallet.h \
     adddialog.h \
     settingsdialog.h \
     restmonthdialog.h \
     editingtabledelegate.h \
-    tablewidget.h
+    tablewidget.h \
+    dateeditingdelegate.h
 
 FORMS    += mywallet.ui \
     adddialog.ui \

@@ -12,6 +12,7 @@
 #include "adddialog.h"
 #include "settingsdialog.h"
 #include "restmonthdialog.h"
+#include "dateeditingdelegate.h"
 
 namespace Ui {
 class MyWallet;
@@ -43,11 +44,13 @@ private slots:
     void on__action_open_triggered();
     void on__action_settings_triggered();
     void SlotUpdateWindowHeader();
+    void on__button_change_rest_clicked();
 
 private:
     void CreateTableRow(QDate &date, int total, QString &description, bool is_rest = true);
     void AddNewRowInTable();
     void CreateNewItem(int row, int column, QString text);
+    void CreateNewWallet(const QString file_name);
     void ReadXML(/*const QString file_name*/);
     QTableWidgetItem* GetNextItem(QTableWidgetItem* item) const;
     QTableWidgetItem* GetPreviousItem(QTableWidgetItem *item) const;

@@ -18,17 +18,16 @@ MyWallet::MyWallet(QWidget *parent) :
     _ui -> setupUi(this);
     connect(this, SIGNAL(SignalUpdate()), this, SLOT(SlotUpdateTotalFields()));
     connect(this, SIGNAL(SignalWalletWasOpen()), this, SLOT(SlotUpdateWindowHeader()));
+
     _current_path = QDir().home().path() + "/.MyWallet";
     _wallet_name = DEFAULT_FILE_NAME;
     ReadSettings();
     ReadXML();
     _ui -> _table -> setCurrentItem(0);
 
+    _ui -> _table -> setItemDelegateForColumn(DATE_INDEX, new DateEditingDelegate);
     _ui -> _table -> setItemDelegateForColumn(OUTPUT_INDEX, new EditingTableDelegate);
     _ui -> _table -> setItemDelegateForColumn(INPUT_INDEX, new EditingTableDelegate);
-
-    if (_ui -> _label_rest_value -> text().toInt() == 0)
-        ChangeMonthRest();
 }
 
 
@@ -75,9 +74,27 @@ void MyWallet::CreateNewItem(int row, int column, QString text) {
 }
 
 
+void MyWallet::CreateNewWallet(const QString file_name) {
+    QDir().mkdir(_current_path);
+    QFile file(file_name);
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&file);
+        QDomDocument document;
+        document.setContent(&file);
+        QDomElement root = document.documentElement();
+        if (true == root.isNull()) {
+            root = document.createElement("mywallet");
+            document.appendChild(root);
+        }
+        document.save(stream, 4);
+        file.close();
+    }
+}
+
+
 void MyWallet::ReadXML() {
     _ui -> _table -> setRowCount(0);
-    QString file_name = _current_path + "/" + _wallet_name;
+    QString file_name = _current_path + _wallet_name;
     if (true == QFileInfo(file_name).exists()) {
         QFile wallet_file(file_name);
         if (false == wallet_file.open(QFile::ReadOnly)) {
@@ -133,8 +150,9 @@ void MyWallet::ReadXML() {
         _ui -> _table -> scrollToBottom();
         emit SignalUpdate();
         emit SignalWalletWasOpen();
+        wallet_file.close();
     } else
-        return;
+        CreateNewWallet(_current_path + _wallet_name);
 }
 
 
@@ -190,9 +208,9 @@ void MyWallet::WriteXML() const {
     if (0 == _ui -> _table -> rowCount())
         return;
     if (false == QDir(_current_path).exists())
-        QDir().mkdir(_current_path);
+        QDir().mkpath(_current_path + _wallet_name);
     QDir().setCurrent(_current_path);
-    QFile file(_wallet_name);
+    QFile file(_current_path + _wallet_name);
     if (false == file.open(QFile::ReadOnly)) {
        QMessageBox::warning(0,
                             tr("MyWallet"),
@@ -379,17 +397,19 @@ void MyWallet::on__action_remove_triggered() {
         QDate date = QDate::fromString(_ui -> _table -> item(current_row, DATE_INDEX) -> text(), DATE_FORMAT);
         int value = 0;
         QString description;
+        bool is_rest = false;
         if (true == _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text().isEmpty()) {
             value = _ui -> _table -> item(current_row, INPUT_INDEX) -> text().toInt();
             description = _ui -> _table -> item(current_row, INPUT_DESCRIPTION_INDEX) -> text();
         } else {
             value = _ui -> _table -> item(current_row, OUTPUT_INDEX) -> text().toInt();
             description = _ui -> _table -> item(current_row, OUTPUT_DESCRIPTION_INDEX) -> text();
+            is_rest = true;
         }
-        DeleteItemFromXML(date, value, description);
+        DeleteItemFromXML(date, value, description, is_rest);
         _ui -> _table -> removeRow(current_row);
-        emit SignalUpdate();
     }
+     emit SignalUpdate();
 }
 
 
@@ -432,6 +452,7 @@ void MyWallet::on__action_settings_triggered() {
         if (true == dialog.IsWalletBoxIsActive()) {
             _current_path = dialog.get_directory() + "/";
             _wallet_name = dialog.get_wallet_name();
+            CreateNewWallet(_current_path + _wallet_name);
         }
     }
 }
@@ -441,3 +462,12 @@ void MyWallet::SlotUpdateWindowHeader() {
     setWindowTitle(_current_path + _wallet_name + " - [MyWallet]");
 }
 
+
+void MyWallet::on__button_change_rest_clicked() {
+    RestMonthDialog dialog;
+    if (QDialog::Accepted == dialog.exec()) {
+        int rest = dialog.get_rest_month();
+        _ui -> _label_rest_value -> setText(QString::number(rest));
+        emit SignalUpdate();
+    }
+}

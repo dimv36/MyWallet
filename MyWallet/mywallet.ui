@@ -18,7 +18,7 @@
     <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
   </property>
   <widget class="QWidget" name="_central_widget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="_main_layout">
     <item row="0" column="0">
      <widget class="QTableWidget" name="_table">
       <property name="editTriggers">
@@ -106,11 +106,31 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <layout class="QFormLayout" name="_label_layout">
+     <layout class="QGridLayout" name="_layout">
+      <item row="1" column="1">
+       <widget class="QLabel" name="_label_output_value">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="_label_rest">
         <property name="text">
          <string>Остаток на начало месяца: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="_label_input_value">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -128,10 +148,13 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="_label_total">
+      <item row="3" column="1">
+       <widget class="QLabel" name="_label_total_value">
         <property name="text">
-         <string>Итого:</string>
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -145,33 +168,17 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="_label_output_value">
+      <item row="3" column="0">
+       <widget class="QLabel" name="_label_total">
         <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <string>Итого:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="_label_input_value">
+      <item row="0" column="2">
+       <widget class="QPushButton" name="_button_change_rest">
         <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="_label_total_value">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <string>Изменить...</string>
         </property>
        </widget>
       </item>
