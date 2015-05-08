@@ -22,3 +22,8 @@ Makefile
 ui_*
 debug/*
 release/*
+
+# python
+*.pyc
+*.pyo
+__pycache__/*
