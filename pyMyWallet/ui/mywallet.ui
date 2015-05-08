@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MyWallet</class>
+ <widget class="QMainWindow" name="MyWallet">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MyWallet</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resouce.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
+  <widget class="QWidget" name="_central_widget">
+   <layout class="QGridLayout" name="_main_layout">
+    <item row="0" column="0" colspan="2">
+     <widget class="QTableView" name="_view"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="_label_balance">
+      <property name="text">
+       <string>Balance at the beginning of month:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="_label_expenses_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="_label_total_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="_label_incoming">
+      <property name="text">
+       <string>Incoming:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="_label_total">
+      <property name="text">
+       <string>In total:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="_label_expenses">
+      <property name="text">
+       <string>Expenses:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="_label_incoming_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="_label_balance_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="_label_loan">
+      <property name="text">
+       <string>Loan:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="_label_debt">
+      <property name="text">
+       <string>Debt:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="_label_loan_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="_label_debt_value">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="_main_menu">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="_menu_file">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="_action_open_wallet"/>
+    <addaction name="_action_settings"/>
+    <addaction name="separator"/>
+    <addaction name="_action_exit"/>
+   </widget>
+   <widget class="QMenu" name="_menu_wallet">
+    <property name="title">
+     <string>Wallet</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="_action_add_item"/>
+    <addaction name="_action_delete_item"/>
+    <addaction name="_action_change_balance"/>
+    <addaction name="separator"/>
+    <addaction name="_action_show_statistic"/>
+   </widget>
+   <addaction name="_menu_file"/>
+   <addaction name="_menu_wallet"/>
+  </widget>
+  <widget class="QToolBar" name="_main_tool_bar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="_action_add_item"/>
+   <addaction name="_action_delete_item"/>
+   <addaction name="separator"/>
+   <addaction name="_action_settings"/>
+  </widget>
+  <action name="_action_open_wallet">
+   <property name="icon">
+    <iconset resource="../resources/resouce.qrc">
+     <normaloff>:/folder_blue.png</normaloff>:/folder_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open wallet</string>
+   </property>
+  </action>
+  <action name="_action_exit">
+   <property name="icon">
+    <iconset resource="../resources/resouce.qrc">
+     <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="_action_add_item">
+   <property name="icon">
+    <iconset resource="../resources/resouce.qrc">
+     <normaloff>:/edit_add.png</normaloff>:/edit_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add item</string>
+   </property>
+  </action>
+  <action name="_action_delete_item">
+   <property name="icon">
+    <iconset resource="../resources/resouce.qrc">
+     <normaloff>:/edit_remove.png</normaloff>:/edit_remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete item</string>
+   </property>
+  </action>
+  <action name="_action_settings">
+   <property name="icon">
+    <iconset resource="../resources/resouce.qrc">
+     <normaloff>:/kservices.png</normaloff>:/kservices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="_action_show_statistic">
+   <property name="text">
+    <string>Show statistic</string>
+   </property>
+  </action>
+  <action name="_action_change_balance">
+   <property name="text">
+    <string>Change balance</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/resouce.qrc"/>
+ </resources>
+ <connections/>
+</ui>
