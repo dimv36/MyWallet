@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Настройки</string>
+   <string>Settings</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resouce.qrc">
@@ -24,7 +24,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="_wallet_box">
      <property name="title">
-      <string>Параметры кошелька</string>
+      <string>Wallet Settings</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -39,21 +39,21 @@
       <item row="1" column="0">
        <widget class="QLabel" name="_wallet_name_label">
         <property name="text">
-         <string>Кошелёк</string>
+         <string>Wallet</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="_directory_label">
         <property name="text">
-         <string>Директория</string>
+         <string>Directory</string>
         </property>
        </widget>
       </item>
       <item row="0" column="3">
        <widget class="QPushButton" name="_directory_button">
         <property name="text">
-         <string>Изменить...</string>
+         <string>Change...</string>
         </property>
        </widget>
       </item>

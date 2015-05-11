@@ -3,18 +3,18 @@ from enum import Enum
 
 
 class WalletItem:
-    def __init__(self):
-        self._sum = ''
-        self._description = ''
+    def __init__(self, value='', description=''):
+        self._value = value
+        self._description = description
 
-    def sum(self):
-        return self._sum
+    def value(self):
+        return self._value
 
     def description(self):
         return self._description
 
-    def set_sum(self, value):
-        self._sum = value
+    def set_value(self, value):
+        self._value = value
 
     def set_description(self, value):
         self._description = value
