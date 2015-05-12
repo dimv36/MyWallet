@@ -22,7 +22,6 @@ class WalletModel(QAbstractTableModel):
                               tr('WalletModel', 'Debt'), tr('WalletModel', 'State of debt')]
         self.__items = []
         self.__wallet = wallet_file_path
-        self.__read_wallet()
 
     def data(self, index, role=None):
         if not index.isValid():
@@ -115,10 +114,10 @@ class WalletModel(QAbstractTableModel):
             self.__items.append(row)
 
     def __read_wallet(self):
-        if self.__items:
-            for item in self.__items:
-                self.__items.remove(item)
+        # Очищаем модель
+        self.__items.clear()
         print(self.__wallet)
+        # Разбираем XML с данными
         tree = etree.parse(self.__wallet)
         if tree:
             root = tree.getroot()
@@ -146,7 +145,6 @@ class WalletModel(QAbstractTableModel):
                         self.__append_entry(day_date, debt_entries, WalletItemType.DEBT)
             except IndexError:
                 pass
-            print(self.__items)
 
     def write_wallet(self):
         pass

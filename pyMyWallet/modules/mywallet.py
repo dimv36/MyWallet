@@ -1,11 +1,12 @@
 __author__ = 'dimv36'
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtCore import QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication, QDir, QSize, QPoint, QFileInfo
 from platform import system
 
 from modules.mvc.walletmodel import WalletModel
 from modules.settingsdialog import SettingsDialog
 from modules.newwalletdialog import NewWalletDialog
+from modules.addsourcesdialog import AddSourcesDialog
 from ui.ui_mywallet import Ui_MyWallet
 
 
@@ -32,21 +33,17 @@ class MyWallet(QMainWindow, Ui_MyWallet):
 
         # Устанавливаем модель
         self._model = WalletModel(self.__current_path + self.__wallet_name)
-        self._view.setModel(self._model)
-        self._view.resizeColumnsToContents()
+        self.read_wallet_and_update_view()
 
         # Отправляем сигнал обновления заголовка окна
         self._signals.signal_wallet_changed.emit()
-
-    def __del__(self):
-        print('__del__')
-        self.write_settings()
 
     def init_signal_slots(self):
         self._action_exit.pyqtConfigure(triggered=self.on_exit)
         self._action_settings.pyqtConfigure(triggered=self.on_settings)
         self._action_open_wallet.pyqtConfigure(triggered=self.on_open_wallet)
         self._action_new_wallet.pyqtConfigure(triggered=self.on_new_wallet)
+        self._action_add_item.pyqtConfigure(triggered=self.on_add_item)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -84,16 +81,26 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         settings.setValue('wallet_name', self.__wallet_name)
         settings.endGroup()
 
-    def close(self):
-        print('close')
+    def read_wallet_and_update_view(self, wallet_path=None):
+        self._model.read_wallet(wallet_path)
+        self._model.beginResetModel()
+        self._view.setModel(self._model)
+        self._model.endResetModel()
+        self._view.resizeColumnsToContents()
+        # Отправляем сигнал на обновление заголовка окна приложения
+        self._signals.signal_wallet_changed.emit()
+
+    def closeEvent(self, event):
+        print('closeEvent')
         self.write_settings()
-        super().close()
+        super().closeEvent(event)
 
     # Слот закрытия приложения
     @pyqtSlot()
     def on_exit(self):
         print('on_exit')
-        self.close()
+        self.write_settings()
+        exit(0)
 
     # Слот настроек
     @pyqtSlot()
@@ -102,17 +109,24 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         if dialog.exec() == QDialog.Accepted:
             directory = dialog.directory()
             wallet_name = dialog.wallet_name()
+            old_directory = self.__current_path
+            old_wallet = self.__wallet_name
             if not directory == self.__current_path or not wallet_name == self.__wallet_name:
                 # TODO: WriteXml() call
-                self.__current_path = directory
+                self.set_current_path(directory)
                 self.__wallet_name = wallet_name
-                self._signals.signal_wallet_changed.emit()
+                wallet_path = self.__current_path + self.__wallet_name
                 try:
-                    self._model.read_wallet(self.__current_path + self.__wallet_name)
+                    self.read_wallet_and_update_view(wallet_path)
                     pass
-                    # TODO: ReadXml() call
                 except OSError:
-                    # TODO: Обработать исключение, если файла не существует
+                    QMessageBox.warning(self,
+                                        self.tr('MyWallet', 'MyWallet'),
+                                        self.tr('MyWallet', 'File %s does not exist') % wallet_path
+                                        )
+                    self.set_current_path(old_directory)
+                    self.__wallet_name = old_wallet
+                    self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
                     pass
 
     # Слот окрытия кошелька
@@ -127,10 +141,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         if wallet_name and not file_name == self.__current_path + self.__wallet_name:
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self._model.read_wallet(file_name)
-            # Отправляем сигнал на обновление заголовка окна приложения
-            self._signals.signal_wallet_changed.emit()
-            self._view.setModel(self._model)
+            self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
 
     # Слот обновления заголовка приложения
     @pyqtSlot()
@@ -148,7 +159,12 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self._model.create_new_wallet(directory + wallet_name)
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self._model.read_wallet()
-            self._signals.signal_wallet_changed.emit()
-            self._view.setModel(self._model)
-            self._view.update()
+            self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
+
+    # Слот дробавления источников данных
+    @pyqtSlot()
+    def on_add_item(self):
+        print('Add item')
+        dialog = AddSourcesDialog()
+        if dialog.exec() == dialog.Accepted:
+            pass
