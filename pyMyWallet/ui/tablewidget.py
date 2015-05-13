@@ -1,6 +1,6 @@
 __author__ = 'dimv36'
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QItemDelegate, QDoubleSpinBox
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QCoreApplication
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QCoreApplication, QLocale
 
 from ui.ui_tablewidget import Ui_TableWidget
 
@@ -13,6 +13,7 @@ class EditingDelegate(QItemDelegate):
         editor = QDoubleSpinBox(parent)
         editor.setMinimum(0.01)
         editor.setMaximum(1000000.00)
+        editor.setLocale(QLocale(QLocale.English))
         return editor
 
     def setModelData(self, editor, model, index):
@@ -61,12 +62,9 @@ class TableWidget(QWidget, Ui_TableWidget):
                     return False
         return True
 
-    def is_table_enabled(self):
-        return self._group_box.isEnabled()
-
     def get_rows(self):
         result = []
-        for i in range(0, self._table.rowCount() + 1):
+        for i in range(0, self._table.rowCount()):
             row = (self._table.item(i, 0).text(), self._table.item(i, 1).text())
             result.append(row)
         return result
@@ -85,7 +83,7 @@ class TableWidget(QWidget, Ui_TableWidget):
     def __on_add_button_clicked(self):
         current_row = self._table.currentRow()
         self._table.insertRow(current_row + 1)
-        for i in range(0, self._table.columnCount() + 1):
+        for i in range(0, self._table.columnCount()):
             self._table.setItem(current_row, i, QTableWidgetItem())
         self._table.scrollToBottom()
         self._table.setItemDelegateForColumn(0, EditingDelegate())

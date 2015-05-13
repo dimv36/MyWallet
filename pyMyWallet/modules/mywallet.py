@@ -1,9 +1,13 @@
 __author__ = 'dimv36'
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox
-from PyQt5.QtCore import QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication, QDir, QSize, QPoint, QFileInfo
+from PyQt5.QtCore import (
+    QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication,
+    QDir, QSize, QPoint, QFileInfo, QModelIndex
+)
 from platform import system
 
 from modules.mvc.walletmodel import WalletModel
+from modules.enums import WalletItemType, WalletItemModelType
 from modules.settingsdialog import SettingsDialog
 from modules.newwalletdialog import NewWalletDialog
 from modules.addsourcesdialog import AddSourcesDialog
@@ -44,6 +48,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_open_wallet.pyqtConfigure(triggered=self.on_open_wallet)
         self._action_new_wallet.pyqtConfigure(triggered=self.on_new_wallet)
         self._action_add_item.pyqtConfigure(triggered=self.on_add_item)
+        self._action_delete_item.pyqtConfigure(triggered=self.on_delete_item)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -70,7 +75,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         settings.endGroup()
 
     def write_settings(self):
-        print('write_settings')
         settings = QSettings()
         if system() == 'Windows':
             settings = QSettings(self.__current_path + 'mywallet.conf', QSettings.IniFormat)
@@ -91,14 +95,12 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._signals.signal_wallet_changed.emit()
 
     def closeEvent(self, event):
-        print('closeEvent')
         self.write_settings()
         super().closeEvent(event)
 
     # Слот закрытия приложения
     @pyqtSlot()
     def on_exit(self):
-        print('on_exit')
         self.write_settings()
         exit(0)
 
@@ -164,7 +166,53 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот дробавления источников данных
     @pyqtSlot()
     def on_add_item(self):
-        print('Add item')
         dialog = AddSourcesDialog()
         if dialog.exec() == dialog.Accepted:
-            pass
+            date = dialog.date().toString('dd.MM.yyyy')
+            incoming = dialog.incoming()
+            expense = dialog.expense()
+            loan = dialog.loan()
+            debt = dialog.debt()
+            print(incoming, expense, loan, debt)
+            self._model.beginResetModel()
+            for item in incoming:
+                self._model.append_entry(date, item[0], item[1], WalletItemType.INCOMING)
+            for item in expense:
+                self._model.append_entry(date, item[0], item[1], WalletItemType.EXPENSE)
+            for item in loan:
+                self._model.append_entry(date, item[0], item[1], WalletItemType.LOAN)
+            for item in debt:
+                self._model.append_entry(date, item[0], item[1], WalletItemType.DEBT)
+            self._model.endResetModel()
+            self._view.resizeColumnsToContents()
+
+    # Слот удаления записи из таблицы
+    @pyqtSlot()
+    def on_delete_item(self):
+        if not self._view.selectedIndexes():
+            return
+        # Определяем тип объекта
+        item_type = None
+        item_data = []
+        for index in self._view.selectedIndexes():
+            index = QModelIndex(index)
+            if index.column() == WalletItemModelType.INDEX_DATE:
+                item_data.append(index.data())
+            elif not index.column() == WalletItemModelType.INDEX_DATE and index.data():
+                if WalletItemModelType.INDEX_INCOMING.value <= index.column() \
+                        <= WalletItemModelType.INDEX_INCOMING_DESCRIPTION.value:
+                    item_type = WalletItemType.INCOMING
+                elif WalletItemModelType.INDEX_EXPENSE.value <= index.column() \
+                        <= WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
+                    item_type = WalletItemType.EXPENSE
+                elif WalletItemModelType.INDEX_LOAN.value <= index.column() \
+                        <= WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
+                    item_type = WalletItemType.LOAN
+                elif WalletItemModelType.INDEX_DEBT.value <= index.column() \
+                        <= WalletItemModelType.INDEX_DEBT_DESCRIPTION.value:
+                    item_type = WalletItemType.DEBT
+                item_data.append(index.data())
+        self._model.beginResetModel()
+        self._model.remove_entry(item_data[0], item_data[1], item_data[2], item_type)
+        self._model.endResetModel()
+        self._view.clearSelection()

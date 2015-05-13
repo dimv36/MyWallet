@@ -1,5 +1,5 @@
 __author__ = 'dimv36'
-from enum import Enum
+from modules.enums import WalletItemType
 
 
 class WalletItem:
@@ -22,13 +22,6 @@ class WalletItem:
 
 class WalletException(Exception):
     pass
-
-
-class WalletItemType(Enum):
-    INCOMING = 0
-    EXPENSE = 1
-    LOAN = 2
-    DEBT = 3
 
 
 class WalletRow:

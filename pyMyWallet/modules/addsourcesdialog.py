@@ -41,22 +41,9 @@ class AddSourcesDialog(Ui_AddSourcesDialog, QDialog):
     def debt(self):
         return self._debt.get_rows()
 
-    def is_incoming_enabled(self):
-        return self._incoming.is_table_enabled()
-
-    def is_expense_enabled(self):
-        return self._expense.is_table_enabled()
-
-    def is_loan_enabled(self):
-        return self._loan.is_table_enabled()
-
-    def is_debt_enabled(self):
-        return self._debt.is_table_enabled()
-
     # Слот обработки изменения формы
     @pyqtSlot()
     def __on_update_form(self):
-        print('__on_update_form')
         enabled = self._incoming.is_data_correct() and self._expense.is_data_correct()\
                   and self._loan.is_data_correct() and self._debt.is_data_correct()
         self._button_box.button(self._button_box.Ok).setEnabled(enabled)

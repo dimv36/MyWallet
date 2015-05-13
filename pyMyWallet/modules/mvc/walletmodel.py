@@ -2,7 +2,8 @@ __author__ = 'dimv36'
 from PyQt5.QtCore import QCoreApplication, QAbstractTableModel, Qt, QDate
 from lxml import etree
 
-from modules.mvc.walletitem import WalletRow, WalletItem, WalletItemType
+from modules.mvc.walletitem import WalletRow, WalletItem
+from modules.enums import WalletItemModelType, WalletItemType
 
 
 class WalletModelException(Exception):
@@ -29,44 +30,44 @@ class WalletModel(QAbstractTableModel):
         if index.row() >= len(self.__items):
             raise WalletModelException('Incorrect item number: %d' % index.row())
         if role == Qt.DisplayRole or role == Qt.EditRole:
-            if index.column() == 0:
+            if index.column() == WalletItemModelType.INDEX_DATE.value:
                 return self.__items[index.row()].date()
-            elif index.column() == 1:
+            elif index.column() == WalletItemModelType.INDEX_INCOMING.value:
                 return self.__items[index.row()].incoming().value()
-            elif index.column() == 2:
+            elif index.column() == WalletItemModelType.INDEX_INCOMING_DESCRIPTION.value:
                 return self.__items[index.row()].incoming().description()
-            elif index.column() == 3:
+            elif index.column() == WalletItemModelType.INDEX_EXPENSE.value:
                 return self.__items[index.row()].expense().value()
-            elif index.column() == 4:
+            elif index.column() == WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
                 return self.__items[index.row()].expense().description()
-            elif index.column() == 5:
+            elif index.column() == WalletItemModelType.INDEX_LOAN.value:
                 return self.__items[index.row()].loan().value()
-            elif index.column() == 6:
+            elif index.column() == WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
                 return self.__items[index.row()].loan().description()
-            elif index.column() == 7:
+            elif index.column() == WalletItemModelType.INDEX_DEBT.value:
                 return self.__items[index.row()].debt().value()
-            elif index.column() == 8:
+            elif index.column() == WalletItemModelType.INDEX_DEBT_DESCRIPTION.value:
                 return self.__items[index.row()].debt().description()
 
     def setData(self, index, value, role=None):
         if index.isValid() and role == Qt.EditRole:
-            if index.column() == 0:
+            if index.column() == WalletItemModelType.INDEX_DATE.value:
                 self.__items[index.row()].set_date(value)
-            elif index.column() == 1:
+            elif index.column() == WalletItemModelType.INDEX_INCOMING.value:
                 self.__items[index.row()].incoming().set_value(value)
-            elif index.column() == 2:
+            elif index.column() == WalletItemModelType.INDEX_INCOMING_DESCRIPTION.value:
                 self.__items[index.row()].incoming().set_description(value)
-            elif index.column() == 3:
+            elif index.column() == WalletItemModelType.INDEX_EXPENSE.value:
                 self.__items[index.row()].expense().set_value(value)
-            elif index.column() == 4:
+            elif index.column() == WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
                 self.__items[index.row()].expense().set_description(value)
-            elif index.column() == 5:
+            elif index.column() == WalletItemModelType.INDEX_LOAN.value:
                 self.__items[index.row()].loan().set_value(value)
-            elif index.column() == 6:
+            elif index.column() == WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
                 self.__items[index.row()].loan().set_description(value)
-            elif index.column() == 7:
+            elif index.column() == WalletItemModelType.INDEX_DEBT.value:
                 self.__items[index.row()].debt().set_value(value)
-            elif index.column() == 8:
+            elif index.column() == WalletItemModelType.INDEX_DEBT_DESCRIPTION.value:
                 self.__items[index.row()].debt().set_description(value)
 
     def rowCount(self, index=None, *args, **kwargs):
@@ -99,19 +100,39 @@ class WalletModel(QAbstractTableModel):
             self.__wallet = wallet_path
         self.__read_wallet()
 
-    def __append_entry(self, date, entries, entry_type):
+    def __append_entries_from_xml(self, date, entries, entry_type):
         for entry in entries:
-            item = WalletItem(entry.attrib['value'], entry.attrib['description'])
-            row = WalletRow()
-            if entry_type == WalletItemType.INCOMING:
-                row.set_incoming(date, item)
-            elif entry_type == WalletItemType.EXPENSE:
-                row.set_expense(date, item)
-            elif entry_type == WalletItemType.LOAN:
-                row.set_loan(date, item)
-            elif entry_type == WalletItemType.DEBT:
-                row.set_debt(date, item)
-            self.__items.append(row)
+            amount = entry.attrib['value']
+            description = entry.attrib['description']
+            self.append_entry(date, amount, description, entry_type)
+
+    def append_entry(self, date, amount, description, entry_type):
+        item = WalletItem(amount, description)
+        row = WalletRow()
+        if entry_type == WalletItemType.INCOMING:
+            row.set_incoming(date, item)
+        elif entry_type == WalletItemType.EXPENSE:
+            row.set_expense(date, item)
+        elif entry_type == WalletItemType.LOAN:
+            row.set_loan(date, item)
+        elif entry_type == WalletItemType.DEBT:
+            row.set_debt(date, item)
+        self.__items.append(row)
+
+    def remove_entry(self, date, amount, description, entry_type):
+        print(amount, description)
+        item = WalletItem(amount, description)
+        row = WalletRow()
+        if entry_type == WalletItemType.INCOMING:
+            row.set_incoming(date, item)
+        elif entry_type == WalletItemType.EXPENSE:
+            row.set_expense(date, item)
+        elif entry_type == WalletItemType.LOAN:
+            row.set_loan(date, item)
+        elif entry_type == WalletItemType.DEBT:
+            row.set_debt(date, item)
+        # TODO: Релазиовать корректное сравнение и удаление
+        self.__items.remove(row)
 
     def __read_wallet(self):
         # Очищаем модель
@@ -139,10 +160,10 @@ class WalletModel(QAbstractTableModel):
                         day_date = QDate(int(year.attrib['value']), int(month.attrib['value']),
                                          int(day.attrib['value'])).toString(self.DATE_FORMAT)
                         # Добавляем данные в модель
-                        self.__append_entry(day_date, incoming_entries, WalletItemType.INCOMING)
-                        self.__append_entry(day_date, expenses_entries, WalletItemType.EXPENSE)
-                        self.__append_entry(day_date, loan_entries, WalletItemType.LOAN)
-                        self.__append_entry(day_date, debt_entries, WalletItemType.DEBT)
+                        self.__append_entries_from_xml(day_date, incoming_entries, WalletItemType.INCOMING)
+                        self.__append_entries_from_xml(day_date, expenses_entries, WalletItemType.EXPENSE)
+                        self.__append_entries_from_xml(day_date, loan_entries, WalletItemType.LOAN)
+                        self.__append_entries_from_xml(day_date, debt_entries, WalletItemType.DEBT)
             except IndexError:
                 pass
 
