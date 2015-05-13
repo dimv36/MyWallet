@@ -51,7 +51,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="3">
-    <widget class="TableWidget" name="_table_expense" native="true"/>
+    <widget class="TableWidget" name="_expense" native="true"/>
    </item>
    <item row="5" column="2">
     <widget class="QDialogButtonBox" name="_button_box">
@@ -67,13 +67,13 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="3">
-    <widget class="TableWidget" name="_table_input" native="true"/>
+    <widget class="TableWidget" name="_incoming" native="true"/>
    </item>
    <item row="3" column="0" colspan="3">
-    <widget class="TableWidget" name="_table_loan" native="true"/>
+    <widget class="TableWidget" name="_loan" native="true"/>
    </item>
    <item row="4" column="0" colspan="3">
-    <widget class="TableWidget" name="_table_debt" native="true"/>
+    <widget class="TableWidget" name="_debt" native="true"/>
    </item>
   </layout>
  </widget>

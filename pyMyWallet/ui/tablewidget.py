@@ -1,7 +1,6 @@
 __author__ = 'dimv36'
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QItemDelegate, QLineEdit
-from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QItemDelegate, QDoubleSpinBox
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QCoreApplication
 
 from ui.ui_tablewidget import Ui_TableWidget
 
@@ -11,35 +10,36 @@ class EditingDelegate(QItemDelegate):
         super().__init__()
 
     def createEditor(self, parent, style=None, index=None):
-        editor = QLineEdit(parent)
-        editor.setValidator(QDoubleValidator())
+        editor = QDoubleSpinBox(parent)
+        editor.setMinimum(0.01)
+        editor.setMaximum(1000000.00)
         return editor
 
     def setModelData(self, editor, model, index):
-        text = editor.text()
+        text = str(editor.value())
         model.setData(index, text, Qt.EditRole)
 
     def setEditorData(self, editor, index):
-        text = str(index.model().data(index, Qt.EditRole))
-        if text == 'None':
-            text = ''
-        if not text:
+        if index.model().data(index, Qt.EditRole) is None:
             return
-        editor.setText(text)
+        value = float(index.model().data(index, Qt.EditRole))
+        editor.setValue(value)
 
 
 class TableWidget(QWidget, Ui_TableWidget):
+    tr = QCoreApplication.translate
+
     class Communicate(QObject):
         signal_table_was_updated = pyqtSignal()
 
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.__signals = self.Communicate()
+        self.signals = self.Communicate()
         self.__init_signal_slots()
 
     def __init_signal_slots(self):
-        self.__signals.signal_table_was_updated.connect(self.__on_update)
+        self.signals.signal_table_was_updated.connect(self.__on_update)
         self._table.pyqtConfigure(cellChanged=self.__on_cell_changed)
         self._add_button.pyqtConfigure(clicked=self.__on_add_button_clicked)
         self._delete_button.pyqtConfigure(clicked=self.__on_delete_button_clicked)
@@ -48,7 +48,7 @@ class TableWidget(QWidget, Ui_TableWidget):
         return self._table.rowCount() and self.is_data_correct()
 
     def set_title(self, title):
-        self._group_box.setTitle(title)
+        self._group_box.setTitle(self.tr('TableWidget', title))
 
     def is_data_correct(self):
         for i in range(0, self._table.rowCount()):
@@ -71,14 +71,16 @@ class TableWidget(QWidget, Ui_TableWidget):
             result.append(row)
         return result
 
+    # Слот обработки сигнала на изменение текущей ячейки таблицы
     @pyqtSlot(int, int)
     def __on_cell_changed(self, row, column):
         item = self._table.item(row, column)
         if item is not None:
             item.setSelected(False)
-        self.__signals.signal_table_was_updated.emit()
+        self.signals.signal_table_was_updated.emit()
         pass
 
+    # Слот обработки сигнала на нажатие кнопки добавления
     @pyqtSlot()
     def __on_add_button_clicked(self):
         current_row = self._table.currentRow()
@@ -88,6 +90,7 @@ class TableWidget(QWidget, Ui_TableWidget):
         self._table.scrollToBottom()
         self._table.setItemDelegateForColumn(0, EditingDelegate())
 
+    # Слот обработки сигнала на нажатие кнопки удаления
     @pyqtSlot()
     def __on_delete_button_clicked(self):
         current_row = self._table.currentRow()
@@ -97,8 +100,9 @@ class TableWidget(QWidget, Ui_TableWidget):
         item = self._table.item(current_row, 0)
         if item.isSelected():
             self._table.removeRow(current_row)
-            self.__signals.signal_table_was_updated.emit()
+            self.signals.signal_table_was_updated.emit()
 
+    # Слот обработки сигнала на обновление формы
     @pyqtSlot()
     def __on_update(self):
         self._delete_button.setEnabled(self.__is_table_has_rows())
