@@ -19,6 +19,9 @@ class WalletItem:
     def set_description(self, value):
         self._description = value
 
+    def __eq__(self, other):
+        return self.value() == other.value() and self.description() == other.description()
+
 
 class WalletException(Exception):
     pass
@@ -29,8 +32,8 @@ class WalletRow:
         self._date = None
         self._incoming = WalletItem()
         self._expense = WalletItem()
-        self._debt = WalletItem()
         self._loan = WalletItem()
+        self._debt = WalletItem()
         self._type = WalletItem()
 
     def __set_item(self, date, item, item_type):
@@ -82,3 +85,11 @@ class WalletRow:
 
     def set_debt(self, date, item):
         self.__set_item(date, item, WalletItemType.DEBT)
+
+    def __eq__(self, other):
+        return self.date() == other.date() and \
+               self.incoming() == other.incoming() and \
+               self.expense() == other.expense() and \
+               self.loan() == other.loan() and \
+               self.debt() == other.debt() and \
+               self.type() == other.type()

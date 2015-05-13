@@ -120,7 +120,6 @@ class WalletModel(QAbstractTableModel):
         self.__items.append(row)
 
     def remove_entry(self, date, amount, description, entry_type):
-        print(amount, description)
         item = WalletItem(amount, description)
         row = WalletRow()
         if entry_type == WalletItemType.INCOMING:
@@ -131,7 +130,6 @@ class WalletModel(QAbstractTableModel):
             row.set_loan(date, item)
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
-        # TODO: Релазиовать корректное сравнение и удаление
         self.__items.remove(row)
 
     def __read_wallet(self):
