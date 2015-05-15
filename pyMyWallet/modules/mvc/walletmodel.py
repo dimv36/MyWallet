@@ -1,5 +1,5 @@
 __author__ = 'dimv36'
-from PyQt5.QtCore import QCoreApplication, QAbstractTableModel, Qt, QDate
+from PyQt5.QtCore import QCoreApplication, QAbstractTableModel, Qt, QDate, QObject, pyqtSignal, pyqtSlot
 from lxml import etree
 
 from modules.mvc.walletitem import WalletRow, WalletItem
@@ -13,6 +13,9 @@ class WalletModelException(Exception):
 class WalletModel(QAbstractTableModel):
     DATE_FORMAT = 'dd.MM.yyyy'
 
+    class Communicate(QObject):
+        signal_model_was_changed = pyqtSignal()
+
     def __init__(self, wallet_file_path):
         super().__init__()
         tr = QCoreApplication.translate
@@ -23,6 +26,20 @@ class WalletModel(QAbstractTableModel):
                               tr('WalletModel', 'Debt'), tr('WalletModel', 'State of debt')]
         self.__items = []
         self.__wallet = wallet_file_path
+        self.__signals = self.Communicate()
+        self.__init_signals_slots()
+
+    def __init_signals_slots(self):
+        self.__signals.signal_model_was_changed.connect(self.__on_model_changed)
+
+    @pyqtSlot()
+    def __on_model_changed(self):
+        self.sort()
+
+    def sort(self, column=None, order=None):
+        self.__items = sorted(self.__items)
+        if order == Qt.DescendingOrder:
+            self.__items.reverse()
 
     def data(self, index, role=None):
         if not index.isValid():
@@ -118,6 +135,7 @@ class WalletModel(QAbstractTableModel):
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
         self.__items.append(row)
+        self.__signals.signal_model_was_changed.emit()
 
     def remove_entry(self, date, amount, description, entry_type):
         item = WalletItem(amount, description)
@@ -131,6 +149,7 @@ class WalletModel(QAbstractTableModel):
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
         self.__items.remove(row)
+        # TODO: Удалить элемент из XML
 
     def __read_wallet(self):
         # Очищаем модель

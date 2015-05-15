@@ -93,3 +93,6 @@ class WalletRow:
                self.loan() == other.loan() and \
                self.debt() == other.debt() and \
                self.type() == other.type()
+
+    def __lt__(self, other):
+        return self.date() < other.date()
