@@ -121,21 +121,29 @@ class WalletModel(QAbstractTableModel):
         for entry in entries:
             amount = entry.attrib['value']
             description = entry.attrib['description']
-            self.append_entry(date, amount, description, entry_type)
+            self.append_entry(date, amount, description, entry_type, add_to_xml=False)
 
-    def append_entry(self, date, amount, description, entry_type):
+    def append_entry(self, date, amount, description, entry_type, add_to_xml=True):
         item = WalletItem(amount, description)
         row = WalletRow()
+        # Тег элемента, который может быть записан в XML
+        tag = str()
         if entry_type == WalletItemType.INCOMING:
             row.set_incoming(date, item)
+            tag = 'incoming'
         elif entry_type == WalletItemType.EXPENSE:
             row.set_expense(date, item)
+            tag = 'expense'
         elif entry_type == WalletItemType.LOAN:
             row.set_loan(date, item)
+            tag = 'loan'
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
+            tag = 'debt'
         self.__items.append(row)
         self.__signals.signal_model_was_changed.emit()
+        if add_to_xml:
+            self.__add_item_to_xml(date, item, tag)
 
     def remove_entry(self, date, amount, description, entry_type):
         item = WalletItem(amount, description)
@@ -184,5 +192,38 @@ class WalletModel(QAbstractTableModel):
             except IndexError:
                 pass
 
-    def write_wallet(self):
-        pass
+    def __add_item_to_xml(self, date, item, tag):
+        def get_current_xml_item(parent, tag_name, value):
+            # Сортируем узлы
+            def getkey(elem):
+                return elem.attrib['value']
+
+            items = parent.findall(tag_name)
+            if not items:
+                # Создаем элемент
+                found_item = etree.SubElement(parent, tag_name, {'value': value})
+            else:
+                found_item = sorted(items, key=getkey)[-1]
+            if not found_item.attrib['value'] == value:
+                # Нашли узел в XML, но не совпадает атрибут value, создаем новый
+                found_item = etree.SubElement(parent, tag_name, {'value': value})
+            # TODO: Выполнить сортировку узлов по аттрибуту value
+            return found_item
+
+        item_day = date.split('.')[0]
+        item_month = date.split('.')[1]
+        item_year = date.split('.')[2]
+        parser = etree.XMLParser(resolve_entities=False, strip_cdata=False)
+        tree = etree.parse(self.__wallet, parser)
+        print(etree.tostring(tree, pretty_print=True, encoding='unicode', with_tail=True))
+        if tree:
+            root = tree.getroot()
+            year = get_current_xml_item(root, 'year', item_year)
+            month = get_current_xml_item(year, 'month', item_month)
+            day = get_current_xml_item(month, 'day', item_day)
+            print(type(day), dir(day))
+            # Записываем данные
+            etree.SubElement(day, tag, attrib={'value': item.value(), 'description': item.description()})
+            xml = etree.tostring(tree, pretty_print=True, encoding='unicode')
+            print(xml)
+            tree.write(self.__wallet, encoding='unicode')
