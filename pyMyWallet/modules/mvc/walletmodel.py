@@ -16,21 +16,31 @@ class WalletModel(QAbstractTableModel):
     class Communicate(QObject):
         signal_model_was_changed = pyqtSignal()
 
+    class WalletData:
+        def __init__(self):
+            self.incoming = float()
+            self.expense = float()
+            self.loan = float()
+            self.debt = float()
+            self.balance = float()
+
     def __init__(self, wallet_file_path):
         super().__init__()
         tr = QCoreApplication.translate
-        self.__header_data = [tr('WalletModel', 'Date'), tr('WalletModel', 'Incoming'),
+        self.__header_data = [tr('WalletModel', 'Date'),
+                              tr('WalletModel', 'Incoming'),
                               tr('WalletModel', 'State of incoming'),
                               tr('WalletModel', 'Expense'), tr('WalletModel', 'State of expense'),
                               tr('WalletModel', 'Loan'), tr('WalletModel', 'State of loan'),
                               tr('WalletModel', 'Debt'), tr('WalletModel', 'State of debt')]
         self.__items = []
         self.__wallet = wallet_file_path
-        self.__signals = self.Communicate()
+        self.signals = self.Communicate()
+        self.__wallet_data = self.WalletData()
         self.__init_signals_slots()
 
     def __init_signals_slots(self):
-        self.__signals.signal_model_was_changed.connect(self.__on_model_changed)
+        self.signals.signal_model_was_changed.connect(self.__on_model_changed)
 
     @pyqtSlot()
     def __on_model_changed(self):
@@ -131,38 +141,56 @@ class WalletModel(QAbstractTableModel):
         if entry_type == WalletItemType.INCOMING:
             row.set_incoming(date, item)
             tag = 'incoming'
+            self.__wallet_data.incoming += float(amount)
         elif entry_type == WalletItemType.EXPENSE:
             row.set_expense(date, item)
             tag = 'expense'
+            self.__wallet_data.expense += float(amount)
         elif entry_type == WalletItemType.LOAN:
             row.set_loan(date, item)
             tag = 'loan'
+            self.__wallet_data.loan += float(amount)
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
             tag = 'debt'
+            self.__wallet_data.debt += float(amount)
         self.__items.append(row)
-        self.__signals.signal_model_was_changed.emit()
+        self.signals.signal_model_was_changed.emit()
         if add_to_xml:
             self.__add_item_to_xml(date, item, tag)
 
     def remove_entry(self, date, amount, description, entry_type):
         item = WalletItem(amount, description)
         row = WalletRow()
+        # Тег элемента, который должен быть удалён из XML
+        tag = str()
         if entry_type == WalletItemType.INCOMING:
             row.set_incoming(date, item)
+            tag = 'incoming'
+            self.__wallet_data.incoming -= float(amount)
         elif entry_type == WalletItemType.EXPENSE:
             row.set_expense(date, item)
+            tag = 'expense'
+            self.__wallet_data.expense -= float(amount)
         elif entry_type == WalletItemType.LOAN:
             row.set_loan(date, item)
+            tag = 'loan'
+            self.__wallet_data.loan -= float(amount)
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
+            tag = 'debt'
+            self.__wallet_data.debt -= float(amount)
         self.__items.remove(row)
-        # TODO: Удалить элемент из XML
+        self.__remove_item_from_xml(date, item, tag)
+
+    def wallet_data(self):
+        return self.__wallet_data
 
     def __read_wallet(self):
         # Очищаем модель
         self.__items.clear()
-        print(self.__wallet)
+        # Сбрасываем состояние доходов/расходов
+        self.__wallet_data = self.WalletData()
         # Разбираем XML с данными
         tree = etree.parse(self.__wallet)
         if tree:
@@ -173,7 +201,13 @@ class WalletModel(QAbstractTableModel):
                 year = root.findall('year')[-1]
                 # Получаем узел с последнем месяцем, данные по которому содержатся в XML
                 month = year.findall('month')[-1]
-                if int(year.attrib['value']) == current_date.year() and int(month.attrib['value']) == current_date.month():
+                if int(year.attrib['value']) == current_date.year() and \
+                        int(month.attrib['value']) == current_date.month():
+                    # Получаем остаток на начало месяца
+                    try:
+                        self.__wallet_data.balance = float(month.attrib['rest'])
+                    except KeyError:
+                        self.__wallet_data.balance = float()
                     # Получаем список узлов текущего месяца
                     days = month.findall('day')
                     for day in days:
@@ -194,16 +228,12 @@ class WalletModel(QAbstractTableModel):
 
     def __add_item_to_xml(self, date, item, tag):
         def get_current_xml_item(parent, tag_name, value):
-            # Сортируем узлы
-            def getkey(elem):
-                return elem.attrib['value']
-
             items = parent.findall(tag_name)
             if not items:
                 # Создаем элемент
                 found_item = etree.SubElement(parent, tag_name, {'value': value})
             else:
-                found_item = sorted(items, key=getkey)[-1]
+                found_item = sorted(items, key=lambda x: x.attrib['value'])[-1]
             if not found_item.attrib['value'] == value:
                 # Нашли узел в XML, но не совпадает атрибут value, создаем новый
                 found_item = etree.SubElement(parent, tag_name, {'value': value})
@@ -215,15 +245,29 @@ class WalletModel(QAbstractTableModel):
         item_year = date.split('.')[2]
         parser = etree.XMLParser(resolve_entities=False, strip_cdata=False)
         tree = etree.parse(self.__wallet, parser)
-        print(etree.tostring(tree, pretty_print=True, encoding='unicode', with_tail=True))
         if tree:
             root = tree.getroot()
             year = get_current_xml_item(root, 'year', item_year)
             month = get_current_xml_item(year, 'month', item_month)
             day = get_current_xml_item(month, 'day', item_day)
-            print(type(day), dir(day))
             # Записываем данные
             etree.SubElement(day, tag, attrib={'value': item.value(), 'description': item.description()})
-            xml = etree.tostring(tree, pretty_print=True, encoding='unicode')
-            print(xml)
-            tree.write(self.__wallet, encoding='unicode')
+            tree.write(self.__wallet)
+
+    def __remove_item_from_xml(self, date, item, tag):
+        tree = etree.parse(self.__wallet)
+        item_day = date.split('.')[0]
+        item_month = date.split('.')[1]
+        item_year = date.split('.')[2]
+        if tree:
+            items = tree.xpath('//%s[@value=\'%s\']' % (tag, item.value()))
+            item = sorted(items, key=lambda x: x.attrib['value'])[-1]
+            if item is not None:
+                day = item.getparent()
+                month = day.getparent()
+                year = month.getparent()
+                if day.attrib['value'] == item_day \
+                        and month.attrib['value'] == item_month \
+                        and year.attrib['value'] == item_year:
+                    day.remove(item)
+                    tree.write(self.__wallet)
