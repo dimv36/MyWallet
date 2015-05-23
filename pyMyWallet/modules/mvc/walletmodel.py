@@ -26,13 +26,15 @@ class WalletModel(QAbstractTableModel):
 
     def __init__(self, wallet_file_path):
         super().__init__()
-        tr = QCoreApplication.translate
-        self.__header_data = [tr('WalletModel', 'Date'),
-                              tr('WalletModel', 'Incoming'),
-                              tr('WalletModel', 'State of incoming'),
-                              tr('WalletModel', 'Expense'), tr('WalletModel', 'State of expense'),
-                              tr('WalletModel', 'Loan'), tr('WalletModel', 'State of loan'),
-                              tr('WalletModel', 'Debt'), tr('WalletModel', 'State of debt')]
+        self.__header_data = [QCoreApplication.translate('WalletModel', 'Date'),
+                              QCoreApplication.translate('WalletModel', 'Incoming'),
+                              QCoreApplication.translate('WalletModel', 'State of incoming'),
+                              QCoreApplication.translate('WalletModel', 'Expense'),
+                              QCoreApplication.translate('WalletModel', 'State of expense'),
+                              QCoreApplication.translate('WalletModel', 'Loan'),
+                              QCoreApplication.translate('WalletModel', 'State of loan'),
+                              QCoreApplication.translate('WalletModel', 'Debt'),
+                              QCoreApplication.translate('WalletModel', 'State of debt')]
         self.__items = []
         self.__wallet = wallet_file_path
         self.signals = self.Communicate()

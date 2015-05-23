@@ -159,7 +159,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self._label_total_value.setStyleSheet('QLabel { color : red }')
         self._label_total_value.setText(str(total))
 
-
     # Слот создания нового бумажника
     @pyqtSlot()
     def on_new_wallet(self):

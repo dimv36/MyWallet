@@ -1,5 +1,5 @@
 __author__ = 'dimv36'
-from PyQt5.QtCore import QDate, pyqtSlot
+from PyQt5.QtCore import QDate, pyqtSlot, QCoreApplication
 from PyQt5.QtWidgets import QDialog
 
 from ui.ui_addsourcesdialog import Ui_AddSourcesDialog
@@ -13,10 +13,10 @@ class AddSourcesDialog(Ui_AddSourcesDialog, QDialog):
         # Делаем неактивной кнопку Ok формы
         self._button_box.button(self._button_box.Ok).setEnabled(False)
         # Устанавливаем заголовки виджетам источников
-        self._incoming.set_title('Incoming')
-        self._expense.set_title('Expense')
-        self._loan.set_title('Loan')
-        self._debt.set_title('Debt')
+        self._incoming.set_title(QCoreApplication.translate('AddSourcesDialog', 'Incoming'))
+        self._expense.set_title(QCoreApplication.translate('AddSourcesDialog', 'Expense'))
+        self._loan.set_title(QCoreApplication.translate('AddSourcesDialog', 'Loan'))
+        self._debt.set_title(QCoreApplication.translate('AddSourcesDialog', 'Debt'))
         # Подключаем сигналы к слотам
         self.__init_signal_slots()
 
