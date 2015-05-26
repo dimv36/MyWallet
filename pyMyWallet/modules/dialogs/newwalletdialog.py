@@ -5,7 +5,6 @@ from ui.ui_newwalletdialog import Ui_NewWalletDialog
 
 
 class NewWalletDialog(QDialog, Ui_NewWalletDialog):
-    tr = QCoreApplication.translate
 
     def __init__(self, directory):
         super().__init__()
@@ -24,7 +23,7 @@ class NewWalletDialog(QDialog, Ui_NewWalletDialog):
     @pyqtSlot()
     def __on_directory_triggered(self):
         directory = QFileDialog.getExistingDirectory(self,
-                                                     self.tr('NewWalletDialog', 'Choose directory'),
+                                                     QCoreApplication.translate('NewWalletDialog', 'Choose directory'),
                                                      QDir.current().path())
         if directory:
             self._edit_directory.setText(directory)

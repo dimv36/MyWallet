@@ -1,16 +1,18 @@
 __author__ = 'dimv36'
+from platform import system
+
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtCore import (
     QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication,
     QDir, QSize, QPoint, QFileInfo, QModelIndex
 )
-from platform import system
 
 from modules.mvc.walletmodel import WalletModel
 from modules.enums import WalletItemType, WalletItemModelType
-from modules.settingsdialog import SettingsDialog
-from modules.newwalletdialog import NewWalletDialog
-from modules.addsourcesdialog import AddSourcesDialog
+from modules.dialogs.settingsdialog import SettingsDialog
+from modules.dialogs.newwalletdialog import NewWalletDialog
+from modules.dialogs.addsourcesdialog import AddSourcesDialog
+from modules.dialogs.changemonthbalance import ChangeMonthBalance
 from ui.ui_mywallet import Ui_MyWallet
 
 
@@ -19,7 +21,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         signal_wallet_changed = pyqtSignal()
 
     MAIN_SETTINGS = 'mywallet'
-    tr = QCoreApplication.translate
 
     def __init__(self):
         super().__init__()
@@ -49,6 +50,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_new_wallet.pyqtConfigure(triggered=self.on_new_wallet)
         self._action_add_item.pyqtConfigure(triggered=self.on_add_item)
         self._action_delete_item.pyqtConfigure(triggered=self.on_delete_item)
+        self._action_change_balance.pyqtConfigure(triggered=self.on_change_balance)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -122,8 +124,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                     pass
                 except OSError:
                     QMessageBox.warning(self,
-                                        self.tr('MyWallet', 'MyWallet'),
-                                        self.tr('MyWallet', 'File %s does not exist') % wallet_path
+                                        QCoreApplication.translate('MyWallet', 'MyWallet'),
+                                        QCoreApplication.translate('MyWallet', 'File %s does not exist') % wallet_path
                                         )
                     self.set_current_path(old_directory)
                     self.__wallet_name = old_wallet
@@ -132,9 +134,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот окрытия кошелька
     @pyqtSlot()
     def on_open_wallet(self):
-        file_name = QFileDialog.getOpenFileName(self, self.tr('MyWallet', 'Choose file'),
+        file_name = QFileDialog.getOpenFileName(self,
+                                                QCoreApplication.translate('MyWallet', 'Choose file'),
                                                 QDir.current().path(),
-                                                self.tr('MyWallet', 'XML-files (*.xml)'))[0]
+                                                QCoreApplication.translate('MyWallet', 'XML-files (*.xml)'))[0]
         directory = QFileInfo(file_name).dir().path()
         wallet_name = QFileInfo(file_name).fileName()
         if wallet_name and not file_name == self.__current_path + self.__wallet_name:
@@ -171,7 +174,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self.__wallet_name = wallet_name
             self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
 
-    # Слот дробавления источников данных
+    # Слот добавления источников данных
     @pyqtSlot()
     def on_add_item(self):
         dialog = AddSourcesDialog()
@@ -224,3 +227,13 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._model.remove_entry(item_data[0], item_data[1], item_data[2], item_type)
         self._model.endResetModel()
         self._view.clearSelection()
+
+    # Слот изменения остатка на начало месяца
+    @pyqtSlot()
+    def on_change_balance(self):
+        dialog = ChangeMonthBalance()
+        dialog.set_month_balance(float(self._label_balance_value.text()))
+        if dialog.exec() == QDialog.Accepted:
+            balance = dialog.balance()
+            self._model.change_current_month_balance(balance)
+            self._signals.signal_wallet_changed.emit()

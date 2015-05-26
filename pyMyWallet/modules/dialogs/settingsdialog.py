@@ -7,7 +7,6 @@ from ui.ui_settingsdialog import Ui_SettingsDialog
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
     DEFAULT_WALLET_NAME = 'wallet.xml'
-    tr = QCoreApplication.translate
 
     def __init__(self, directory, wallet_name=DEFAULT_WALLET_NAME):
         super().__init__()
@@ -32,7 +31,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
     def __on_directory_clicked(self):
         new_directory = QFileDialog.getExistingDirectory(self,
-                                                         self.tr('SettingsDialog', 'Open directory'),
+                                                         QCoreApplication.translate('SettingsDialog', 'Open directory'),
                                                          QDir.current().path())
         if new_directory:
             self._directory.setText(new_directory)

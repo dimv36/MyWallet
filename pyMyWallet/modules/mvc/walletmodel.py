@@ -185,6 +185,25 @@ class WalletModel(QAbstractTableModel):
         self.__items.remove(row)
         self.__remove_item_from_xml(date, item, tag)
 
+    def change_current_month_balance(self, balance):
+        tree = etree.parse(self.__wallet)
+        current_month = QDate.currentDate().month()
+        if tree:
+            month_item = tree.xpath('//month[@value=\'%s\']' % str(current_month))
+            if month_item:
+                need_write = False
+                month_item = month_item[0]
+                old_balance = month_item.attrib['rest']
+                if not old_balance:
+                    month_item.attrib['rest'] = balance
+                    need_write = True
+                elif not float(old_balance) == float(balance):
+                    month_item.attrib['rest'] = balance
+                    need_write = True
+                if need_write:
+                    tree.write(self.__wallet)
+                    self.__wallet_data.balance = float(balance)
+
     def wallet_data(self):
         return self.__wallet_data
 

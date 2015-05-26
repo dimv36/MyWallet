@@ -290,7 +290,7 @@
     <message>
         <location filename="modules/mvc/walletmodel.py" line="35"/>
         <source>State of loan</source>
-        <translation>Статья заемов</translation>
+        <translation>Статья займов</translation>
     </message>
     <message>
         <location filename="modules/mvc/walletmodel.py" line="36"/>
