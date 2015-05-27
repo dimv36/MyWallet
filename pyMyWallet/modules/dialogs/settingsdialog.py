@@ -2,7 +2,7 @@ __author__ = 'dimv36'
 from PyQt5.QtWidgets import QDialog, QFileDialog
 from PyQt5.QtCore import QDir, QCoreApplication
 
-from ui.ui_settingsdialog import Ui_SettingsDialog
+from modules.ui.ui_settingsdialog import Ui_SettingsDialog
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):

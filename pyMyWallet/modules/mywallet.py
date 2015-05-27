@@ -1,4 +1,5 @@
 __author__ = 'dimv36'
+import sys
 from platform import system
 
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox
@@ -13,7 +14,7 @@ from modules.dialogs.settingsdialog import SettingsDialog
 from modules.dialogs.newwalletdialog import NewWalletDialog
 from modules.dialogs.addsourcesdialog import AddSourcesDialog
 from modules.dialogs.changemonthbalance import ChangeMonthBalance
-from ui.ui_mywallet import Ui_MyWallet
+from modules.ui.ui_mywallet import Ui_MyWallet
 
 
 class MyWallet(QMainWindow, Ui_MyWallet):
@@ -104,7 +105,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     @pyqtSlot()
     def on_exit(self):
         self.write_settings()
-        exit(0)
+        sys.exit(0)
 
     # Слот настроек
     @pyqtSlot()

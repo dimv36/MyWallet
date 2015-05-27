@@ -2,7 +2,7 @@ __author__ = 'dimv36'
 from PyQt5.QtCore import QDate, pyqtSlot, QCoreApplication
 from PyQt5.QtWidgets import QDialog
 
-from ui.ui_addsourcesdialog import Ui_AddSourcesDialog
+from modules.ui.ui_addsourcesdialog import Ui_AddSourcesDialog
 
 
 class AddSourcesDialog(Ui_AddSourcesDialog, QDialog):

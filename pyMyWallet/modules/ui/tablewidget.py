@@ -2,7 +2,7 @@ __author__ = 'dimv36'
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QItemDelegate, QDoubleSpinBox
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QCoreApplication, QLocale
 
-from ui.ui_tablewidget import Ui_TableWidget
+from modules.ui.ui_tablewidget import Ui_TableWidget
 
 
 class EditingDelegate(QItemDelegate):

@@ -1,7 +1,7 @@
 __author__ = 'dimv36'
 from PyQt5.QtWidgets import QDialog
 
-from ui.ui_changemonthbalance import Ui_ChangeMonthDialog
+from modules.ui.ui_changemonthbalance import Ui_ChangeMonthDialog
 
 
 class ChangeMonthBalance(QDialog, Ui_ChangeMonthDialog):

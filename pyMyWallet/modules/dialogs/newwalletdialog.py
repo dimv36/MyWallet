@@ -1,7 +1,8 @@
 __author__ = 'dimv36'
 from PyQt5.QtCore import pyqtSlot, QCoreApplication, QDir
 from PyQt5.QtWidgets import QDialog, QFileDialog
-from ui.ui_newwalletdialog import Ui_NewWalletDialog
+
+from modules.ui.ui_newwalletdialog import Ui_NewWalletDialog
 
 
 class NewWalletDialog(QDialog, Ui_NewWalletDialog):
