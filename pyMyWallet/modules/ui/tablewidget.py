@@ -28,8 +28,6 @@ class EditingDelegate(QItemDelegate):
 
 
 class TableWidget(QWidget, Ui_TableWidget):
-    tr = QCoreApplication.translate
-
     class Communicate(QObject):
         signal_table_was_updated = pyqtSignal()
 
