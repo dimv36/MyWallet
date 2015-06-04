@@ -32,7 +32,7 @@
       <item row="0" column="0">
        <widget class="QTableWidget" name="_table">
         <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectItems</enum>
+         <enum>QAbstractItemView::SelectRows</enum>
         </property>
         <property name="showGrid">
          <bool>true</bool>

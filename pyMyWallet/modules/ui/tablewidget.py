@@ -46,7 +46,7 @@ class TableWidget(QWidget, Ui_TableWidget):
         self._delete_button.pyqtConfigure(clicked=self.__on_delete_button_clicked)
 
     def __is_table_has_rows(self):
-        return self._table.rowCount() and self.is_data_correct()
+        return self._table.rowCount()
 
     def set_title(self, title):
         self._group_box.setTitle(self.tr('TableWidget', title))
@@ -69,6 +69,11 @@ class TableWidget(QWidget, Ui_TableWidget):
             result.append(row)
         return result
 
+    # Получить число строк виджета
+    def row_count(self):
+        return self._table.rowCount()
+
+
     # Слот обработки сигнала на изменение текущей ячейки таблицы
     @pyqtSlot(int, int)
     def __on_cell_changed(self, row, column):
@@ -76,28 +81,32 @@ class TableWidget(QWidget, Ui_TableWidget):
         if item is not None:
             item.setSelected(False)
         self.signals.signal_table_was_updated.emit()
-        pass
 
     # Слот обработки сигнала на нажатие кнопки добавления
     @pyqtSlot()
     def __on_add_button_clicked(self):
+        self._table.clearSelection()
         current_row = self._table.currentRow()
         self._table.insertRow(current_row + 1)
+        current_row += 1
         for i in range(0, self._table.columnCount()):
             self._table.setItem(current_row, i, QTableWidgetItem())
         self._table.scrollToBottom()
         self._table.setItemDelegateForColumn(0, EditingDelegate())
+        self.signals.signal_table_was_updated.emit()
 
     # Слот обработки сигнала на нажатие кнопки удаления
     @pyqtSlot()
     def __on_delete_button_clicked(self):
-        current_row = self._table.currentRow()
-        if current_row < 0:
+        selected_items = self._table.selectedItems()
+        if not selected_items:
+            self._table.clearSelection()
             return
 
-        item = self._table.item(current_row, 0)
+        item = selected_items[0]
         if item.isSelected():
-            self._table.removeRow(current_row)
+            self._table.removeRow(item.row())
+            self._table.clearSelection()
             self.signals.signal_table_was_updated.emit()
 
     # Слот обработки сигнала на обновление формы

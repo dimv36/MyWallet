@@ -45,5 +45,7 @@ class AddSourcesDialog(Ui_AddSourcesDialog, QDialog):
     @pyqtSlot()
     def __on_update_form(self):
         enabled = self._incoming.is_data_correct() and self._expense.is_data_correct()\
-                  and self._loan.is_data_correct() and self._debt.is_data_correct()
+                  and self._loan.is_data_correct() and self._debt.is_data_correct() \
+                  and (self._incoming.row_count() or self._expense.row_count() \
+                       or self._loan.row_count() or self._debt.row_count())
         self._button_box.button(self._button_box.Ok).setEnabled(enabled)
