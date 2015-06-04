@@ -73,7 +73,6 @@ class TableWidget(QWidget, Ui_TableWidget):
     def row_count(self):
         return self._table.rowCount()
 
-
     # Слот обработки сигнала на изменение текущей ячейки таблицы
     @pyqtSlot(int, int)
     def __on_cell_changed(self, row, column):
