@@ -22,7 +22,7 @@ class Ui_TableWidget(object):
         self._grid_layout = QtWidgets.QGridLayout(self._group_box)
         self._grid_layout.setObjectName("_grid_layout")
         self._table = QtWidgets.QTableWidget(self._group_box)
-        self._table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self._table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self._table.setShowGrid(True)
         self._table.setObjectName("_table")
         self._table.setColumnCount(2)
