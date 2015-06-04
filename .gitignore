@@ -19,7 +19,6 @@ qrc_*.cpp
 Makefile
 *-build-*
 
-ui_*
 debug/*
 release/*
 
