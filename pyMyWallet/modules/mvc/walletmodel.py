@@ -207,6 +207,38 @@ class WalletModel(QAbstractTableModel):
     def wallet_data(self):
         return self.__wallet_data
 
+    def __month_rest(self, tree, current_month):
+        # Ищем элемент месяца, предшествующий текущему
+        if current_month in range(0, 10):
+            str_month = '0%d' % (current_month - 1)
+        else:
+            str_month = str(current_month)
+        month = tree.xpath('///month[@value=\'%s\']' % str_month)[0]
+        try:
+            month_rest = float(month.attrib['rest'])
+        except KeyError:
+            month_rest = float()
+        days = month.findall('day')
+        incoming = float()
+        expense = float()
+        loan = float()
+        debt = float()
+        if days:
+            for day in days:
+                incoming_entries = day.findall('incoming')
+                expenses_entries = day.findall('expense')
+                loan_entries = day.findall('loan')
+                debt_entries = day.findall('debt')
+                for entry in incoming_entries:
+                    incoming += float(entry.attrib['value'])
+                for entry in expenses_entries:
+                    expense += float(entry.attrib['value'])
+                for entry in loan_entries:
+                    loan += float(entry.attrib['value'])
+                for entry in debt_entries:
+                    debt += float(entry.attrib['value'])
+                self.__wallet_data.balance = month_rest + incoming - expense + loan - debt
+
     def __read_wallet(self):
         # Очищаем модель
         self.__items.clear()
@@ -244,6 +276,9 @@ class WalletModel(QAbstractTableModel):
                         self.__append_entries_from_xml(day_date, expenses_entries, WalletItemType.EXPENSE)
                         self.__append_entries_from_xml(day_date, loan_entries, WalletItemType.LOAN)
                         self.__append_entries_from_xml(day_date, debt_entries, WalletItemType.DEBT)
+                else:
+                    # Вычисляем остаток на начало месяца на основе предыдущих данных
+                    self.__month_rest(tree, current_date.month())
             except IndexError:
                 pass
 
