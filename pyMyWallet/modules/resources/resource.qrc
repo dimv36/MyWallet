@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-	<file>new.png</file>
+        <file>new.png</file>
         <file>edit.png</file>
         <file>edit_remove.png</file>
         <file>edit_add.png</file>
@@ -8,5 +8,6 @@
         <file>kservices.png</file>
         <file>folder_blue.png</file>
         <file>kwallet.png</file>
+        <file>info.png</file>
     </qresource>
 </RCC>

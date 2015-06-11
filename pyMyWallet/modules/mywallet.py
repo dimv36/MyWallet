@@ -2,7 +2,9 @@ __author__ = 'dimv36'
 import sys
 from platform import system
 
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox
+from PyQt5.QtWidgets import (
+    QMainWindow, QFileDialog, QDialog, QMessageBox
+)
 from PyQt5.QtCore import (
     QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication,
     QDir, QSize, QPoint, QFileInfo, QModelIndex
@@ -52,6 +54,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_add_item.pyqtConfigure(triggered=self.on_add_item)
         self._action_delete_item.pyqtConfigure(triggered=self.on_delete_item)
         self._action_change_balance.pyqtConfigure(triggered=self.on_change_balance)
+        self._action_about.pyqtConfigure(triggered=self.on_about)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -239,3 +242,14 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             balance = dialog.balance()
             self._model.change_current_month_balance(balance)
             self._signals.signal_wallet_changed.emit()
+
+    # Слот отображения информации о программе
+    @pyqtSlot()
+    def on_about(self):
+        dialog = QMessageBox.about(self,
+                                   QCoreApplication.translate('MyWallet', 'About application'),
+                                   QCoreApplication.translate('MyWallet', 'MyWallet developed at June 2015\n'
+                                                                          'author: Dmitry Voronin\n'
+                                                                          'email: carriingfate92@yandex.ru\n'
+                                                                          'version: 0.10'))
+        dialog.exec()
