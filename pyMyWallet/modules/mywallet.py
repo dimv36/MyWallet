@@ -62,6 +62,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def read_settings(self):
         settings = QSettings()
         if system() == 'Windows':
+            self.set_current_path(QDir.home().path() + '/MyWallet/')
             settings = QSettings(self.__current_path + 'mywallet.conf', QSettings.IniFormat)
         settings.beginGroup(self.MAIN_SETTINGS)
         self.resize(settings.value('size', type=QSize))
