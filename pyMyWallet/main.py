@@ -12,7 +12,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     translator = QTranslator()
-    translator.load('ts/pymywallet')
+    translator.load('ts/pymywallet_RU')
     app.installTranslator(translator)
 
     w = MyWallet()

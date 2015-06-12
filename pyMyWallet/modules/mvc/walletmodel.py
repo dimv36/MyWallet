@@ -201,19 +201,16 @@ class WalletModel(QAbstractTableModel):
                     month_item.attrib['rest'] = balance
                     need_write = True
                 if need_write:
-                    tree.write(self.__wallet)
                     self.__wallet_data.balance = float(balance)
+                    # Записываем изменения в XML
+                    self.__write_wallet(tree.getroot())
 
     def wallet_data(self):
         return self.__wallet_data
 
     def __month_rest(self, tree, current_month):
         # Ищем элемент месяца, предшествующий текущему
-        if current_month in range(0, 10):
-            str_month = '0%d' % (current_month - 1)
-        else:
-            str_month = str(current_month)
-        month = tree.xpath('///month[@value=\'%s\']' % str_month)[0]
+        month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month), lambda x: int(x.attrib['value'])))[0]
         try:
             month_rest = float(month.attrib['rest'])
         except KeyError:
@@ -282,25 +279,51 @@ class WalletModel(QAbstractTableModel):
             except IndexError:
                 pass
 
+    def __write_wallet(self, root):
+        def indent(elem, level=0):
+            i = "\n" + level*"  "
+            if len(elem):
+                if not elem.text or not elem.text.strip():
+                    elem.text = i + "  "
+                if not elem.tail or not elem.tail.strip():
+                    elem.tail = i
+                for elem in elem:
+                    indent(elem, level+1)
+                if not elem.tail or not elem.tail.strip():
+                    elem.tail = i
+            else:
+                if level and (not elem.tail or not elem.tail.strip()):
+                    elem.tail = i
+
+        indent(root)
+        tree = etree.ElementTree(root)
+        tree.write(self.__wallet, encoding='utf-8', method='html')
+
     def __add_item_to_xml(self, date, item, tag):
         def get_current_xml_item(parent, tag_name, value):
             items = parent.findall(tag_name)
             if not items:
                 # Создаем элемент
-                found_item = etree.SubElement(parent, tag_name, {'value': value})
+                # Если тэг -- month и у нас есть остаток на начало месяца, то записываем в XML
+                if tag_name == 'month' and self.__wallet_data.balance:
+                    found_item = etree.SubElement(parent, tag_name, {'value': str(value),
+                                                                     'rest': str(self.__wallet_data.balance)})
+                # Во всех остальных случаях просто создаем новый элемент с атрибутом value
+                else:
+                    found_item = etree.SubElement(parent, tag_name, {'value': str(value)})
             else:
-                found_item = sorted(items, key=lambda x: x.attrib['value'])[-1]
-            if not found_item.attrib['value'] == value:
+                found_item = sorted(items, key=lambda x: int(x.attrib['value']))[-1]
+            # Нашли элемент?
+            if not int(found_item.attrib['value']) == value:
                 # Нашли узел в XML, но не совпадает атрибут value, создаем новый
-                found_item = etree.SubElement(parent, tag_name, {'value': value})
+                found_item = etree.SubElement(parent, tag_name, {'value': str(value)})
             # TODO: Выполнить сортировку узлов по аттрибуту value
             return found_item
 
-        item_day = date.split('.')[0]
-        item_month = date.split('.')[1]
-        item_year = date.split('.')[2]
-        parser = etree.XMLParser(resolve_entities=False, strip_cdata=False)
-        tree = etree.parse(self.__wallet, parser)
+        item_day = int(date.split('.')[0])
+        item_month = int(date.split('.')[1])
+        item_year = int(date.split('.')[2])
+        tree = etree.parse(self.__wallet)
         if tree:
             root = tree.getroot()
             year = get_current_xml_item(root, 'year', item_year)
@@ -308,22 +331,35 @@ class WalletModel(QAbstractTableModel):
             day = get_current_xml_item(month, 'day', item_day)
             # Записываем данные
             etree.SubElement(day, tag, attrib={'value': item.value(), 'description': item.description()})
-            tree.write(self.__wallet)
+            self.__write_wallet(tree.getroot())
 
     def __remove_item_from_xml(self, date, item, tag):
         tree = etree.parse(self.__wallet)
-        item_day = date.split('.')[0]
-        item_month = date.split('.')[1]
-        item_year = date.split('.')[2]
+        item_day = int(date.split('.')[0])
+        item_month = int(date.split('.')[1])
+        item_year = int(date.split('.')[2])
+        root = tree.getroot()
         if tree:
             items = tree.xpath('//%s[@value=\'%s\']' % (tag, item.value()))
-            item = sorted(items, key=lambda x: x.attrib['value'])[-1]
+            item = sorted(items, key=lambda x: float(x.attrib['value']))[-1]
             if item is not None:
                 day = item.getparent()
                 month = day.getparent()
                 year = month.getparent()
-                if day.attrib['value'] == item_day \
-                        and month.attrib['value'] == item_month \
-                        and year.attrib['value'] == item_year:
+                if int(day.attrib['value']) == item_day \
+                        and int(month.attrib['value']) == item_month \
+                        and int(year.attrib['value']) == item_year:
+                    # Удаляем запись
                     day.remove(item)
-                    tree.write(self.__wallet)
+                    # Проверяем, пуст ли элемент day
+                    print(list(day))
+                    if not list(day):
+                        # Удаляем его
+                        month.remove(day)
+                        # Аналогично проверяем на пустоту элемент month
+                        if not list(month):
+                            year.remove(day)
+                            # Наконец, если и элемент year пуст, удаляем его
+                            if not list(root):
+                                root.remove(year)
+                self.__write_wallet(root)

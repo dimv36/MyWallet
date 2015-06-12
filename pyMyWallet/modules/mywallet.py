@@ -201,6 +201,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self._model.append_entry(date, item[0], item[1], WalletItemType.DEBT)
             self._model.endResetModel()
             self._view.resizeColumnsToContents()
+            self._signals.signal_wallet_changed.emit()
 
     # Слот удаления записи из таблицы
     @pyqtSlot()
@@ -232,6 +233,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._model.remove_entry(item_data[0], item_data[1], item_data[2], item_type)
         self._model.endResetModel()
         self._view.clearSelection()
+        self._signals.signal_wallet_changed.emit()
 
     # Слот изменения остатка на начало месяца
     @pyqtSlot()

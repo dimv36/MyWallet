@@ -8,20 +8,20 @@ SOURCES += \
     modules/mvc/walletitem.py \
     modules/mywallet.py \
     modules/enums.py \
-    ui/ui_tablewidget.py \
-    ui/ui_settingsdialog.py \
-    ui/ui_newwalletdialog.py \
-    ui/ui_mywallet.py \
-    ui/ui_changemonthbalance.py \
-    ui/ui_addsourcesdialog.py \
-    ui/tablewidget.py
+    modules/ui/ui_tablewidget.py \
+    modules/ui/ui_settingsdialog.py \
+    modules/ui/ui_newwalletdialog.py \
+    modules/ui/ui_mywallet.py \
+    modules/ui/ui_changemonthbalance.py \
+    modules/ui/ui_addsourcesdialog.py \
+    modules/ui/tablewidget.py
 
-TRANSLATIONS = pymywallet.ts
+TRANSLATIONS = ts/pymywallet_RU.ts
 
 FORMS += \
-    ui/tablewidget.ui \
-    ui/settingsdialog.ui \
-    ui/newwalletdialog.ui \
-    ui/mywallet.ui \
-    ui/changemonthbalance.ui \
-    ui/addsourcesdialog.ui
+    modules/ui/tablewidget.ui \
+    modules/ui/settingsdialog.ui \
+    modules/ui/newwalletdialog.ui \
+    modules/ui/mywallet.ui \
+    modules/ui/changemonthbalance.ui \
+    modules/ui/addsourcesdialog.ui

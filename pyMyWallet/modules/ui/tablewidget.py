@@ -1,6 +1,6 @@
 __author__ = 'dimv36'
 from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QItemDelegate, QDoubleSpinBox
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QCoreApplication, QLocale
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, Qt, QLocale
 
 from modules.ui.ui_tablewidget import Ui_TableWidget
 
@@ -47,7 +47,7 @@ class TableWidget(QWidget, Ui_TableWidget):
         return self._table.rowCount()
 
     def set_title(self, title):
-        self._group_box.setTitle(self.tr('TableWidget', title))
+        self._group_box.setTitle(title)
 
     def is_data_correct(self):
         for i in range(0, self._table.rowCount()):
