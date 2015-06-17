@@ -98,7 +98,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._view.setModel(self._model)
         self._model.endResetModel()
         self._view.resizeColumnsToContents()
-        self._view.scrollToBottom()
         # Отправляем сигнал на обновление заголовка окна приложения
         self._signals.signal_wallet_changed.emit()
 
@@ -157,18 +156,19 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
         wallet_data = self._model.wallet_data()
         total = wallet_data.balance + wallet_data.incoming - wallet_data.expense + wallet_data.loan - wallet_data.debt
-        self._label_incoming_value.setText(str(wallet_data.incoming))
-        self._label_expense_value.setText(str(wallet_data.expense))
-        self._label_loan_value.setText(str(wallet_data.loan))
-        self._label_debt_value.setText(str(wallet_data.debt))
-        self._label_balance_value.setText(str(wallet_data.balance))
+        total = round(total, 2)
+        self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
+        self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
+        self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
+        self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
+        self._label_balance_value.setText(str(round(wallet_data.balance)))
         if total >= 0:
             self._label_total_value.setStyleSheet('QLabel { color : green }')
         else:
             self._label_total_value.setStyleSheet('QLabel { color : red }')
         self._label_total_value.setText(str(total))
         # Прокручиваем скроллер
-        self._view.scrollToBottom()
+        # self._view.scrollToBottom()
 
     # Слот создания нового бумажника
     @pyqtSlot()
