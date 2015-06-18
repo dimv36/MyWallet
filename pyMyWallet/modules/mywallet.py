@@ -100,7 +100,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._view.resizeColumnsToContents()
         # Отправляем сигнал на обновление заголовка окна приложения
         self._signals.signal_wallet_changed.emit()
-        self._view.scrollTo()
+        # self._view.scrollTo()
 
     def closeEvent(self, event):
         self.write_settings()
