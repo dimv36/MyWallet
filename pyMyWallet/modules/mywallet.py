@@ -161,7 +161,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
         self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
         self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
-        self._label_balance_value.setText(str(round(wallet_data.balance)))
+        self._label_balance_value.setText(str(round(wallet_data.balance, 2)))
         if total >= 0:
             self._label_total_value.setStyleSheet('QLabel { color : green }')
         else:
