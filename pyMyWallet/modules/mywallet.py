@@ -100,6 +100,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._view.resizeColumnsToContents()
         # Отправляем сигнал на обновление заголовка окна приложения
         self._signals.signal_wallet_changed.emit()
+        # self._view.scrollTo()
 
     def closeEvent(self, event):
         self.write_settings()
@@ -167,8 +168,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         else:
             self._label_total_value.setStyleSheet('QLabel { color : red }')
         self._label_total_value.setText(str(total))
-        # Прокручиваем скроллер
-        # self._view.scrollToBottom()
 
     # Слот создания нового бумажника
     @pyqtSlot()
@@ -192,7 +191,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             expense = dialog.expense()
             loan = dialog.loan()
             debt = dialog.debt()
-            print(incoming, expense, loan, debt)
             self._model.beginResetModel()
             for item in incoming:
                 self._model.append_entry(date, item[0], item[1], WalletItemType.INCOMING)
@@ -205,6 +203,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self._model.endResetModel()
             self._view.resizeColumnsToContents()
             self._signals.signal_wallet_changed.emit()
+            # Прокручиваем скроллер
+            self._view.scrollToBottom()
 
     # Слот удаления записи из таблицы
     @pyqtSlot()

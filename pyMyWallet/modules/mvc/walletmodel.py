@@ -209,32 +209,35 @@ class WalletModel(QAbstractTableModel):
         return self.__wallet_data
 
     def __month_rest(self, tree, current_month):
-        # Ищем элемент месяца, предшествующий текущему
-        month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month), lambda x: int(x.attrib['value'])))[0]
         try:
-            month_rest = float(month.attrib['rest'])
-        except KeyError:
-            month_rest = float()
-        days = month.findall('day')
-        incoming = float()
-        expense = float()
-        loan = float()
-        debt = float()
-        if days:
-            for day in days:
-                incoming_entries = day.findall('incoming')
-                expenses_entries = day.findall('expense')
-                loan_entries = day.findall('loan')
-                debt_entries = day.findall('debt')
-                for entry in incoming_entries:
-                    incoming += float(entry.attrib['value'])
-                for entry in expenses_entries:
-                    expense += float(entry.attrib['value'])
-                for entry in loan_entries:
-                    loan += float(entry.attrib['value'])
-                for entry in debt_entries:
-                    debt += float(entry.attrib['value'])
-                self.__wallet_data.balance = month_rest + incoming - expense + loan - debt
+            # Ищем элемент месяца, предшествующий текущему
+            month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month), lambda x: int(x.attrib['value'])))[0]
+            try:
+                month_rest = float(month.attrib['rest'])
+            except KeyError:
+                month_rest = float()
+            days = month.findall('day')
+            incoming = float()
+            expense = float()
+            loan = float()
+            debt = float()
+            if days:
+                for day in days:
+                    incoming_entries = day.findall('incoming')
+                    expenses_entries = day.findall('expense')
+                    loan_entries = day.findall('loan')
+                    debt_entries = day.findall('debt')
+                    for entry in incoming_entries:
+                        incoming += float(entry.attrib['value'])
+                    for entry in expenses_entries:
+                        expense += float(entry.attrib['value'])
+                    for entry in loan_entries:
+                        loan += float(entry.attrib['value'])
+                    for entry in debt_entries:
+                        debt += float(entry.attrib['value'])
+                    self.__wallet_data.balance = month_rest + incoming - expense + loan - debt
+        except TypeError:
+            self.__wallet_data.balance = float()
 
     def __read_wallet(self):
         # Очищаем модель
@@ -352,7 +355,6 @@ class WalletModel(QAbstractTableModel):
                     # Удаляем запись
                     day.remove(item)
                     # Проверяем, пуст ли элемент day
-                    print(list(day))
                     if not list(day):
                         # Удаляем его
                         month.remove(day)
