@@ -254,7 +254,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def on_about(self):
         dialog = QMessageBox.about(self,
                                    QCoreApplication.translate('MyWallet', 'About application'),
-                                   QCoreApplication.translate('MyWallet', 'MyWallet developed at June 2015\n'
+                                   QCoreApplication.translate('MyWallet', 'MyWallet developed in June 2015\n'
                                                                           'author: Dmitry Voronin\n'
                                                                           'email: carriingfate92@yandex.ru\n'
                                                                           'version: %s' % MY_WALLET_VERSION_STR))
