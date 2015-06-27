@@ -17,6 +17,7 @@ from modules.dialogs.newwalletdialog import NewWalletDialog
 from modules.dialogs.addsourcesdialog import AddSourcesDialog
 from modules.dialogs.changemonthbalance import ChangeMonthBalance
 from modules.ui.ui_mywallet import Ui_MyWallet
+from modules.version import MY_WALLET_VERSION_STR
 
 
 class MyWallet(QMainWindow, Ui_MyWallet):
@@ -256,5 +257,5 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                                    QCoreApplication.translate('MyWallet', 'MyWallet developed at June 2015\n'
                                                                           'author: Dmitry Voronin\n'
                                                                           'email: carriingfate92@yandex.ru\n'
-                                                                          'version: 0.10'))
+                                                                          'version: %s' % MY_WALLET_VERSION_STR))
         dialog.exec()
