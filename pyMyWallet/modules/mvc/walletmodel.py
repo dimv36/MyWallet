@@ -36,6 +36,7 @@ class WalletModel(QAbstractTableModel):
                               QCoreApplication.translate('WalletModel', 'Debt'),
                               QCoreApplication.translate('WalletModel', 'State of debt')]
         self.__items = []
+        self.__root = None
         self.__wallet = wallet_file_path
         self.signals = self.Communicate()
         self.__wallet_data = self.WalletData()
@@ -208,10 +209,15 @@ class WalletModel(QAbstractTableModel):
     def wallet_data(self):
         return self.__wallet_data
 
+    def root(self):
+        # Возвращает ElementData
+        return self.__root
+
     def __month_rest(self, tree, current_month):
         try:
             # Ищем элемент месяца, предшествующий текущему
-            month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month), lambda x: int(x.attrib['value'])))[0]
+            month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month),
+                                      lambda x: int(x.attrib['value'])))[0]
             try:
                 month_rest = float(month.attrib['rest'])
             except KeyError:
@@ -248,6 +254,7 @@ class WalletModel(QAbstractTableModel):
         tree = etree.parse(self.__wallet)
         if tree:
             root = tree.getroot()
+            self.__root = root
             current_date = QDate.currentDate()
             # Получаем узел с текущим годом
             try:
@@ -298,8 +305,9 @@ class WalletModel(QAbstractTableModel):
                 if level and (not elem.tail or not elem.tail.strip()):
                     elem.tail = i
 
-        indent(root)
-        tree = etree.ElementTree(root)
+        self.__root = root
+        indent(self.__root)
+        tree = etree.ElementTree(self.__root)
         tree.write(self.__wallet, encoding='utf-8', method='html')
 
     def __add_item_to_xml(self, date, item, tag):

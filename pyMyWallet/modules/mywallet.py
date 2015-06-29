@@ -12,10 +12,7 @@ from PyQt5.QtCore import (
 
 from modules.mvc.walletmodel import WalletModel
 from modules.enums import WalletItemType, WalletItemModelType
-from modules.dialogs.settingsdialog import SettingsDialog
-from modules.dialogs.newwalletdialog import NewWalletDialog
-from modules.dialogs.addsourcesdialog import AddSourcesDialog
-from modules.dialogs.changemonthbalance import ChangeMonthBalance
+from modules.dialogs import *
 from modules.ui.ui_mywallet import Ui_MyWallet
 from modules.version import MY_WALLET_VERSION_STR
 
@@ -56,6 +53,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_delete_item.pyqtConfigure(triggered=self.on_delete_item)
         self._action_change_balance.pyqtConfigure(triggered=self.on_change_balance)
         self._action_about.pyqtConfigure(triggered=self.on_about)
+        self._action_show_statistic.pyqtConfigure(triggered=self.on_statistic_show)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -258,4 +256,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                                                                           'author: Dmitry Voronin\n'
                                                                           'email: carriingfate92@yandex.ru\n'
                                                                           'version: %s' % MY_WALLET_VERSION_STR))
+        dialog.exec()
+
+    # Слот отображения статистики
+    @pyqtSlot()
+    def on_statistic_show(self):
+        dialog = StatisticDialog(self._model.root())
         dialog.exec()
