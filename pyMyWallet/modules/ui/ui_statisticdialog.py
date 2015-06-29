@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'statisticdialog.ui'
+# Form implementation generated from reading ui file 'statisticsdialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -43,5 +43,5 @@ class Ui_StatisticDialog(object):
         StatisticDialog.setWindowTitle(_translate("StatisticDialog", "Statistics"))
         self._periods.headerItem().setText(0, _translate("StatisticDialog", "Statistic periods"))
 
-from qcustomplot import QCustomPlot
-import resource_rc
+from qcustomplot.qcustomplot import QCustomPlot
+import modules.resources.resource_rc
