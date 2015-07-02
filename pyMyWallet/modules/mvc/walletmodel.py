@@ -190,19 +190,24 @@ class WalletModel(QAbstractTableModel):
         tree = etree.parse(self.__wallet)
         current_month = QDate.currentDate().month()
         if tree:
-            month_item = tree.xpath('//month[@value=\'%s\']' % str(current_month))
-            if month_item:
+            month_item = tree.xpath('////month[@value=%s]' % str(current_month))[0]
+            if month_item is not None:
                 need_write = False
-                month_item = month_item[0]
-                old_balance = month_item.attrib['rest']
-                if not old_balance:
-                    month_item.attrib['rest'] = balance
+                old_balance = float()
+                try:
+                    old_balance = month_item.attrib['rest']
+                except KeyError:
                     need_write = True
+                if old_balance == float():
+                    need_write = True
+                    month_item.set('rest', balance)
                 elif not float(old_balance) == float(balance):
-                    month_item.attrib['rest'] = balance
+                    month_item.set('rest', balance)
                     need_write = True
                 if need_write:
+                    print(self.__wallet_data.balance)
                     self.__wallet_data.balance = float(balance)
+                    print(self.__wallet_data.balance)
                     # Записываем изменения в XML
                     self.__write_wallet(tree.getroot())
 
@@ -216,8 +221,7 @@ class WalletModel(QAbstractTableModel):
     def __month_rest(self, tree, current_month):
         try:
             # Ищем элемент месяца, предшествующий текущему
-            month = sorted(tree.xpath('///month[@value=\'%s\']' % str(current_month),
-                                      lambda x: int(x.attrib['value'])))[0]
+            month = tree.xpath('////month[@value=%s]' % str(current_month - 1))[0]
             try:
                 month_rest = float(month.attrib['rest'])
             except KeyError:
@@ -242,6 +246,8 @@ class WalletModel(QAbstractTableModel):
                     for entry in debt_entries:
                         debt += float(entry.attrib['value'])
                     self.__wallet_data.balance = month_rest + incoming - expense + loan - debt
+                    # TODO: Изменение не работает!
+                    # self.change_current_month_balance(self.__wallet_data.balance)
         except TypeError:
             self.__wallet_data.balance = float()
 
@@ -267,7 +273,7 @@ class WalletModel(QAbstractTableModel):
                     try:
                         self.__wallet_data.balance = float(month.attrib['rest'])
                     except KeyError:
-                        self.__wallet_data.balance = float()
+                        self.__month_rest(tree, current_date.month())
                     # Получаем список узлов текущего месяца
                     days = month.findall('day')
                     for day in days:

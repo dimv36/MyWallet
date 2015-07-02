@@ -43,5 +43,5 @@ class Ui_StatisticDialog(object):
         StatisticDialog.setWindowTitle(_translate("StatisticDialog", "Statistics"))
         self._periods.headerItem().setText(0, _translate("StatisticDialog", "Statistic periods"))
 
-from qcustomplot.qcustomplot import QCustomPlot
+#from qcustomplot.qcustomplot import QCustomPlot
 import modules.resources.resource_rc
