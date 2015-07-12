@@ -5,7 +5,7 @@ from enum import Enum
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
 from PyQt5.QtCore import QCoreApplication
 
-from modules.ui.ui_staticsticdialog import Ui_StatisticDialog
+from modules.ui.ui_statisticdialog import Ui_StatisticDialog
 
 
 class _StatisticItemType(Enum):
