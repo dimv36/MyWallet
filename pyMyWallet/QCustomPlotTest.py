@@ -5,7 +5,7 @@ import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QColor, QPen
-from qcustomplot import QCustomPlot, QCPBars, QCP
+from qcustomplot.qcustomplot import QCustomPlot, QCPBars, QCP
 
 if __name__ == '__main__':
 
