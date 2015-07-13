@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/evn python3
 __author__ = 'dimv36'
 
 import sys
