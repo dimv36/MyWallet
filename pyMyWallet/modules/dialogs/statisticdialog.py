@@ -133,15 +133,18 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
     def __create_statistic_items(self):
         root_item = QTreeWidgetItem(self._periods, _StatisticItemType.ROOT.value)
         root_item.setText(0, 'mywallet')
-        years = self.__wallet_root.findall('year')
-        for year in years:
-            year_item = QTreeWidgetItem(root_item, _StatisticItemType.ITEM_YEAR.value)
-            year_item.setText(0, year.attrib['value'])
-            months = year.findall('month')
-            for month in months:
-                month_item = QTreeWidgetItem(year_item, _StatisticItemType.ITEM_MONTH.value)
-                long_month_name = _MonthName(int(month.attrib['value'])).name
-                month_item.setText(0, QCoreApplication.translate('StatisticDialog', long_month_name))
+        try:
+            years = self.__wallet_root.findall('year')
+            for year in years:
+                year_item = QTreeWidgetItem(root_item, _StatisticItemType.ITEM_YEAR.value)
+                year_item.setText(0, year.attrib['value'])
+                months = year.findall('month')
+                for month in months:
+                    month_item = QTreeWidgetItem(year_item, _StatisticItemType.ITEM_MONTH.value)
+                    long_month_name = _MonthName(int(month.attrib['value'])).name
+                    month_item.setText(0, QCoreApplication.translate('StatisticDialog', long_month_name))
+        except AttributeError:
+            pass
         self._periods.expandAll()
 
     def __get_item_sum(self, items):
