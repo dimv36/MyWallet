@@ -37,7 +37,20 @@ class _MonthName(Enum):
                 return value
 
 
+class _MonthStatisticData:
+    balance = float()
+    incoming = float()
+    expense = float()
+    loan = float()
+    debt = float()
+
 class StatisticDialog(QDialog, Ui_StatisticDialog):
+    BALANCE = QCoreApplication.translate('StatisticDialog', 'balance')
+    INCOMING = QCoreApplication.translate('StatisticDialog', 'incoming')
+    EXPENSE = QCoreApplication.translate('StatisticDialog', 'expense')
+    LOAN = QCoreApplication.translate('StatisticDialog', 'loan')
+    DEBT = QCoreApplication.translate('StatisticDialog', 'debt')
+
     def __init__(self, wallet_root):
         super().__init__()
         self.setupUi(self)
@@ -56,31 +69,31 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         pen.setWidth(1.2)
         # balance settings
         self._graphic.addPlottable(self.__balance)
-        self.__balance.setName(QCoreApplication.translate('StatisticDialog', 'balance'))
+        self.__balance.setName(self.BALANCE)
         pen.setColor(QColor(255, 100, 0))
         self.__balance.setPen(pen)
         self.__balance.setBrush(QColor(255, 100, 0, 50))
         # incoming settings
         self._graphic.addPlottable(self.__incoming)
-        self.__incoming.setName(QCoreApplication.translate('StatisticDialog', 'incoming'))
+        self.__incoming.setName(self.INCOMING)
         pen.setColor(QColor(255, 131, 0))
         self.__incoming.setPen(pen)
         self.__incoming.setBrush(QColor(255, 131, 0, 50))
         # expense settings
         self._graphic.addPlottable(self.__expense)
-        self.__expense.setName(QCoreApplication.translate('StatisticDialog', 'expense'))
+        self.__expense.setName(self.EXPENSE)
         pen.setColor(QColor(1, 92, 192))
         self.__expense.setPen(pen)
         self.__expense.setBrush(QColor(1, 92, 191, 50))
         # loan settings
         self._graphic.addPlottable(self.__loan)
-        self.__loan.setName(QCoreApplication.translate('StatisticDialog', 'loan'))
+        self.__loan.setName(self.LOAN)
         pen.setColor(QColor(150, 222, 0))
         self.__loan.setPen(pen)
         self.__loan.setBrush(QColor(150, 222, 0, 70))
         # debt settings
         self._graphic.addPlottable(self.__debt)
-        self.__debt.setName(QCoreApplication.translate('StatisticDialog', 'debt'))
+        self.__debt.setName(self.DEBT)
         pen.setColor(QColor(100, 180, 0))
         self.__debt.setPen(pen)
         self.__debt.setBrush(QColor(100, 180, 0, 70))
@@ -138,35 +151,43 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
                 result += float(item.attrib['value'])
         return result
 
-    def __make_month_statistic(self, item):
-        year = int(item.parent().text(0))
-        month = _MonthName.from_string(item.text(0)).value
+    def __get_month_statistic(self, month, year):
+        month_statistic_data = _MonthStatisticData
         tree = etree.ElementTree(self.__wallet_root)
         month_item = tree.xpath('///year[@value=%s]/month[@value=%s]' % (str(year), str(month)))[0]
         try:
-            balance = float(month_item.attrib['rest'])
+            month_statistic_data.balance = float(month_item.attrib['rest'])
         except KeyError:
-            balance = float()
+            month_statistic_data.balance = float()
         incoming_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/incoming' % (str(year), str(month)))
         expense_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/expense' % (str(year), str(month)))
         load_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/loan' % (str(year), str(month)))
         debt_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/debt' % (str(year), str(month)))
-        incoming = self.__get_item_sum(incoming_items)
-        expense = self.__get_item_sum(expense_items)
-        loan = self.__get_item_sum(load_items)
-        debt = self.__get_item_sum(debt_items)
-        labels = [QCoreApplication.translate('StatisticDialog', 'balance'),
-                  QCoreApplication.translate('StatisticDialog', 'incoming'),
-                  QCoreApplication.translate('StatisticDialog', 'expense'),
-                  QCoreApplication.translate('StatisticDialog', 'loan'),
-                  QCoreApplication.translate('StatisticDialog', 'debt')]
-        ticks = [i + 1 for i in range(0, 6)]
+        month_statistic_data.incoming = self.__get_item_sum(incoming_items)
+        month_statistic_data.expense = self.__get_item_sum(expense_items)
+        month_statistic_data.loan = self.__get_item_sum(load_items)
+        month_statistic_data.debt = self.__get_item_sum(debt_items)
+        return month_statistic_data
+
+    def __make_month_statistic(self, item):
+        year = int(item.parent().text(0))
+        month = _MonthName.from_string(item.text(0)).value
+        month_data = self.__get_month_statistic(month, year)
+        labels = [self.BALANCE,
+                  self.INCOMING,
+                  self.EXPENSE,
+                  self.LOAN,
+                  self.DEBT]
+        ticks = [i + 1 for i in range(0, len(labels))]
         self._graphic.xAxis.setTickVector(ticks)
         self._graphic.xAxis.setTickVectorLabels(labels)
-        self._graphic.yAxis.setRange(0, max(incoming, expense, loan, debt, balance) + 5000)
-        self.__balance.setData([1], [balance])
-        self.__incoming.setData([2], [incoming])
-        self.__expense.setData([3], [expense])
-        self.__loan.setData([4], [loan])
-        self.__debt.setData([5], [debt])
+        self._graphic.yAxis.setRange(0, max(month_data.balance, month_data.incoming,
+                                            month_data.expense, month_data.loan,
+                                            month_data.debt) + 5000)
+        self._graphic.xAxis.setRange(0, len(labels) + 1)
+        self.__balance.setData([1], [month_data.balance])
+        self.__incoming.setData([2], [month_data.incoming])
+        self.__expense.setData([3], [month_data.expense])
+        self.__loan.setData([4], [month_data.loan])
+        self.__debt.setData([5], [month_data.debt])
         self._graphic.replot()
