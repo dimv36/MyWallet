@@ -128,7 +128,7 @@ class WalletModel(QAbstractTableModel):
     def read_wallet(self, wallet_path=None):
         if wallet_path is not None:
             self.__wallet = wallet_path
-            self.__read_wallet()
+        self.__read_wallet()
 
     def __append_entries_from_xml(self, date, entries, entry_type):
         for entry in entries:
@@ -257,6 +257,8 @@ class WalletModel(QAbstractTableModel):
         # Сбрасываем состояние доходов/расходов
         self.__wallet_data = self.WalletData()
         # Разбираем XML с данными
+        if self.__wallet is None:
+            return
         tree = etree.parse(self.__wallet)
         if tree:
             root = tree.getroot()
