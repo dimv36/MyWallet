@@ -61,12 +61,12 @@ class _MonthStatisticData:
 
 
 class StatisticDialog(QDialog, Ui_StatisticDialog):
-    BALANCE_AT_START = QCoreApplication.translate('StatisticDialog', 'balance \nat start')
+    BALANCE_AT_START = QCoreApplication.translate('StatisticDialog', 'balance \nat start of month')
     INCOMING = QCoreApplication.translate('StatisticDialog', 'incoming')
     EXPENSE = QCoreApplication.translate('StatisticDialog', 'expense')
     LOAN = QCoreApplication.translate('StatisticDialog', 'loan')
     DEBT = QCoreApplication.translate('StatisticDialog', 'debt')
-    BALANCE_AT_END = QCoreApplication.translate('StatisticDialog', 'balance \nat end')
+    BALANCE_AT_END = QCoreApplication.translate('StatisticDialog', 'balance \nat end of month')
 
     class Bars:
         def __init__(self, customplot):
@@ -102,9 +102,9 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.balance_at_start.setPen(pen)
             self.balance_at_start.setBrush(QColor(255, 100, 0, 50))
             # incoming
-            pen.setColor(QColor(255, 125, 0))
+            pen.setColor(QColor(255, 0, 0))
             self.incoming.setPen(pen)
-            self.incoming.setBrush(QColor(255, 125, 0, 50))
+            self.incoming.setBrush(QColor(255, 0, 0, 50))
             # expense
             pen.setColor(QColor(10, 90, 190))
             self.expense.setPen(pen)
@@ -126,20 +126,12 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         super().__init__()
         self.setupUi(self)
         self.__wallet_root = wallet_root
-        self.__bar_group = QCPBarsGroup(self._graphic)
         self.__graphics = []
+        self.__bar_group = QCPBarsGroup(self._graphic)
+        self.__bar_groups = []
         self.__init_plottable()
         self.__create_statistic_items()
         self.__init_signal_slots()
-
-    def __append_graphics_to_bar_group(self):
-        for bar in self.__graphics:
-            self.__bar_group.append(bar.balance_at_start)
-            self.__bar_group.append(bar.incoming)
-            self.__bar_group.append(bar.expense)
-            self.__bar_group.append(bar.loan)
-            self.__bar_group.append(bar.debt)
-            self.__bar_group.append(bar.balance_at_end)
 
     def __init_plottable(self):
         # Axis settings
@@ -154,6 +146,14 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         grid_pen.setColor(QColor(0, 0, 0, 25))
         self._graphic.yAxis.grid().setSubGridPen(grid_pen)
         self._graphic.xAxis.setTickLabelRotation(60)
+        # legend
+        self._graphic.legend.setVisible(True)
+        self._graphic.axisRect().insetLayout().setInsetAlignment(0, Qt.AlignRight | Qt.AlignTop)
+        self._graphic.legend.setBrush(QColor(255, 255, 255, 200))
+        legend_pen = QPen()
+        legend_pen.setColor(QColor(130, 130, 130, 200))
+        self._graphic.legend.setBorderPen(legend_pen)
+        self._graphic.setInteractions(QCP.iRangeDrag or QCP.iRangeZoom)
 
     def __init_signal_slots(self):
         self._periods.itemClicked.connect(self.__on_item_clicked)
@@ -163,7 +163,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         if item.type() == _StatisticItemType.ROOT.value:
             pass
         elif item.type() == _StatisticItemType.ITEM_YEAR.value:
-            pass
+            self.__make_year_statistic(item)
         elif item.type() == _StatisticItemType.ITEM_MONTH.value:
             self.__make_month_statistic(item)
 
@@ -171,7 +171,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         root_item = QTreeWidgetItem(self._periods, _StatisticItemType.ROOT.value)
         root_item.setText(0, 'mywallet')
         if self.__wallet_root is None:
-            return 
+            return
         years = self.__wallet_root.findall('year')
         for year in years:
             year_item = QTreeWidgetItem(root_item, _StatisticItemType.ITEM_YEAR.value)
@@ -216,26 +216,67 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         year = int(item.parent().text(0))
         month = _MonthName.from_string(item.text(0)).value
         month_data = self.__get_month_statistic(month, year)
-        labels = [self.BALANCE_AT_START,
-                  self.INCOMING,
-                  self.EXPENSE,
-                  self.LOAN,
-                  self.DEBT,
-                  self.BALANCE_AT_END
-                  ]
-        ticks = [i + 1 for i in range(0, len(labels))]
-        self._graphic.xAxis.setTickVector(ticks)
-        self._graphic.xAxis.setTickVectorLabels(labels)
+        self._graphic.xAxis.setAutoTicks(False)
+        self._graphic.xAxis.setTickVectorLabels([])
         self._graphic.yAxis.setRange(0, max(month_data.balance_at_start, month_data.incoming,
                                             month_data.expense, month_data.loan,
                                             month_data.debt, month_data.balance_at_end) + 5000)
-        self._graphic.xAxis.setRange(0, len(labels) + 1)
+        bar_group = QCPBarsGroup(self._graphic)
+        self._graphic.xAxis.setRange(0, 7)
         bars = self.Bars(self._graphic)
         self.__graphics.append(bars)
-        bars.balance_at_start.setData([1], [month_data.balance_at_start])
-        bars.incoming.setData([2], [month_data.incoming])
+        self.__bar_group.append(bars.balance_at_start)
+        self.__bar_group.append(bars.incoming)
+        self.__bar_group.append(bars.expense)
+        self.__bar_group.append(bars.loan)
+        self.__bar_group.append(bars.debt)
+        self.__bar_group.append(bars.balance_at_end)
+        bars.balance_at_start.setData([3], [month_data.balance_at_start])
+        bars.incoming.setData([3], [month_data.incoming])
         bars.expense.setData([3], [month_data.expense])
-        bars.loan.setData([4], [month_data.loan])
-        bars.debt.setData([5], [month_data.debt])
-        bars.balance_at_end.setData([6], [month_data.balance_at_end])
+        bars.loan.setData([3], [month_data.loan])
+        bars.debt.setData([3], [month_data.debt])
+        bars.balance_at_end.setData([3], [month_data.balance_at_end])
+        self._graphic.replot()
+
+    def __make_year_statistic(self, year_item):
+        if self.__graphics:
+            self._graphic.clearPlottables()
+            self.__graphics.clear()
+            self.__bar_groups.clear()
+        year = int(year_item.text(0))
+        self._graphic.xAxis.setRange(0, year_item.childCount() + 5)
+        balance_at_start_data = []
+        incoming_data = []
+        expense_data = []
+        loan_data = []
+        debt_data = []
+        balance_at_end_data = []
+        datax = [i for i in range(1, year_item.childCount() + 2)]
+        self._graphic.yAxis.setRange(0, 150000)
+        for i in range(0, year_item.childCount()):
+            month_item = year_item.child(i)
+            month = _MonthName.from_string(month_item.text(0)).value
+            month_data = self.__get_month_statistic(month, year)
+            balance_at_start_data.append(month_data.balance_at_start)
+            incoming_data.append(month_data.incoming)
+            expense_data.append(month_data.expense)
+            loan_data.append(month_data.loan)
+            debt_data.append(month_data.debt)
+            balance_at_end_data.append(month_data.balance_at_end)
+        for i in range(0, year_item.childCount()):
+            bars = self.Bars(self._graphic)
+            self.__graphics.append(bars)
+            bars.balance_at_start.setData(datax, balance_at_start_data)
+            bars.incoming.setData(datax, incoming_data)
+            bars.expense.setData(datax, expense_data)
+            bars.loan.setData(datax, loan_data)
+            bars.debt.setData(datax, debt_data)
+            bars.balance_at_end.setData(datax, balance_at_end_data)
+            self.__bar_group.append(bars.balance_at_start)
+            self.__bar_group.append(bars.incoming)
+            self.__bar_group.append(bars.expense)
+            self.__bar_group.append(bars.loan)
+            self.__bar_group.append(bars.debt)
+            self.__bar_group.append(bars.balance_at_end)
         self._graphic.replot()

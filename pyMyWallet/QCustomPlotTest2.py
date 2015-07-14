@@ -13,10 +13,10 @@ if __name__ == '__main__':
 
     w = QCustomPlot()
 
-    datax = [1, 2, 3, 4]
-    datay1 = [0.6, 0.5, 0.3, 0.15]
-    datay2 = [0.3, 0.28, 0.2, 0.1]
-    datay3 = [0.33, 0.31, 0.27, 0.13]
+    datax = [1, 2, 3, 4, 5]
+    datay1 = [0.6, 0.5, 0.3, 0.15, 2.]
+    datay2 = [0.3, 0.28, 0.2, 0.1, 3.]
+    datay3 = [0.33, 0.31, 0.27, 0.13, 4.]
 
     group = QCPBarsGroup(w)
     bars1 = QCPBars(w.xAxis, w.yAxis)
