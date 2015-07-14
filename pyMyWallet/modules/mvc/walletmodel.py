@@ -128,7 +128,7 @@ class WalletModel(QAbstractTableModel):
     def read_wallet(self, wallet_path=None):
         if wallet_path is not None:
             self.__wallet = wallet_path
-        self.__read_wallet()
+            self.__read_wallet()
 
     def __append_entries_from_xml(self, date, entries, entry_type):
         for entry in entries:
