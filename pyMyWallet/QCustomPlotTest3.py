@@ -5,7 +5,7 @@ import sys
 from PyQt5.QtCore import Qt, QLocale, QDateTime, qrand
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QColor, QPen, QBrush, QFont
-from qcustomplot.qcustomplot import QCustomPlot, QCPGraph, QCPAxis
+from qcustomplot.qcustomplot import QCustomPlot, QCPGraph, QCPAxis, QCPScatterStyle
 
 if __name__ == '__main__':
 
@@ -18,27 +18,32 @@ if __name__ == '__main__':
     # seconds of current time, we'll use it as starting point in time for data:
     # create multiple graphs:
     w.addGraph()
-    w.graph(0).setData([1420059600, 1422738000, 1425157200, 1427835600, 1430427600, 1433106000],
-                      [1, 2, 3, 4, 5, 6])
+    date = QDateTime.fromTime_t(1420059600).date().toString('dd.MMMM.yyyy')
+    print(date)
+    datax = [1, 2, 3, 4, 5, 6, 7]
+    datay = [15860.0, 23042.0, 13550.0, 33285.0, 39097.0, 39097.0, 28854.91]
+    labels = ['0', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul']
+    w.graph(0).setData(datax,
+                      datay)
+
+    print(w.graph().data())
+    w.xAxis.setTickVectorLabels(labels)
     # configure bottom axis to show date and time instead of number:
-    w.xAxis.setTickLabelType(QCPAxis.ltDateTime)
-    w.xAxis.setDateTimeFormat("MMMM\nyyyy")
     # set a fixed tick-step to one tick per month:
     w.xAxis.setAutoTickStep(False)
-    w.xAxis.setTickStep(2628000) # one month in seconds
-    w.xAxis.setSubTickCount(3)
-    # apply manual tick and tick label for left axis:
-    w.yAxis.setAutoTicks(False)
-    w.yAxis.setAutoTickLabels(False)
-    w.yAxis.setTickVector([5, 55])
-    w.yAxis.setTickVectorLabels(["Not so\nhigh", "Very\nhigh"])
+    w.xAxis.setAutoTicks(False)
+    w.xAxis.setAutoTickLabels(False)
+    w.xAxis.setTickStep(0.5) # one month in seconds
+    w.xAxis.setTickLabelPadding(0)
+    w.xAxis.setSubTickCount(0)
     # set axis labels:
     w.xAxis.setLabel("Date")
     w.yAxis.setLabel("Random wobbly lines value")
     # make top and right axes visible but without ticks and labels:
     # set axis ranges to show all data:
-    w.xAxis.setRange(1420059600, 1433106000)
-    w.yAxis.setRange(0, 60)
+    w.xAxis.setRange(0, 7.1)
+    w.yAxis.setRange(0, 50000)
+    w.graph().setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 4))
     # show legend:
     w.legend.setVisible(True)
     w.show()
