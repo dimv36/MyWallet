@@ -153,10 +153,6 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         grid_pen.setStyle(Qt.SolidLine)
         grid_pen.setColor(QColor(0, 0, 0, 25))
         self._graphic.yAxis.grid().setSubGridPen(grid_pen)
-        self._graphic.xAxis.setAutoTickStep(False)
-        # self._graphic.xAxis.setTickLabels(True)
-        # self._graphic.xAxis.setAutoTicks(False)
-        # self._graphic.xAxis.setAutoTickLabels(False)
         self._graphic.xAxis.setSubTickCount(0)
         self._graphic.yAxis.setLabel(QCoreApplication.translate(self.__class__.__name__, 'rubles'))
         # legend
@@ -166,7 +162,8 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         legend_pen = QPen()
         legend_pen.setColor(QColor(130, 130, 130, 200))
         self._graphic.legend.setBorderPen(legend_pen)
-        self._graphic.setInteractions(QCP.iRangeDrag and QCP.iRangeZoom)
+        flags = QCP.iRangeDrag | QCP.iRangeZoom | QCP.iSelectPlottables
+        self._graphic.setInteractions(QCP.Interactions(flags))
 
     def __init_signal_slots(self):
         self._periods.itemClicked.connect(self.__on_item_clicked)
@@ -266,19 +263,14 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         loan_data = []
         debt_data = []
         balance_at_end_data = []
-        self._graphic.xAxis.setTickStep(2628000)
-        self._graphic.xAxis.setTickLabelType(QCPAxis.ltDateTime)
-        self._graphic.xAxis.setDateTimeFormat('MMMM\nyyyy')
-        self._graphic.setLocale(QLocale(QLocale.English, QLocale.UnitedKingdom))
-        datax = []
+        labels = ['']
+        datax = [i + 1 for i in range(0, year_item.childCount())]
         self._graphic.xAxis.setLabel(QCoreApplication.translate(self.__class__.__name__,
                                                                 'Statistic by %s  year' % str(year)))
-        self._graphic.yAxis.setRange(0, 150000)
         for i in range(0, year_item.childCount()):
             month_item = year_item.child(i)
+            labels.append('%s\n%s' % (month_item.text(0), str(year)))
             month = _MonthName.from_string(month_item.text(0)).value
-            date_time = QDateTime(QDate(year, month, 1))
-            datax.append(date_time.toTime_t())
             month_data = self.__get_month_statistic(month, year)
             balance_at_start_data.append(month_data.balance_at_start)
             incoming_data.append(month_data.incoming)
@@ -286,32 +278,42 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             loan_data.append(month_data.loan)
             debt_data.append(month_data.debt)
             balance_at_end_data.append(month_data.balance_at_end)
-        self._graphic.xAxis.setRange(min(datax), max(datax) + 500)
-        print(datax, balance_at_start_data)
+        self._graphic.xAxis.setAutoTickLabels(False)
+        self._graphic.xAxis.setRange(min(datax) - 0.1, max(datax) + 0.1)
+        self._graphic.xAxis.setAutoSubTicks(False)
+        self._graphic.xAxis.setAutoTickStep(False)
+        self._graphic.xAxis.setTicks(True)
+        self._graphic.xAxis.setSubTickCount(4)
+        self._graphic.xAxis.setTickStep(1)
+        self._graphic.yAxis.setRange(-100, max(max(balance_at_start_data), max(incoming_data),
+                                               max(expense_data), max(loan_data),
+                                               max(debt_data), max(balance_at_end_data)) + 5000)
         for i in range(0, 6):
             self._graphic.addGraph()
+        self._graphic.xAxis.setTickVectorLabels(labels)
+        self._graphic.xAxis.setNumberPrecision(0)
         self._graphic.graph(0).setData(datax, balance_at_start_data)
         self._graphic.graph(0).setName(self.BALANCE_AT_START)
         self._graphic.graph(0).setPen(QPen(Qt.red))
-        self._graphic.graph(0).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCircle, 4))
+        self._graphic.graph(0).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCircle, 8))
         self._graphic.graph(1).setData(datax, incoming_data)
         self._graphic.graph(1).setName(self.INCOMING)
         self._graphic.graph(1).setPen(QPen(Qt.blue))
-        self._graphic.graph(1).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossSquare, 4))
+        self._graphic.graph(1).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossSquare, 8))
         self._graphic.graph(2).setData(datax, expense_data)
         self._graphic.graph(2).setName(self.EXPENSE)
         self._graphic.graph(2).setPen(QPen(Qt.green))
-        self._graphic.graph(2).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDot, 4))
+        self._graphic.graph(2).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssStar, 8))
         self._graphic.graph(3).setData(datax, loan_data)
         self._graphic.graph(3).setName(self.LOAN)
         self._graphic.graph(3).setPen(QPen(Qt.yellow))
-        self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDisc, 4))
+        self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDisc, 8))
         self._graphic.graph(4).setData(datax, debt_data)
         self._graphic.graph(4).setName(self.DEBT)
         self._graphic.graph(4).setPen(QPen(Qt.gray))
-        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 4))
+        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 8))
         self._graphic.graph(5).setData(datax, balance_at_end_data)
         self._graphic.graph(5).setPen(QPen(Qt.darkRed))
         self._graphic.graph(5).setName(self.BALANCE_AT_END)
-        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 4))
+        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
         self._graphic.replot()
