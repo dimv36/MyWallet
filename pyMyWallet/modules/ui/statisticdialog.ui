@@ -52,16 +52,16 @@
        </property>
       </column>
      </widget>
-     <widget class="QCustomPlot" name="_graphic" native="true"/>
+     <widget class="MousePlot" name="_graphic" native="true"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QCustomPlot</class>
+   <class>MousePlot</class>
    <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
+   <header>mouseplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

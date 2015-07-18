@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'statisticsdialog.ui'
+# Form implementation generated from reading ui file 'statisticdialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -29,7 +29,7 @@ class Ui_StatisticDialog(object):
         self._periods.setMinimumSize(QtCore.QSize(50, 0))
         self._periods.setMaximumSize(QtCore.QSize(250, 16777215))
         self._periods.setObjectName("_periods")
-        self._graphic = QCustomPlot(self.splitter)
+        self._graphic = MousePlot(self.splitter)
         self._graphic.setObjectName("_graphic")
         self.gridLayout.addWidget(self.splitter, 0, 1, 1, 1)
 
@@ -43,5 +43,5 @@ class Ui_StatisticDialog(object):
         StatisticDialog.setWindowTitle(_translate("StatisticDialog", "Statistics"))
         self._periods.headerItem().setText(0, _translate("StatisticDialog", "Statistic periods"))
 
-from qcustomplot.qcustomplot import QCustomPlot
+from .mouseplot import MousePlot
 import modules.resources.resource_rc
