@@ -18,24 +18,19 @@ if __name__ == '__main__':
     # seconds of current time, we'll use it as starting point in time for data:
     # create multiple graphs:
     w.addGraph()
-    date = QDateTime.fromTime_t(1420059600).date().toString('dd.MMMM.yyyy')
-    print(date)
-    datax = [1, 2, 3, 4, 5, 6, 7]
+    datax = [1414789200, 1417381200]
     datay = [15860.0, 23042.0, 13550.0, 33285.0, 39097.0, 39097.0, 28854.91]
-    labels = ['0', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul']
+    labels = ['', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul']
     w.graph(0).setData(datax,
                       datay)
-
-    print(w.graph().data())
     w.xAxis.setTickVectorLabels(labels)
     # configure bottom axis to show date and time instead of number:
     # set a fixed tick-step to one tick per month:
-    w.xAxis.setAutoTickStep(False)
-    w.xAxis.setAutoTicks(False)
+    # w.xAxis.setAutoTickStep(False)
+    # w.xAxis.setAutoTicks(False)
     w.xAxis.setAutoTickLabels(False)
-    w.xAxis.setTickStep(0.5) # one month in seconds
-    w.xAxis.setTickLabelPadding(0)
-    w.xAxis.setSubTickCount(0)
+    # w.xAxis.setTickLabelPadding(0)
+    # w.xAxis.setSubTickCount(0)
     # set axis labels:
     w.xAxis.setLabel("Date")
     w.yAxis.setLabel("Random wobbly lines value")
