@@ -2,7 +2,7 @@ __author__ = 'dimv36'
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QToolTip
-from qcustomplot.qcustomplot import QCustomPlot
+from qcustomplot.qcustomplot import QCustomPlot, QCPBarData
 
 class MousePlot(QCustomPlot):
     def __init__(self, parent):
@@ -24,8 +24,8 @@ class MousePlot(QCustomPlot):
                 if bar:
                     print('bar found')
                     need_tooltip = True
-                    data = bar.data()
-                    print(data)
+                    data = QCPBarData(bar.data()[3.0])
+                    print(data.key, data.value)
                 elif graph:
                     print('graph found')
                     need_tooltip = True
