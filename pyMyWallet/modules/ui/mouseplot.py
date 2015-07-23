@@ -30,19 +30,20 @@ class MousePlot(QCustomPlot):
                                                                  '<tr>'
                                                                  '<td>%s rub.</td>'
                                                                  '</tr>'
-                                                                 '</table>' % (plottable.name(), str(y))))
+                                                                 '</table>') % (plottable.name(), str(y)))
                 elif graph:
                     labels = self.xAxis.tickVectorLabels()
                     label_x = str(labels[int(x)])
                     y = round(y, 2)
-                    QToolTip.showText(event.globalPos(),
-                                      QCoreApplication.translate('MousePlot',
-                                                                 '<table>'
-                                                                 '<tr>'
-                                                                 '<th colspan="2">%s</th>'
-                                                                 '</tr>'
-                                                                 '<tr>'
-                                                                 '<td>%s: %s rub.</td>'
-                                                                 '</tr>'
-                                                                 '</table>' % (plottable.name(), label_x, str(y))))
+                    if not label_x == '':
+                        QToolTip.showText(event.globalPos(),
+                                          QCoreApplication.translate('MousePlot',
+                                                                     '<table>'
+                                                                     '<tr>'
+                                                                     '<th colspan="2">%s</th>'
+                                                                     '</tr>'
+                                                                     '<tr>'
+                                                                     '<td>%s: %s rub.</td>'
+                                                                     '</tr>'
+                                                                     '</table>') % (plottable.name(), label_x, str(y)))
         super().mousePressEvent(event)

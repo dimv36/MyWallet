@@ -255,7 +255,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                           QCoreApplication.translate('MyWallet', 'MyWallet developed in June 2015\n'
                                                                  'author: Dmitry Voronin\n'
                                                                  'email: carriingfate92@yandex.ru\n'
-                                                                 'version: %s' % MY_WALLET_VERSION_STR))
+                                                                 'version: %s') % MY_WALLET_VERSION_STR)
 
     # Слот отображения статистики
     @pyqtSlot()
