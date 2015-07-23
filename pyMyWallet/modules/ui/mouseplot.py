@@ -4,32 +4,23 @@ from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QToolTip
 from qcustomplot.qcustomplot import QCustomPlot, QCPBarData
 
+
 class MousePlot(QCustomPlot):
     def __init__(self, parent):
         super().__init__(parent)
 
     def mousePressEvent(self, event):
-        print('MousePlot: mousePressEvent')
         event = QMouseEvent(event)
         if event.button() == Qt.LeftButton:
-            print('left button clicked')
             plottable = self.plottableAt(event.pos())
             if plottable is not None:
-                print('Plottable is not None')
-                need_tooltip = False
                 x = self.xAxis.pixelToCoord(event.pos().x())
                 y = self.yAxis.pixelToCoord(event.pos().y())
                 bar = self.plottableBarsAt(event.pos())
                 graph = self.plottableGraphAt(event.pos())
                 if bar:
-                    print('bar found')
-                    need_tooltip = True
                     data = QCPBarData(bar.data()[3.0])
-                    print(data.key, data.value)
-                elif graph:
-                    print('graph found')
-                    need_tooltip = True
-                if need_tooltip:
+                    y = data.value
                     QToolTip.showText(event.globalPos(),
                                       QCoreApplication.translate('MousePlot',
                                                                  '<table>'
@@ -37,14 +28,21 @@ class MousePlot(QCustomPlot):
                                                                  '<th colspan="2">%s</th>'
                                                                  '</tr>'
                                                                  '<tr>'
-                                                                 '<td>X: %s</td>'
+                                                                 '<td>%s rub.</td>'
+                                                                 '</tr>'
+                                                                 '</table>' % (plottable.name(), str(y))))
+                elif graph:
+                    labels = self.xAxis.tickVectorLabels()
+                    label_x = str(labels[int(x)])
+                    y = round(y, 2)
+                    QToolTip.showText(event.globalPos(),
+                                      QCoreApplication.translate('MousePlot',
+                                                                 '<table>'
+                                                                 '<tr>'
+                                                                 '<th colspan="2">%s</th>'
                                                                  '</tr>'
                                                                  '<tr>'
-                                                                 '<td>Y: %s</td>'
+                                                                 '<td>%s: %s rub.</td>'
                                                                  '</tr>'
-                                                                 '</table>' % (plottable.name(), str(x), str(y))))
-                print(x, y)
-            else:
-                print('Plottable is None')
-
+                                                                 '</table>' % (plottable.name(), label_x, str(y))))
         super().mousePressEvent(event)
