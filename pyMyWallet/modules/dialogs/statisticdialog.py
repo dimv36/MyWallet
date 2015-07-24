@@ -5,7 +5,7 @@ from enum import Enum
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
 from PyQt5.QtGui import QColor, QPen
-from qcustomplot.qcustomplot import QCPBars, QCPBarsGroup, QCP, QCPScatterStyle, QCPAxis
+from qcustomplot.qcustomplot import QCPBars, QCPBarsGroup, QCP, QCPScatterStyle
 
 from modules.ui.ui_statisticdialog import Ui_StatisticDialog
 
