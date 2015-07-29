@@ -358,5 +358,5 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.graph(6).setData(datax, balance_at_end_data)
         self._graphic.graph(6).setPen(QPen(Qt.darkRed))
         self._graphic.graph(6).setName(QCoreApplication.translate('StatisticDialog', 'Balance\nat end of month'))
-        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
+        self._graphic.graph(6).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
         self._graphic.replot()
