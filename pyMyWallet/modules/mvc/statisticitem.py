@@ -30,10 +30,6 @@ class StatisticTreeItem:
         except KeyError:
             return None
 
-    def column_count(self):
-        print('StatisticTreeItem: count: %d' % len(self.__statistic_item_data))
-        return len(self.__statistic_item_data)
-
     def child_count(self):
         return len(self.__child_items)
 
@@ -55,13 +51,19 @@ class StatisticTreeItem:
     def parent(self):
         return self.__parent
 
-    def remove_children(self, position):
+    def childs(self):
+        return self.__child_items
+
+    def remove_child(self, position):
         if position < 0 or position > len(self.__child_items):
             raise StatisticItemException('Unexpected position: %d' % position)
         del self.__child_items[position]
 
-    def child_number(self):
-        return len(self.__child_items)
+    def row(self):
+        pass
+        if self.__parent:
+            return self.__parent.childs()
+        return 0
 
     def set_data(self, column, value):
         if column < StatisticTreeItemType.TYPE.value or column > StatisticTreeItemType.TRANSLATED_NAME.value:
