@@ -32,6 +32,7 @@ class WalletRow:
         self._date = None
         self._incoming = WalletItem()
         self._expense = WalletItem()
+        self._savings = WalletItem()
         self._loan = WalletItem()
         self._debt = WalletItem()
         self._type = WalletItem()
@@ -44,6 +45,8 @@ class WalletRow:
                 self._incoming = item
             elif self._type == WalletItemType.EXPENSE:
                 self._expense = item
+            elif self._type == WalletItemType.SAVING:
+                self._savings = item
             elif self._type == WalletItemType.LOAN:
                 self._loan = item
             elif self._type == WalletItemType.DEBT:
@@ -62,6 +65,9 @@ class WalletRow:
     def expense(self):
         return self._expense
 
+    def savings(self):
+        return self._savings
+
     def loan(self):
         return self._loan
 
@@ -79,6 +85,9 @@ class WalletRow:
 
     def set_expense(self, date, item):
         self.__set_item(date, item, WalletItemType.EXPENSE)
+
+    def set_saving(self, date, item):
+        self.__set_item(date, item, WalletItemType.SAVING)
 
     def set_loan(self, date, item):
         self.__set_item(date, item, WalletItemType.LOAN)

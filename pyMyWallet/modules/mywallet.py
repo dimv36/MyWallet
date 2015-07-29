@@ -155,10 +155,13 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def on_update(self):
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
         wallet_data = self._model.wallet_data()
-        total = wallet_data.balance + wallet_data.incoming - wallet_data.expense + wallet_data.loan - wallet_data.debt
+        total = wallet_data.balance + wallet_data.incoming + \
+                wallet_data.savings - wallet_data.expense + \
+                wallet_data.loan - wallet_data.debt
         total = round(total, 2)
         self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
         self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
+        self._label_saving_value.setText(str(round(wallet_data.savings, 2)))
         self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
         self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
         self._label_balance_value.setText(str(round(wallet_data.balance, 2)))
@@ -188,6 +191,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             date = dialog.date().toString('dd.MM.yyyy')
             incoming = dialog.incoming()
             expense = dialog.expense()
+            savings = dialog.savings()
             loan = dialog.loan()
             debt = dialog.debt()
             self._model.beginResetModel()
@@ -195,6 +199,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self._model.append_entry(date, item[0], item[1], WalletItemType.INCOMING)
             for item in expense:
                 self._model.append_entry(date, item[0], item[1], WalletItemType.EXPENSE)
+            for item in savings:
+                self._model.append_entry(date, item[0], item[1], WalletItemType.SAVING)
             for item in loan:
                 self._model.append_entry(date, item[0], item[1], WalletItemType.LOAN)
             for item in debt:
@@ -224,6 +230,9 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 elif WalletItemModelType.INDEX_EXPENSE.value <= index.column() \
                         <= WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
                     item_type = WalletItemType.EXPENSE
+                elif WalletItemModelType.INDEX_SAVINGS.value <= index.column() \
+                        <= WalletItemModelType.INDEX_SAVINGS_DESCRIPTION.value:
+                    item_type = WalletItemType.SAVING
                 elif WalletItemModelType.INDEX_LOAN.value <= index.column() \
                         <= WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
                     item_type = WalletItemType.LOAN

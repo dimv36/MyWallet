@@ -20,6 +20,7 @@ class WalletModel(QAbstractTableModel):
         def __init__(self):
             self.incoming = float()
             self.expense = float()
+            self.savings = float()
             self.loan = float()
             self.debt = float()
             self.balance = float()
@@ -31,6 +32,8 @@ class WalletModel(QAbstractTableModel):
                               QCoreApplication.translate('WalletModel', 'State of incoming'),
                               QCoreApplication.translate('WalletModel', 'Expense'),
                               QCoreApplication.translate('WalletModel', 'State of expense'),
+                              QCoreApplication.translate('WalletModel', 'Savings'),
+                              QCoreApplication.translate('WalletModel', 'State of savings'),
                               QCoreApplication.translate('WalletModel', 'Loan'),
                               QCoreApplication.translate('WalletModel', 'State of loan'),
                               QCoreApplication.translate('WalletModel', 'Debt'),
@@ -70,6 +73,10 @@ class WalletModel(QAbstractTableModel):
                 return self.__items[index.row()].expense().value()
             elif index.column() == WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
                 return self.__items[index.row()].expense().description()
+            elif index.column() == WalletItemModelType.INDEX_SAVINGS.value:
+                return self.__items[index.row()].savings().value()
+            elif index.column() == WalletItemModelType.INDEX_SAVINGS_DESCRIPTION.value:
+                return self.__items[index.row()].savings().description()
             elif index.column() == WalletItemModelType.INDEX_LOAN.value:
                 return self.__items[index.row()].loan().value()
             elif index.column() == WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
@@ -91,6 +98,10 @@ class WalletModel(QAbstractTableModel):
                 self.__items[index.row()].expense().set_value(value)
             elif index.column() == WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
                 self.__items[index.row()].expense().set_description(value)
+            elif index.column() == WalletItemModelType.INDEX_SAVINGS.value:
+                self.__items[index.row()].savings().set_value(value)
+            elif index.column() == WalletItemModelType.INDEX_SAVINGS_DESCRIPTION.value:
+                self.__items[index.row()].savings().set_description(value)
             elif index.column() == WalletItemModelType.INDEX_LOAN.value:
                 self.__items[index.row()].loan().set_value(value)
             elif index.column() == WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
@@ -149,6 +160,11 @@ class WalletModel(QAbstractTableModel):
             row.set_expense(date, item)
             tag = 'expense'
             self.__wallet_data.expense += float(amount)
+        elif entry_type == WalletItemType.SAVING:
+            print('type: saving')
+            row.set_saving(date, item)
+            tag = 'saving'
+            self.__wallet_data.savings += float(amount)
         elif entry_type == WalletItemType.LOAN:
             row.set_loan(date, item)
             tag = 'loan'
@@ -175,6 +191,10 @@ class WalletModel(QAbstractTableModel):
             row.set_expense(date, item)
             tag = 'expense'
             self.__wallet_data.expense -= float(amount)
+        elif entry_type == WalletItemType.SAVING:
+            row.set_saving(date, item)
+            tag = 'saving'
+            self.__wallet_data.savings -= float(amount)
         elif entry_type == WalletItemType.LOAN:
             row.set_loan(date, item)
             tag = 'loan'
@@ -229,23 +249,27 @@ class WalletModel(QAbstractTableModel):
             days = month.findall('day')
             incoming = float()
             expense = float()
+            saving = float()
             loan = float()
             debt = float()
             if days:
                 for day in days:
                     incoming_entries = day.findall('incoming')
                     expenses_entries = day.findall('expense')
+                    savings_entries = day.findall('saving')
                     loan_entries = day.findall('loan')
                     debt_entries = day.findall('debt')
                     for entry in incoming_entries:
                         incoming += float(entry.attrib['value'])
                     for entry in expenses_entries:
                         expense += float(entry.attrib['value'])
+                    for entry in savings_entries:
+                        saving += float(entry.attrib['value'])
                     for entry in loan_entries:
                         loan += float(entry.attrib['value'])
                     for entry in debt_entries:
                         debt += float(entry.attrib['value'])
-                    self.__wallet_data.balance = month_rest + incoming - expense + loan - debt
+                    self.__wallet_data.balance = month_rest + incoming + saving - expense + loan - debt
                     # TODO: Изменение не работает!
                     # self.change_current_month_balance(self.__wallet_data.balance)
         except TypeError:
@@ -281,6 +305,7 @@ class WalletModel(QAbstractTableModel):
                     for day in days:
                         incoming_entries = day.findall('incoming')
                         expenses_entries = day.findall('expense')
+                        savings_entries = day.findall('saving')
                         loan_entries = day.findall('loan')
                         debt_entries = day.findall('debt')
                         # Создаём сущность даты элемента, которому соответствуют данные
@@ -289,6 +314,7 @@ class WalletModel(QAbstractTableModel):
                         # Добавляем данные в модель
                         self.__append_entries_from_xml(day_date, incoming_entries, WalletItemType.INCOMING)
                         self.__append_entries_from_xml(day_date, expenses_entries, WalletItemType.EXPENSE)
+                        self.__append_entries_from_xml(day_date, savings_entries, WalletItemType.SAVING)
                         self.__append_entries_from_xml(day_date, loan_entries, WalletItemType.LOAN)
                         self.__append_entries_from_xml(day_date, debt_entries, WalletItemType.DEBT)
                 else:
@@ -376,7 +402,7 @@ class WalletModel(QAbstractTableModel):
                         month.remove(day)
                         # Аналогично проверяем на пустоту элемент month
                         if not list(month):
-                            year.remove(day)
+                            year.remove(month)
                             # Наконец, если и элемент year пуст, удаляем его
                             if not list(root):
                                 root.remove(year)

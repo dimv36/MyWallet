@@ -69,6 +69,7 @@ class _MonthStatisticData:
         self.balance_at_start = float()
         self.incoming = float()
         self.expense = float()
+        self.savings = float()
         self.loan = float()
         self.debt = float()
         self.balance_at_end = float()
@@ -77,14 +78,20 @@ class _MonthStatisticData:
         return 'balance at start: %d ' \
                'incoming: %d ' \
                'expense: %d ' \
+               'savings: %d' \
                'loan: %d ' \
                'debt: %d ' \
-               'balance at end: %d' % (self.balance_at_start, self.incoming,
-                                       self.expense, self.loan,
-                                       self.debt, self.balance_at_end)
+               'balance at end: %d' % (self.balance_at_start,
+                                       self.incoming,
+                                       self.expense,
+                                       self.savings,
+                                       self.loan,
+                                       self.debt,
+                                       self.balance_at_end)
 
     def make_balance_at_end(self):
-        self.balance_at_end = self.balance_at_start + self.incoming - self.expense + self.loan - self.debt
+        self.balance_at_end = self.balance_at_start + self.incoming \
+                              + self.savings - self.expense + self.loan - self.debt
 
 
 class StatisticDialog(QDialog, Ui_StatisticDialog):
@@ -94,6 +101,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.balance_at_start = QCPBars(customplot.xAxis, customplot.yAxis)
             self.incoming = QCPBars(customplot.xAxis, customplot.yAxis)
             self.expense = QCPBars(customplot.xAxis, customplot.yAxis)
+            self.savings = QCPBars(customplot.xAxis, customplot.yAxis)
             self.loan = QCPBars(customplot.xAxis, customplot.yAxis)
             self.debt = QCPBars(customplot.xAxis, customplot.yAxis)
             self.balance_at_end = QCPBars(customplot.xAxis, customplot.yAxis)
@@ -107,6 +115,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.__graphic.addPlottable(self.balance_at_start)
             self.__graphic.addPlottable(self.incoming)
             self.__graphic.addPlottable(self.expense)
+            self.__graphic.addPlottable(self.savings)
             self.__graphic.addPlottable(self.loan)
             self.__graphic.addPlottable(self.debt)
             self.__graphic.addPlottable(self.balance_at_end)
@@ -114,6 +123,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.balance_at_start.setName(QCoreApplication.translate('Bars', 'Balance\nat start of month'))
             self.incoming.setName(QCoreApplication.translate('Bars', 'Incoming'))
             self.expense.setName(QCoreApplication.translate('Bars', 'Expense'))
+            self.savings.setName(QCoreApplication.translate('Bars', 'Savings'))
             self.loan.setName(QCoreApplication.translate('Bars', 'Loan'))
             self.debt.setName(QCoreApplication.translate('Bars', 'Debt'))
             self.balance_at_end.setName(QCoreApplication.translate('Bars', 'Balance\nat end of month'))
@@ -133,6 +143,10 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.expense.setPen(pen)
             self.expense.setBrush(QColor(10, 90, 190, 50))
             # self.expense.setWidth(0.3)
+            # savings
+            pen.setColor(QColor(150, 90, 190))
+            self.savings.setPen(pen)
+            self.savings.setBrush(QColor(150, 90, 190, 50))
             # loan
             pen.setColor(QColor(150, 220, 70))
             self.loan.setPen(pen)
@@ -152,6 +166,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
                 self.balance_at_start.setWidth(self.__width)
                 self.incoming.setWidth(self.__width)
                 self.expense.setWidth(self.__width)
+                self.savings.setWidth(self.__width)
                 self.loan.setWidth(self.__width)
                 self.debt.setWidth(self.__width)
                 self.balance_at_end.setWidth(self.__width)
@@ -230,10 +245,12 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             month_statistic_data.balance_at_start = float()
         incoming_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/incoming' % (str(year), str(month)))
         expense_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/expense' % (str(year), str(month)))
+        saving_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/saving' % (str(year), str(month)))
         load_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/loan' % (str(year), str(month)))
         debt_items = tree.xpath('///year[@value=%s]/month[@value=%s]/*/debt' % (str(year), str(month)))
         month_statistic_data.incoming = self.__get_item_sum(incoming_items)
         month_statistic_data.expense = self.__get_item_sum(expense_items)
+        month_statistic_data.savings = self.__get_item_sum(saving_items)
         month_statistic_data.loan = self.__get_item_sum(load_items)
         month_statistic_data.debt = self.__get_item_sum(debt_items)
         month_statistic_data.make_balance_at_end()
@@ -260,12 +277,14 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self.__bar_group.append(bars.balance_at_start)
         self.__bar_group.append(bars.incoming)
         self.__bar_group.append(bars.expense)
+        self.__bar_group.append(bars.savings)
         self.__bar_group.append(bars.loan)
         self.__bar_group.append(bars.debt)
         self.__bar_group.append(bars.balance_at_end)
         bars.balance_at_start.setData([3], [month_data.balance_at_start])
         bars.incoming.setData([3], [month_data.incoming])
         bars.expense.setData([3], [month_data.expense])
+        bars.savings.setData([3], [month_data.savings])
         bars.loan.setData([3], [month_data.loan])
         bars.debt.setData([3], [month_data.debt])
         bars.balance_at_end.setData([3], [month_data.balance_at_end])
@@ -308,7 +327,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.yAxis.setRange(-100, max(max(balance_at_start_data), max(incoming_data),
                                                max(expense_data), max(loan_data),
                                                max(debt_data), max(balance_at_end_data)) + 5000)
-        for i in range(0, 6):
+        for i in range(0, 7):
             self._graphic.addGraph()
         self._graphic.xAxis.setTickVectorLabels(labels)
         self._graphic.xAxis.setNumberPrecision(0)
@@ -324,16 +343,20 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.graph(2).setName(QCoreApplication.translate('StatisticDialog', 'Expense'))
         self._graphic.graph(2).setPen(QPen(Qt.green))
         self._graphic.graph(2).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssStar, 8))
-        self._graphic.graph(3).setData(datax, loan_data)
-        self._graphic.graph(3).setName(QCoreApplication.translate('StatisticDialog', 'Loan'))
-        self._graphic.graph(3).setPen(QPen(Qt.yellow))
-        self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDisc, 8))
-        self._graphic.graph(4).setData(datax, debt_data)
-        self._graphic.graph(4).setName(QCoreApplication.translate('StatisticDialog', 'Debt'))
-        self._graphic.graph(4).setPen(QPen(Qt.gray))
-        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 8))
-        self._graphic.graph(5).setData(datax, balance_at_end_data)
-        self._graphic.graph(5).setPen(QPen(Qt.darkRed))
-        self._graphic.graph(5).setName(QCoreApplication.translate('StatisticDialog', 'Balance\nat end of month'))
+        self._graphic.graph(3).setData(datax, expense_data)
+        self._graphic.graph(3).setName(QCoreApplication.translate('StatisticDialog', 'Savings'))
+        self._graphic.graph(3).setPen(QPen(Qt.green))
+        self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCross, 8))
+        self._graphic.graph(4).setData(datax, loan_data)
+        self._graphic.graph(4).setName(QCoreApplication.translate('StatisticDialog', 'Loan'))
+        self._graphic.graph(4).setPen(QPen(Qt.yellow))
+        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDisc, 8))
+        self._graphic.graph(5).setData(datax, debt_data)
+        self._graphic.graph(5).setName(QCoreApplication.translate('StatisticDialog', 'Debt'))
+        self._graphic.graph(5).setPen(QPen(Qt.gray))
+        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 8))
+        self._graphic.graph(6).setData(datax, balance_at_end_data)
+        self._graphic.graph(6).setPen(QPen(Qt.darkRed))
+        self._graphic.graph(6).setName(QCoreApplication.translate('StatisticDialog', 'Balance\nat end of month'))
         self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
         self._graphic.replot()

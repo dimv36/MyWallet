@@ -3,5 +3,5 @@ from PyQt5.QtCore import QAbstractItemModel
 
 
 class StatisticTreeModel(QAbstractItemModel):
-    
+    pass
 
