@@ -18,7 +18,35 @@
     <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeView" name="_statistic_view">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="MousePlot" name="_graphic" native="true"/>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QDialogButtonBox" name="_buttons">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -26,33 +54,6 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QSplitter" name="splitter">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QTreeWidget" name="_periods">
-      <property name="minimumSize">
-       <size>
-        <width>50</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <column>
-       <property name="text">
-        <string>Statistic periods</string>
-       </property>
-      </column>
-     </widget>
-     <widget class="MousePlot" name="_graphic" native="true"/>
     </widget>
    </item>
   </layout>

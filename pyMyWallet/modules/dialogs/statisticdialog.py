@@ -3,17 +3,12 @@ from lxml import etree
 from enum import Enum
 
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
-from PyQt5.QtCore import QCoreApplication, pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, QCoreApplication
 from PyQt5.QtGui import QColor, QPen
 from qcustomplot.qcustomplot import QCPBars, QCPBarsGroup, QCP, QCPScatterStyle
 
+from modules.mvc.statistictreemodel import StatisticTreeItem, StatisticItemType, StatisticItemData, StatisticTreeModel
 from modules.ui.ui_statisticdialog import Ui_StatisticDialog
-
-
-class _StatisticItemType(Enum):
-    ROOT = QTreeWidgetItem.UserType
-    ITEM_YEAR = QTreeWidgetItem.UserType + 1
-    ITEM_MONTH = QTreeWidgetItem.UserType + 2
 
 
 class _MonthName(Enum):
@@ -144,7 +139,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.expense.setBrush(QColor(10, 90, 190, 50))
             # self.expense.setWidth(0.3)
             # savings
-            pen.setColor(QColor(150, 90, 190))
+            pen.setColor(QColor(150, 50, 10))
             self.savings.setPen(pen)
             self.savings.setBrush(QColor(150, 90, 190, 50))
             # loan
@@ -178,6 +173,8 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self.__graphics = []
         self.__bar_group = QCPBarsGroup(self._graphic)
         self.__bar_groups = []
+        self.__statistic_model = StatisticTreeModel()
+        self._statistic_view.setModel(self.__statistic_model)
         self.__init_plottable()
         self.__create_statistic_items()
         self.__init_signal_slots()
@@ -201,32 +198,37 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.setInteractions(QCP.Interactions(flags))
 
     def __init_signal_slots(self):
-        self._periods.itemClicked.connect(self.__on_item_clicked)
+        self._statistic_view.clicked.connect(self.__on_item_clicked)
 
     @pyqtSlot(QTreeWidgetItem)
-    def __on_item_clicked(self, item):
-        if item.type() == _StatisticItemType.ROOT.value:
-            pass
-        elif item.type() == _StatisticItemType.ITEM_YEAR.value:
-            self.__make_year_statistic(item)
-        elif item.type() == _StatisticItemType.ITEM_MONTH.value:
-            self.__make_month_statistic(item)
+    def __on_item_clicked(self, index):
+        if index.isValid():
+            parent_index = index.parent()
+            item = self.__statistic_model.item_by_indexes(index, parent_index)
+            if item.type() == StatisticItemType.YEAR:
+                self.__make_year_statistic(item)
+            elif item.type() == StatisticItemType.MONTH:
+                self.__make_month_statistic(item)
 
     def __create_statistic_items(self):
-        root_item = QTreeWidgetItem(self._periods, _StatisticItemType.ROOT.value)
-        root_item.setText(0, 'mywallet')
         if self.__wallet_root is None:
             return
         years = self.__wallet_root.findall('year')
         for year in years:
-            year_item = QTreeWidgetItem(root_item, _StatisticItemType.ITEM_YEAR.value)
-            year_item.setText(0, year.attrib['value'])
+            year_item_data = StatisticItemData(StatisticItemType.YEAR,
+                                               year.attrib['value']
+                                               )
+            year_item = StatisticTreeItem(year_item_data, self.__statistic_model.root())
+            self.__statistic_model.root().insert_child(year_item)
             months = year.findall('month')
             for month in months:
-                month_item = QTreeWidgetItem(year_item, _StatisticItemType.ITEM_MONTH.value)
-                long_month_name = _MonthName(int(month.attrib['value'])).name
-                month_item.setText(0, long_month_name)
-        self._periods.expandAll()
+                month_number = int(month.attrib['value'])
+                month_item_data = StatisticItemData(StatisticItemType.MONTH,
+                                                    _MonthName(int(month_number)).name,
+                                                    _MonthName.translated_names(month_number))
+                month_item = StatisticTreeItem(month_item_data, year_item)
+                year_item.insert_child(month_item)
+        self._statistic_view.expandAll()
 
     def __get_item_sum(self, items):
         result = float()
@@ -262,16 +264,17 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.__graphics.clear()
             self._graphic.clearGraphs()
         year_item = month_item.parent()
-        year = int(year_item.text(0))
-        month = _MonthName.from_string(month_item.text(0)).value
+        year = int(year_item.name())
+        month = _MonthName.from_string(month_item.name()).value
         month_data = self.__get_month_statistic(month, year)
         self._graphic.xAxis.setTicks(False)
         self._graphic.xAxis.setLabel(QCoreApplication.translate('StatisticDialog',
-                                                                '%s %s') % (month_item.text(0), year_item.text(0)))
+                                                                '%s %s') % (month_item.translated_name(),
+                                                                            year_item.name()))
         self._graphic.yAxis.setRange(-100, max(month_data.balance_at_start, month_data.incoming,
                                             month_data.expense, month_data.loan,
                                             month_data.debt, month_data.balance_at_end) + 5000)
-        self._graphic.xAxis.setRange(0.5, 6)
+        self._graphic.xAxis.setRange(0.5, 7)
         bars = self.Bars(self._graphic)
         self.__graphics.append(bars)
         self.__bar_group.append(bars.balance_at_start)
@@ -281,13 +284,13 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self.__bar_group.append(bars.loan)
         self.__bar_group.append(bars.debt)
         self.__bar_group.append(bars.balance_at_end)
-        bars.balance_at_start.setData([3], [month_data.balance_at_start])
-        bars.incoming.setData([3], [month_data.incoming])
-        bars.expense.setData([3], [month_data.expense])
-        bars.savings.setData([3], [month_data.savings])
-        bars.loan.setData([3], [month_data.loan])
-        bars.debt.setData([3], [month_data.debt])
-        bars.balance_at_end.setData([3], [month_data.balance_at_end])
+        bars.balance_at_start.setData([4], [month_data.balance_at_start])
+        bars.incoming.setData([4], [month_data.incoming])
+        bars.expense.setData([4], [month_data.expense])
+        bars.savings.setData([4], [month_data.savings])
+        bars.loan.setData([4], [month_data.loan])
+        bars.debt.setData([4], [month_data.debt])
+        bars.balance_at_end.setData([4], [month_data.balance_at_end])
         self._graphic.replot()
 
     def __make_year_statistic(self, year_item):
@@ -295,25 +298,27 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self._graphic.clearPlottables()
             self.__graphics.clear()
             self.__bar_groups.clear()
-        year = int(year_item.text(0))
+        year = int(year_item.name())
         balance_at_start_data = []
         incoming_data = []
         expense_data = []
+        savings_data = []
         loan_data = []
         debt_data = []
         balance_at_end_data = []
         labels = ['']
-        datax = [i + 1 for i in range(0, year_item.childCount())]
+        datax = [i + 1 for i in range(0, year_item.child_count())]
         self._graphic.xAxis.setLabel(QCoreApplication.translate('StatisticDialog',
                                                                 'Statistic by %s  year') % str(year))
-        for i in range(0, year_item.childCount()):
+        for i in range(0, year_item.child_count()):
             month_item = year_item.child(i)
-            labels.append('%s\n%s' % (month_item.text(0), str(year)))
-            month = _MonthName.from_string(month_item.text(0)).value
+            labels.append('%s\n%s' % (month_item.translated_name(), str(year)))
+            month = _MonthName.from_string(month_item.name()).value
             month_data = self.__get_month_statistic(month, year)
             balance_at_start_data.append(month_data.balance_at_start)
             incoming_data.append(month_data.incoming)
             expense_data.append(month_data.expense)
+            savings_data.append(month_data.savings)
             loan_data.append(month_data.loan)
             debt_data.append(month_data.debt)
             balance_at_end_data.append(month_data.balance_at_end)
@@ -325,8 +330,9 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.xAxis.setSubTickCount(4)
         self._graphic.xAxis.setTickStep(1)
         self._graphic.yAxis.setRange(-100, max(max(balance_at_start_data), max(incoming_data),
-                                               max(expense_data), max(loan_data),
-                                               max(debt_data), max(balance_at_end_data)) + 5000)
+                                               max(expense_data), max(savings_data),
+                                               max(loan_data), max(debt_data),
+                                               max(balance_at_end_data)) + 5000)
         for i in range(0, 7):
             self._graphic.addGraph()
         self._graphic.xAxis.setTickVectorLabels(labels)
@@ -343,7 +349,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.graph(2).setName(QCoreApplication.translate('StatisticDialog', 'Expense'))
         self._graphic.graph(2).setPen(QPen(Qt.green))
         self._graphic.graph(2).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssStar, 8))
-        self._graphic.graph(3).setData(datax, expense_data)
+        self._graphic.graph(3).setData(datax, savings_data)
         self._graphic.graph(3).setName(QCoreApplication.translate('StatisticDialog', 'Savings'))
         self._graphic.graph(3).setPen(QPen(Qt.green))
         self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCross, 8))

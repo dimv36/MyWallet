@@ -19,7 +19,7 @@ class MousePlot(QCustomPlot):
                 bar = self.plottableBarsAt(event.pos())
                 graph = self.plottableGraphAt(event.pos())
                 if bar:
-                    data = QCPBarData(bar.data()[3.0])
+                    data = QCPBarData(bar.data()[4.0])
                     y = data.value
                     QToolTip.showText(event.globalPos(),
                                       QCoreApplication.translate('MousePlot',

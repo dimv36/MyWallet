@@ -1,18 +1,25 @@
 __author__ = 'dimv36'
 from enum import Enum
 
-class StatisticTreeItemType(Enum):
-    TYPE = 0
-    NAME = 1
-    TRANSLATED_NAME = 2
+class StatisticItemType(Enum):
+    ROOT = 0
+    YEAR = 1
+    MONTH = 2
 
 
 class StatisticItemData:
-    def __init__(self, item_type, name, translated_name):
+    def __init__(self, item_type, name, translated_name=None):
         self.type = item_type
         self.name = name
         self.translated_name = translated_name
 
+    def __repr__(self):
+        return 'StatisticItemData: Type: %s\n' \
+               'Name: %s\n' \
+               'Translated name: %s\n' % (self.type, self.name, self.translated_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 class StatisticItemException(Exception):
     pass
@@ -33,20 +40,24 @@ class StatisticTreeItem:
     def child_count(self):
         return len(self.__child_items)
 
-    def data(self, column):
-        if column == StatisticTreeItemType.TYPE.value:
-            return self.__statistic_item_data.type
-        elif column == StatisticTreeItemType.NAME.value:
-            return self.__statistic_item_data.name
-        elif column == StatisticTreeItemType.TRANSLATED_NAME.value:
-            return self.__statistic_item_data.translated_name
-        else:
-            raise StatisticItemException('Unexpected column number: %d' % column)
+    def name(self):
+        return self.__statistic_item_data.name
 
-    def insert_children(self, position, item):
-        if position < 0 or position > len(self.__child_items):
-            raise StatisticItemException('Unexpected position: %d' % position)
+    def translated_name(self):
+        if not self.__statistic_item_data.translated_name:
+            return self.__statistic_item_data.name
+        return self.__statistic_item_data.translated_name
+
+    def type(self):
+        return self.__statistic_item_data.type
+
+    def insert_child(self, item):
         self.__child_items.append(item)
+
+    def row(self):
+        if self.__parent:
+            return self.__parent.childs().index(self)
+        return 0
 
     def parent(self):
         return self.__parent
@@ -58,19 +69,3 @@ class StatisticTreeItem:
         if position < 0 or position > len(self.__child_items):
             raise StatisticItemException('Unexpected position: %d' % position)
         del self.__child_items[position]
-
-    def row(self):
-        pass
-        if self.__parent:
-            return self.__parent.childs()
-        return 0
-
-    def set_data(self, column, value):
-        if column < StatisticTreeItemType.TYPE.value or column > StatisticTreeItemType.TRANSLATED_NAME.value:
-            raise StatisticItemException('Unexpected column: %d' % column)
-        if column == StatisticTreeItemType.TYPE.value:
-            self.__statistic_item_data.type = value
-        elif column == StatisticTreeItemType.NAME.value:
-            self.__statistic_item_data.name = value
-        elif column == StatisticTreeItemType.TRANSLATED_NAME.value:
-            self.__statistic_item_data.translated_name = value

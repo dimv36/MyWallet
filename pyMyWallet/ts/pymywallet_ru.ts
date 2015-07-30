@@ -47,41 +47,41 @@
 <context>
     <name>Bars</name>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="123"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="118"/>
         <source>Balance
 at start of month</source>
         <translation>Баланс 
 на начало месяца</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="124"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="119"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="125"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="120"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="127"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="122"/>
         <source>Loan</source>
         <translation>Займ</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="128"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="123"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="129"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="124"/>
         <source>Balance
 at end of month</source>
         <translation>Остаток
 на конец месяца</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="126"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="121"/>
         <source>Savings</source>
         <translation>Накопления</translation>
     </message>
@@ -310,68 +310,76 @@ email: carriingfate92@yandex.ru
 <context>
     <name>StatisticDialog</name>
     <message>
-        <location filename="modules/ui/ui_statisticdialog.py" line="43"/>
+        <location filename="modules/ui/ui_statisticdialog.py" line="48"/>
         <source>Statistics</source>
         <translation>Статистика</translation>
     </message>
     <message>
         <location filename="modules/ui/ui_statisticdialog.py" line="44"/>
         <source>Statistic periods</source>
-        <translation>Периоды отображения статистики</translation>
+        <translation type="obsolete">Периоды отображения статистики</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="192"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="189"/>
         <source>rubles</source>
         <translation>рубли</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="269"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="272"/>
         <source>%s %s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="307"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="311"/>
         <source>Statistic by %s  year</source>
         <translation>Статистика %s года</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="339"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="343"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="343"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="347"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="351"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="355"/>
         <source>Loan</source>
         <translation>Займ</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="355"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="359"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="335"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="339"/>
         <source>Balance
 at start of month</source>
         <translation>Баланс 
 на начало месяца</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="360"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="364"/>
         <source>Balance
 at end of month</source>
         <translation>Остаток
 на конец месяца</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="347"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="351"/>
         <source>Savings</source>
         <translation>Накопления</translation>
+    </message>
+</context>
+<context>
+    <name>StatisticTreeModel</name>
+    <message>
+        <location filename="modules/mvc/statistictreemodel.py" line="10"/>
+        <source>Statistic periods</source>
+        <translation>Периоды отображения статистики</translation>
     </message>
 </context>
 <context>
@@ -458,62 +466,62 @@ at end of month</source>
 <context>
     <name>_MonthName</name>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="42"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="37"/>
         <source>January</source>
         <translation>Январь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="44"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="39"/>
         <source>February</source>
         <translation>Февраль</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="46"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="41"/>
         <source>March</source>
         <translation>Март</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="48"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="43"/>
         <source>April</source>
         <translation>Апрель</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="50"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="45"/>
         <source>May</source>
         <translation>Май</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="52"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="47"/>
         <source>June</source>
         <translation>Июнь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="54"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="49"/>
         <source>July</source>
         <translation>Июль</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="56"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="51"/>
         <source>August</source>
         <translation>Авшусь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="58"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="53"/>
         <source>September</source>
         <translation>Сентябрь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="62"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="57"/>
         <source>November</source>
         <translation>Ноябрь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="64"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="59"/>
         <source>December</source>
         <translation>Декабрь</translation>
     </message>
     <message>
-        <location filename="modules/dialogs/statisticdialog.py" line="60"/>
+        <location filename="modules/dialogs/statisticdialog.py" line="55"/>
         <source>October</source>
         <translation>Октябрь</translation>
     </message>

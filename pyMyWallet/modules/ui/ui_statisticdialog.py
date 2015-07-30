@@ -17,21 +17,26 @@ class Ui_StatisticDialog(object):
         StatisticDialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(StatisticDialog)
         self.gridLayout.setObjectName("gridLayout")
+        self.splitter = QtWidgets.QSplitter(StatisticDialog)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setObjectName("splitter")
+        self._statistic_view = QtWidgets.QTreeView(self.splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self._statistic_view.sizePolicy().hasHeightForWidth())
+        self._statistic_view.setSizePolicy(sizePolicy)
+        self._statistic_view.setMinimumSize(QtCore.QSize(300, 0))
+        self._statistic_view.setMaximumSize(QtCore.QSize(300, 16777215))
+        self._statistic_view.setObjectName("_statistic_view")
+        self._graphic = MousePlot(self.splitter)
+        self._graphic.setObjectName("_graphic")
+        self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
         self._buttons = QtWidgets.QDialogButtonBox(StatisticDialog)
         self._buttons.setOrientation(QtCore.Qt.Horizontal)
         self._buttons.setStandardButtons(QtWidgets.QDialogButtonBox.Ok)
         self._buttons.setObjectName("_buttons")
-        self.gridLayout.addWidget(self._buttons, 1, 1, 1, 1)
-        self.splitter = QtWidgets.QSplitter(StatisticDialog)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName("splitter")
-        self._periods = QtWidgets.QTreeWidget(self.splitter)
-        self._periods.setMinimumSize(QtCore.QSize(50, 0))
-        self._periods.setMaximumSize(QtCore.QSize(250, 16777215))
-        self._periods.setObjectName("_periods")
-        self._graphic = MousePlot(self.splitter)
-        self._graphic.setObjectName("_graphic")
-        self.gridLayout.addWidget(self.splitter, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self._buttons, 1, 0, 1, 1)
 
         self.retranslateUi(StatisticDialog)
         self._buttons.accepted.connect(StatisticDialog.accept)
@@ -41,7 +46,6 @@ class Ui_StatisticDialog(object):
     def retranslateUi(self, StatisticDialog):
         _translate = QtCore.QCoreApplication.translate
         StatisticDialog.setWindowTitle(_translate("StatisticDialog", "Statistics"))
-        self._periods.headerItem().setText(0, _translate("StatisticDialog", "Statistic periods"))
 
-from .mouseplot import MousePlot
+from modules.ui.mouseplot import MousePlot
 import modules.resources.resource_rc

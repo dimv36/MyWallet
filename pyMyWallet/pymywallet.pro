@@ -7,6 +7,8 @@ SOURCES += \
     modules/dialogs/statisticdialog.py \
     modules/mvc/walletmodel.py \
     modules/mvc/walletitem.py \
+    modules/mvc/statisticitem.py \
+    modules/mvc/statistictreemodel.py \
     modules/mywallet.py \
     modules/enums.py \
     modules/version.py \
