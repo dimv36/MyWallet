@@ -5,6 +5,7 @@ SOURCES += \
     modules/dialogs/changemonthbalance.py \
     modules/dialogs/addsourcesdialog.py \
     modules/dialogs/statisticdialog.py \
+    modules/dialogs/payoffdebtdialog.py \
     modules/mvc/walletmodel.py \
     modules/mvc/walletitem.py \
     modules/mvc/statisticitem.py \
@@ -31,4 +32,5 @@ FORMS += \
     modules/ui/mywallet.ui \
     modules/ui/changemonthbalance.ui \
     modules/ui/addsourcesdialog.ui \
-    modules/ui/statisticdialog.ui
+    modules/ui/statisticdialog.ui \
+    modules/ui/payoffdebtdialog.ui

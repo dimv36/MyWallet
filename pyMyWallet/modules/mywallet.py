@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import (
     QSettings, QObject, pyqtSlot, pyqtSignal, QCoreApplication,
-    QDir, QSize, QPoint, QFileInfo, QModelIndex
+    QDir, QSize, QPoint, QFileInfo, QModelIndex, QDate
 )
 
 from modules.mvc.walletmodel import WalletModel
@@ -54,6 +54,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_change_balance.pyqtConfigure(triggered=self.on_change_balance)
         self._action_about.pyqtConfigure(triggered=self.on_about)
         self._action_show_statistic.pyqtConfigure(triggered=self.on_statistic_show)
+        self._action_pay_debt_off.pyqtConfigure(triggered=self.on_pay_debt_off)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -156,8 +157,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
         wallet_data = self._model.wallet_data()
         total = wallet_data.balance + wallet_data.incoming + \
-                wallet_data.savings - wallet_data.expense + \
-                wallet_data.loan - wallet_data.debt
+                wallet_data.savings - wallet_data.expense
         total = round(total, 2)
         self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
         self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
@@ -271,3 +271,17 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def on_statistic_show(self):
         dialog = StatisticDialog(self._model.root())
         dialog.exec()
+
+    # Слот погашения долга
+    @pyqtSlot()
+    def on_pay_debt_off(self):
+        dialog = PayOffDebtDialog()
+        if dialog.exec() == QDialog.Accepted:
+            data = dialog.data()
+            self._model.beginResetModel()
+            self._model.append_entry(QDate.currentDate().toString('dd.MM.yyyy'),
+                                     str(-1 * data[0]),
+                                     data[1],
+                                     WalletItemType.DEBT)
+            self._signals.signal_wallet_changed.emit()
+            self._model.endResetModel()

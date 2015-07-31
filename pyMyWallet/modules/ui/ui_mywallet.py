@@ -117,6 +117,8 @@ class Ui_MyWallet(object):
         icon7.addPixmap(QtGui.QPixmap(":/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self._action_about.setIcon(icon7)
         self._action_about.setObjectName("_action_about")
+        self._action_pay_debt_off = QtWidgets.QAction(MyWallet)
+        self._action_pay_debt_off.setObjectName("_action_pay_debt_off")
         self._menu_file.addAction(self._action_new_wallet)
         self._menu_file.addAction(self._action_open_wallet)
         self._menu_file.addAction(self._action_settings)
@@ -128,6 +130,7 @@ class Ui_MyWallet(object):
         self._menu_wallet.addAction(self._action_add_item)
         self._menu_wallet.addAction(self._action_delete_item)
         self._menu_wallet.addAction(self._action_change_balance)
+        self._menu_wallet.addAction(self._action_pay_debt_off)
         self._menu_wallet.addSeparator()
         self._menu_wallet.addAction(self._action_show_statistic)
         self._main_menu.addAction(self._menu_file.menuAction())
@@ -169,5 +172,6 @@ class Ui_MyWallet(object):
         self._action_change_balance.setText(_translate("MyWallet", "Change balance"))
         self._action_new_wallet.setText(_translate("MyWallet", "New wallet"))
         self._action_about.setText(_translate("MyWallet", "About"))
+        self._action_pay_debt_off.setText(_translate("MyWallet", "Pay debt off"))
 
 import modules.resources.resource_rc

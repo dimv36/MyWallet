@@ -86,7 +86,7 @@ class _MonthStatisticData:
 
     def make_balance_at_end(self):
         self.balance_at_end = self.balance_at_start + self.incoming \
-                              + self.savings - self.expense + self.loan - self.debt
+                              + self.savings - self.expense
 
 
 class StatisticDialog(QDialog, Ui_StatisticDialog):
@@ -303,8 +303,11 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         incoming_data = []
         expense_data = []
         savings_data = []
+        saving_aggregate = float()
         loan_data = []
+        loan_aggregate = float()
         debt_data = []
+        debt_aggreagate = float()
         balance_at_end_data = []
         labels = ['']
         datax = [i + 1 for i in range(0, year_item.child_count())]
@@ -318,9 +321,12 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             balance_at_start_data.append(month_data.balance_at_start)
             incoming_data.append(month_data.incoming)
             expense_data.append(month_data.expense)
-            savings_data.append(month_data.savings)
-            loan_data.append(month_data.loan)
-            debt_data.append(month_data.debt)
+            saving_aggregate += month_data.savings
+            savings_data.append(saving_aggregate)
+            loan_aggregate += month_data.loan
+            loan_data.append(loan_aggregate)
+            debt_aggreagate += month_data.debt
+            debt_data.append(debt_aggreagate)
             balance_at_end_data.append(month_data.balance_at_end)
         self._graphic.xAxis.setAutoTickLabels(False)
         self._graphic.xAxis.setRange(min(datax) - 0.1, max(datax) + 0.1)

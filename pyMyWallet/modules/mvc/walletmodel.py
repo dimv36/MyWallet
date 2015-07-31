@@ -161,7 +161,6 @@ class WalletModel(QAbstractTableModel):
             tag = 'expense'
             self.__wallet_data.expense += float(amount)
         elif entry_type == WalletItemType.SAVING:
-            print('type: saving')
             row.set_saving(date, item)
             tag = 'saving'
             self.__wallet_data.savings += float(amount)
@@ -171,8 +170,10 @@ class WalletModel(QAbstractTableModel):
             self.__wallet_data.loan += float(amount)
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
+            row.set_incoming(date, item)
             tag = 'debt'
             self.__wallet_data.debt += float(amount)
+            self.__wallet_data.incoming += float(amount)
         self.__items.append(row)
         self.signals.signal_model_was_changed.emit()
         if add_to_xml:
@@ -275,6 +276,22 @@ class WalletModel(QAbstractTableModel):
         except TypeError:
             self.__wallet_data.balance = float()
 
+    def __global_sum_value(self, tree, tag):
+        result = float()
+        items = tree.xpath('///year/month/day/%s' % tag)
+        for item in items:
+            result += float(item.attrib['value'])
+        return result
+
+    def __savings(self, tree):
+        return self.__global_sum_value(tree, 'saving')
+
+    def __debt(self, tree):
+        return self.__global_sum_value(tree, 'debt')
+
+    def __loan(self, tree):
+        return self.__global_sum_value(tree, 'loan')
+
     def __read_wallet(self):
         # Очищаем модель
         self.__items.clear()
@@ -317,6 +334,10 @@ class WalletModel(QAbstractTableModel):
                         self.__append_entries_from_xml(day_date, savings_entries, WalletItemType.SAVING)
                         self.__append_entries_from_xml(day_date, loan_entries, WalletItemType.LOAN)
                         self.__append_entries_from_xml(day_date, debt_entries, WalletItemType.DEBT)
+                    # Определяем накопления с момента начала учёта финансов
+                    self.__wallet_data.savings = self.__savings(tree)
+                    self.__wallet_data.loan = self.__loan(tree)
+                    self.__wallet_data.debt = self.__debt(tree)
                 else:
                     # Вычисляем остаток на начало месяца на основе предыдущих данных
                     self.__month_rest(tree, current_date.month())
@@ -325,7 +346,7 @@ class WalletModel(QAbstractTableModel):
 
     def __write_wallet(self, root):
         def indent(elem, level=0):
-            i = "\n" + level*"  "
+            i = '\n' + level * '  '
             if len(elem):
                 if not elem.text or not elem.text.strip():
                     elem.text = i + "  "

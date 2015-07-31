@@ -50,7 +50,7 @@ class WalletRow:
             elif self._type == WalletItemType.LOAN:
                 self._loan = item
             elif self._type == WalletItemType.DEBT:
-                self._expense = item
+                self._debt = item
             else:
                 raise WalletException('Unknown wallet type item: %d' % self._type)
         else:
