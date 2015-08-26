@@ -173,7 +173,8 @@ class WalletModel(QAbstractTableModel):
             row.set_incoming(date, item)
             tag = 'debt'
             self.__wallet_data.debt += float(amount)
-            self.__wallet_data.incoming += float(amount)
+            if float(amount) > 0:
+                self.__wallet_data.incoming += float(amount)
         self.__items.append(row)
         self.signals.signal_model_was_changed.emit()
         if add_to_xml:
