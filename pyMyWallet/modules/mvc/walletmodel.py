@@ -170,10 +170,10 @@ class WalletModel(QAbstractTableModel):
             self.__wallet_data.loan += float(amount)
         elif entry_type == WalletItemType.DEBT:
             row.set_debt(date, item)
-            row.set_incoming(date, item)
             tag = 'debt'
             self.__wallet_data.debt += float(amount)
             if float(amount) > 0:
+                row.set_incoming(date, item)
                 self.__wallet_data.incoming += float(amount)
         self.__items.append(row)
         self.signals.signal_model_was_changed.emit()
