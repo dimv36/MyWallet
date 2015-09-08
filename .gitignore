@@ -21,6 +21,7 @@ Makefile
 
 debug/*
 release/*
+build
 
 # python
 *.pyc
