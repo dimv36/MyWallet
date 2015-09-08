@@ -15,6 +15,7 @@ from modules.enums import WalletItemType, WalletItemModelType
 from modules.dialogs import *
 from modules.ui.ui_mywallet import Ui_MyWallet
 from modules.version import MY_WALLET_VERSION_STR
+from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery
 
 
 class MyWallet(QMainWindow, Ui_MyWallet):
@@ -39,7 +40,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
 
         # Устанавливаем модель
         self._model = WalletModel(self.__current_path + self.__wallet_name)
-        self.read_wallet_and_update_view()
+        self._model.beginResetModel()
+        self._view.setModel(self._model)
+        self._view.resizeColumnsToContents()
+        self._model.endResetModel()
 
         # Отправляем сигнал обновления заголовка окна
         self._signals.signal_wallet_changed.emit()
@@ -78,7 +82,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self.set_current_path(QDir.home().path() + '/MyWallet/')
             elif system() == 'Linux':
                 self.set_current_path(QDir.home().path() + '/.MyWallet/')
-            self.__wallet_name = 'wallet.xml'
+            self.__wallet_name = 'wallet.db'
         settings.endGroup()
 
     def write_settings(self):
@@ -93,7 +97,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         settings.endGroup()
 
     def read_wallet_and_update_view(self, wallet_path=None):
-        self._model.read_wallet(wallet_path)
         self._model.beginResetModel()
         self._view.setModel(self._model)
         self._model.endResetModel()
@@ -143,7 +146,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         file_name = QFileDialog.getOpenFileName(self,
                                                 QCoreApplication.translate('MyWallet', 'Choose file'),
                                                 QDir.current().path(),
-                                                QCoreApplication.translate('MyWallet', 'XML-files (*.xml)'))[0]
+                                                QCoreApplication.translate('MyWallet', 'DB-files (*.db)'))[0]
         directory = QFileInfo(file_name).dir().path()
         wallet_name = QFileInfo(file_name).fileName()
         if wallet_name and not file_name == self.__current_path + self.__wallet_name:
@@ -154,22 +157,23 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот обновления данных доходов/расходов/займов/долгов/остатка на начало месяца приложения
     @pyqtSlot()
     def on_update(self):
-        self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
-        wallet_data = self._model.wallet_data()
-        total = wallet_data.balance + wallet_data.incoming + \
-                wallet_data.savings - wallet_data.expense
-        total = round(total, 2)
-        self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
-        self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
-        self._label_saving_value.setText(str(round(wallet_data.savings, 2)))
-        self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
-        self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
-        self._label_balance_value.setText(str(round(wallet_data.balance, 2)))
-        if total >= 0:
-            self._label_total_value.setStyleSheet('QLabel { color : green }')
-        else:
-            self._label_total_value.setStyleSheet('QLabel { color : red }')
-        self._label_total_value.setText(str(total))
+        # self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
+        # wallet_data = self._model.wallet_data()
+        # total = wallet_data.balance + wallet_data.incoming + \
+        #         wallet_data.savings - wallet_data.expense
+        # total = round(total, 2)
+        # self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
+        # self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
+        # self._label_saving_value.setText(str(round(wallet_data.savings, 2)))
+        # self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
+        # self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
+        # self._label_balance_value.setText(str(round(wallet_data.balance, 2)))
+        # if total >= 0:
+        #     self._label_total_value.setStyleSheet('QLabel { color : green }')
+        # else:
+        #     self._label_total_value.setStyleSheet('QLabel { color : red }')
+        # self._label_total_value.setText(str(total))
+        pass
 
     # Слот создания нового бумажника
     @pyqtSlot()
