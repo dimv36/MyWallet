@@ -35,16 +35,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self.init_signal_slots()
         # Читаем настройки из конфигурационного файла
         self.read_settings()
-
-        # Устанавливаем модель
-        self._model = WalletModel(self.__current_path + self.__wallet_name)
-        self._model.beginResetModel()
-        self._view.setModel(self._model)
-        self._view.resizeColumnsToContents()
-        self._model.endResetModel()
-
-        # Отправляем сигнал обновления заголовка окна
-        self._signals.signal_wallet_changed.emit()
+        # Открываем бумажник
+        self.__open_wallet()
 
     def init_signal_slots(self):
         self._action_exit.pyqtConfigure(triggered=self.on_exit)
@@ -63,6 +55,17 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         if not path.endswith('/'):
             path += '/'
         self.__current_path = path
+
+    def __open_wallet(self):
+        # Устанавливаем модель
+        self._model = WalletModel(self.__current_path + self.__wallet_name)
+        self._model.beginResetModel()
+        self._view.setModel(self._model)
+        self._view.resizeColumnsToContents()
+        self._model.endResetModel()
+
+        # Отправляем сигнал обновления заголовка окна
+        self._signals.signal_wallet_changed.emit()
 
     def read_settings(self):
         settings = QSettings()
@@ -141,7 +144,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         if wallet_name and not file_name == self.__current_path + self.__wallet_name:
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
+            self.__open_wallet()
 
     # Слот обновления данных доходов/расходов/займов/долгов/остатка на начало месяца приложения
     @pyqtSlot()
@@ -150,7 +153,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         # Обновляем заголовок окна
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
         total = wallet_data.balance_at_start + wallet_data.incoming + \
-                wallet_data.savings - wallet_data.expense
+            wallet_data.savings - wallet_data.expense
         total = round(total, 2)
         self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
         self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
@@ -174,7 +177,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self._model.create_new_wallet(directory + wallet_name)
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
+            self._signals.signal_wallet_changed.emit()
 
     # Слот добавления источников данных
     @pyqtSlot()
@@ -242,7 +245,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот изменения остатка на начало месяца
     @pyqtSlot()
     def on_change_balance(self):
-        dialog = ChangeMonthBalance()
+        dialog = ChangeMonthBalanceDialog()
         dialog.set_month_balance(float(self._label_balance_value.text()))
         if dialog.exec() == QDialog.Accepted:
             balance = dialog.balance()
