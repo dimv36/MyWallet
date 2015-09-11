@@ -184,7 +184,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def on_add_item(self):
         dialog = AddSourcesDialog()
         if dialog.exec() == dialog.Accepted:
-            date = dialog.date().toString('dd.MM.yyyy')
+            date = dialog.date()
             incoming = dialog.incoming()
             expense = dialog.expense()
             savings = dialog.savings()
@@ -192,15 +192,15 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             debt = dialog.debt()
             self._model.beginResetModel()
             for item in incoming:
-                self._model.append_entry(date, item[0], item[1], WalletItemType.INCOMING)
+                self._model.add_entry(date, item, WalletItemType.INCOMING)
             for item in expense:
-                self._model.append_entry(date, item[0], item[1], WalletItemType.EXPENSE)
+                self._model.add_entry(date, item, WalletItemType.EXPENSE)
             for item in savings:
-                self._model.append_entry(date, item[0], item[1], WalletItemType.SAVING)
+                self._model.add_entry(date, item, WalletItemType.SAVING)
             for item in loan:
-                self._model.append_entry(date, item[0], item[1], WalletItemType.LOAN)
+                self._model.add_entry(date, item, WalletItemType.LOAN)
             for item in debt:
-                self._model.append_entry(date, item[0], item[1], WalletItemType.DEBT)
+                self._model.add_entry(date, item, WalletItemType.DEBT)
             self._model.endResetModel()
             self._view.resizeColumnsToContents()
             self._signals.signal_wallet_changed.emit()
@@ -210,36 +210,47 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот удаления записи из таблицы
     @pyqtSlot()
     def on_delete_item(self):
-        if not self._view.selectedIndexes():
+        selected_indexes = self._view.selectedIndexes()
+        if not selected_indexes:
             return
         # Определяем тип объекта
         item_type = None
-        item_data = []
-        for index in self._view.selectedIndexes():
+        day = int()
+        month = int()
+        year = int()
+        item = []
+        for index in selected_indexes:
             index = QModelIndex(index)
-            if index.column() == WalletItemModelType.INDEX_DATE:
-                item_data.append(index.data())
-            elif not index.column() == WalletItemModelType.INDEX_DATE and index.data():
-                if WalletItemModelType.INDEX_INCOMING.value <= index.column() \
-                        <= WalletItemModelType.INDEX_INCOMING_DESCRIPTION.value:
+            if index.column() == WalletItemModelType.INDEX_DAY.value:
+                day = self._model.data(index)
+            elif index.column() == WalletItemModelType.INDEX_MONTH.value:
+                month = self._model.data(index)
+            elif index.column() == WalletItemModelType.INDEX_YEAR.value:
+                year = self._model.data(index)
+            elif index.column() == WalletItemModelType.INDEX_INCOMING.value:
+                if index.data():
                     item_type = WalletItemType.INCOMING
-                elif WalletItemModelType.INDEX_EXPENSE.value <= index.column() \
-                        <= WalletItemModelType.INDEX_EXPENSE_DESCRIPTION.value:
+                    item.append(index.data())
+            elif index.column() == WalletItemModelType.INDEX_EXPENSE.value:
+                if index.data():
                     item_type = WalletItemType.EXPENSE
-                elif WalletItemModelType.INDEX_SAVINGS.value <= index.column() \
-                        <= WalletItemModelType.INDEX_SAVINGS_DESCRIPTION.value:
+                    item.append(index.data())
+            elif index.column() == WalletItemModelType.INDEX_SAVINGS.value:
+                if index.data():
                     item_type = WalletItemType.SAVING
-                elif WalletItemModelType.INDEX_LOAN.value <= index.column() \
-                        <= WalletItemModelType.INDEX_LOAN_DESCRIPTION.value:
+                    item.append(index.data())
+            elif index.column() == WalletItemModelType.INDEX_LOAN.value:
+                if index.data():
                     item_type = WalletItemType.LOAN
-                elif WalletItemModelType.INDEX_DEBT.value <= index.column() \
-                        <= WalletItemModelType.INDEX_DEBT_DESCRIPTION.value:
+                    item.append(index.data())
+            elif index.column() == WalletItemModelType.INDEX_DEBT.value:
+                if index.data():
                     item_type = WalletItemType.DEBT
-                item_data.append(index.data())
-        self._model.beginResetModel()
-        self._model.remove_entry(item_data[0], item_data[1], item_data[2], item_type)
+                    item.append(index.data())
+            elif index.column() == WalletItemModelType.INDEX_DESCRIPTION.value:
+                item.append(index.data())
+        self._model.remove_entry(QDate(year, month, day), item, item_type)
         self._model.endResetModel()
-        self._view.clearSelection()
         self._signals.signal_wallet_changed.emit()
 
     # Слот изменения остатка на начало месяца

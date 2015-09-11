@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QCoreApplication, Qt, QDate, QObject, pyqtSignal
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlRecord
-from modules.enums import WalletItemModelType
+from modules.enums import WalletItemModelType, WalletItemType
 
 
 class WalletModelException(Exception):
@@ -8,10 +8,10 @@ class WalletModelException(Exception):
 
 
 class WalletModel(QSqlTableModel):
-    WALLET_SQL_QUERY = 'SELECT day, month, year, ' \
-                       'incoming, expense, saving, ' \
-                       'loan, debt, description FROM wallet_data ' \
-                       'WHERE month = %d AND year = %d ORDER BY day;'
+    __WALLET_SELECT_SQL_QUERY = 'SELECT day, month, year, ' \
+                                'incoming, expense, saving, ' \
+                                'loan, debt, description FROM wallet_data ' \
+                                'WHERE month = %d AND year = %d ORDER BY day;'
 
     class Communicate(QObject):
         signal_model_was_changed = pyqtSignal()
@@ -58,6 +58,12 @@ class WalletModel(QSqlTableModel):
                            Qt.Horizontal,
                            QCoreApplication.translate('WalletModel', 'Debt'))
 
+    def __set_query(self, date=None):
+        if not date:
+            date = QDate.currentDate()
+        self.clear()
+        self.setQuery(QSqlQuery(self.__WALLET_SELECT_SQL_QUERY % (date.month(), date.year())))
+
     def get_wallet_info(self):
         def convert_to_float(_query, _record, _field):
             result = float()
@@ -102,7 +108,6 @@ class WalletModel(QSqlTableModel):
                                                                   'Can\'t connect to wallet %s') % self.__wallet)
         else:
             # Создаем таблицы
-
             create_query = ['DROP TABLE IF EXISTS wallet_data;',
                             'DROP TABLE IF EXISTS wallet_month_data;',
                             'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY,'
@@ -136,5 +141,57 @@ class WalletModel(QSqlTableModel):
         if not self.__db.open():
             raise WalletModelException(QCoreApplication.translate('WalletModel',
                                                                   'Can\'t connect to wallet %s') % self.__wallet)
-        self.setQuery(QSqlQuery(self.WALLET_SQL_QUERY % (QDate.currentDate().month(),
-                                                         QDate.currentDate().year())))
+        self.__set_query()
+
+    def add_entry(self, date, item, wallet_type):
+        values = 'NULL, %d, %d, %d,' % (date.day(), date.month(), date.year())
+        if wallet_type == WalletItemType.INCOMING:
+            values += ' %s, NULL, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
+        elif wallet_type == WalletItemType.EXPENSE:
+            values += ' NULL, %s, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
+        elif wallet_type == WalletItemType.SAVING:
+            values += ' NULL, NULL, %s, NULL, NULL, \'%s\'' % (item[0], item[1])
+        elif wallet_type == WalletItemType.LOAN:
+            values += ' NULL, NULL, NULL, %s, NULL, \'%s\'' % (item[0], item[1])
+        elif wallet_type == WalletItemType.DEBT:
+            values += ' NULL, NULL, NULL, NULL, %s, \'%s\'' % (item[0], item[1])
+        else:
+            raise WalletModelException('Unexpected type: %s' % wallet_type)
+        insert_query = 'INSERT INTO wallet_data VALUES(%s);' % values
+        query = QSqlQuery()
+        if not query.exec(insert_query):
+            raise WalletModelException('Could not insert data: \'%s\'' % insert_query)
+        self.__set_query()
+
+    def remove_entry(self, date, item, wallet_type):
+        self.beginResetModel()
+        sql = 'SELECT id FROM wallet_data WHERE day = %d AND month = %d AND year = %d AND '
+        if wallet_type == WalletItemType.INCOMING:
+            sql += 'incoming = \'%d\''
+        elif wallet_type == WalletItemType.EXPENSE:
+            sql += 'expense = \'%d\''
+        elif wallet_type == WalletItemType.SAVING:
+            sql += 'saving = \'%d\''
+        elif wallet_type == WalletItemType.LOAN:
+            sql += 'loan = \'%d\''
+        elif wallet_type == WalletItemType.DEBT:
+            sql += 'debt = \'%d\''
+        else:
+            raise WalletModelException('Unexpected type: %s', wallet_type)
+        sql += ' AND description = \'%s\' LIMIT 1;'
+        query = QSqlQuery()
+        sql = sql % (date.day(),
+                     date.month(),
+                     date.year(),
+                     item[0],
+                     item[1])
+        if not query.exec(sql):
+            raise WalletModelException('Could not execute query: \'%s\'' % sql)
+        elif query.next():
+            record = query.record()
+            record_id = int(record.value(record.indexOf('id')))
+            sql = 'DELETE FROM wallet_data WHERE id = %d' % record_id
+            if not query.exec(sql):
+                raise WalletModelException('Could not delete item: \'%s\'' % sql)
+        self.endResetModel()
+        self.__set_query()
