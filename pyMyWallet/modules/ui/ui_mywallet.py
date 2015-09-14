@@ -20,6 +20,7 @@ class Ui_MyWallet(object):
         self._main_layout = QtWidgets.QGridLayout(self._central_widget)
         self._main_layout.setObjectName("_main_layout")
         self._view = QtWidgets.QTableView(self._central_widget)
+        self._view.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
         self._view.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self._view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self._view.setObjectName("_view")

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QCoreApplication, Qt, QDate, QObject, pyqtSignal
+from PyQt5.QtCore import QCoreApplication, Qt, QDate, QObject, pyqtSignal, QModelIndex
 from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlRecord
 from modules.enums import WalletItemModelType, WalletItemType
 
@@ -144,6 +144,7 @@ class WalletModel(QSqlTableModel):
         self.__set_query()
 
     def add_entry(self, date, item, wallet_type):
+        self.beginResetModel()
         values = 'NULL, %d, %d, %d,' % (date.day(), date.month(), date.year())
         if wallet_type == WalletItemType.INCOMING:
             values += ' %s, NULL, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
@@ -161,21 +162,22 @@ class WalletModel(QSqlTableModel):
         query = QSqlQuery()
         if not query.exec(insert_query):
             raise WalletModelException('Could not insert data: \'%s\'' % insert_query)
+        self.endResetModel()
         self.__set_query()
 
     def remove_entry(self, date, item, wallet_type):
         self.beginResetModel()
         sql = 'SELECT id FROM wallet_data WHERE day = %d AND month = %d AND year = %d AND '
         if wallet_type == WalletItemType.INCOMING:
-            sql += 'incoming = \'%d\''
+            sql += 'incoming = %f'
         elif wallet_type == WalletItemType.EXPENSE:
-            sql += 'expense = \'%d\''
+            sql += 'expense = %f'
         elif wallet_type == WalletItemType.SAVING:
-            sql += 'saving = \'%d\''
+            sql += 'saving = %f'
         elif wallet_type == WalletItemType.LOAN:
-            sql += 'loan = \'%d\''
+            sql += 'loan = %f'
         elif wallet_type == WalletItemType.DEBT:
-            sql += 'debt = \'%d\''
+            sql += 'debt = %f'
         else:
             raise WalletModelException('Unexpected type: %s', wallet_type)
         sql += ' AND description = \'%s\' LIMIT 1;'
@@ -183,7 +185,7 @@ class WalletModel(QSqlTableModel):
         sql = sql % (date.day(),
                      date.month(),
                      date.year(),
-                     item[0],
+                     round(item[0], 2),
                      item[1])
         if not query.exec(sql):
             raise WalletModelException('Could not execute query: \'%s\'' % sql)

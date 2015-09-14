@@ -21,6 +21,9 @@
    <layout class="QGridLayout" name="_main_layout">
     <item row="0" column="0" colspan="2">
      <widget class="QTableView" name="_view">
+      <property name="locale">
+       <locale language="English" country="UnitedStates"/>
+      </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
       </property>

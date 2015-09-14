@@ -190,7 +190,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             savings = dialog.savings()
             loan = dialog.loan()
             debt = dialog.debt()
-            self._model.beginResetModel()
             for item in incoming:
                 self._model.add_entry(date, item, WalletItemType.INCOMING)
             for item in expense:
@@ -201,7 +200,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self._model.add_entry(date, item, WalletItemType.LOAN)
             for item in debt:
                 self._model.add_entry(date, item, WalletItemType.DEBT)
-            self._model.endResetModel()
             self._view.resizeColumnsToContents()
             self._signals.signal_wallet_changed.emit()
             # Прокручиваем скроллер
@@ -250,7 +248,6 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             elif index.column() == WalletItemModelType.INDEX_DESCRIPTION.value:
                 item.append(index.data())
         self._model.remove_entry(QDate(year, month, day), item, item_type)
-        self._model.endResetModel()
         self._signals.signal_wallet_changed.emit()
 
     # Слот изменения остатка на начало месяца

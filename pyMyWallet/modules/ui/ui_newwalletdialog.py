@@ -37,8 +37,10 @@ class Ui_NewWalletDialog(object):
         self._grid_layout.addWidget(self._button_directory, 1, 2, 1, 1)
         self._main_layout.addLayout(self._grid_layout)
         self._button_box = QtWidgets.QDialogButtonBox(NewWalletDialog)
+        self._button_box.setEnabled(True)
         self._button_box.setOrientation(QtCore.Qt.Horizontal)
         self._button_box.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self._button_box.setCenterButtons(False)
         self._button_box.setObjectName("_button_box")
         self._main_layout.addWidget(self._button_box)
 
