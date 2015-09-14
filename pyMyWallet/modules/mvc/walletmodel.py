@@ -185,7 +185,7 @@ class WalletModel(QSqlTableModel):
         sql = sql % (date.day(),
                      date.month(),
                      date.year(),
-                     round(item[0], 2),
+                     item[0],
                      item[1])
         if not query.exec(sql):
             raise WalletModelException('Could not execute query: \'%s\'' % sql)
