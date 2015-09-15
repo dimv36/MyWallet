@@ -152,9 +152,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         wallet_data = self._model.get_wallet_info()
         # Обновляем заголовок окна
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
-        total = wallet_data.balance_at_start + wallet_data.incoming + \
-            wallet_data.savings - wallet_data.expense
-        total = round(total, 2)
+        total = round(wallet_data.balance_at_end, 2)
         self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
         self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
         self._label_saving_value.setText(str(round(wallet_data.savings, 2)))
@@ -273,8 +271,9 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот отображения статистики
     @pyqtSlot()
     def on_statistic_show(self):
-        dialog = StatisticDialog(self._model.root())
-        dialog.exec()
+        raise NotImplementedError()
+        # dialog = StatisticDialog(self._model.root())
+        # dialog.exec()
 
     # Слот погашения долга
     @pyqtSlot()
@@ -282,10 +281,12 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         dialog = PayOffDebtDialog()
         if dialog.exec() == QDialog.Accepted:
             data = dialog.data()
-            self._model.beginResetModel()
-            self._model.append_entry(QDate.currentDate().toString('dd.MM.yyyy'),
-                                     str(-1 * data[0]),
-                                     data[1],
-                                     WalletItemType.DEBT)
+            if abs(data[0]) > float(self._label_debt_value.text()):
+                QMessageBox.warning(self,
+                                    QCoreApplication.translate('MyWallet', 'Pay debt off'),
+                                    QCoreApplication.translate('MyWallet', 'You can not repay the debt by this amount'))
+                return
+            self._model.add_entry(QDate.currentDate(),
+                                  data,
+                                  WalletItemType.DEBT)
             self._signals.signal_wallet_changed.emit()
-            self._model.endResetModel()

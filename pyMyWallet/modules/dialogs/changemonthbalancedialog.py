@@ -13,4 +13,4 @@ class ChangeMonthBalanceDialog(QDialog, Ui_ChangeMonthDialog):
         self._value.setValue(balance)
 
     def balance(self):
-        return self._value.text()
+        return float(self._value.text())
