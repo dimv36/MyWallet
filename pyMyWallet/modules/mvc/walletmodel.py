@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QCoreApplication, Qt, QDate, QObject, pyqtSignal, QModelIndex
-from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlRecord
+from PyQt5.QtCore import QCoreApplication, Qt, QDate
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from modules.enums import WalletItemModelType, WalletItemType
 
 
@@ -7,7 +7,7 @@ class WalletModelException(Exception):
     pass
 
 
-class WalletModel(QSqlTableModel):
+class WalletModel(QSqlQueryModel):
     __WALLET_SELECT_SQL_QUERY = 'SELECT day, month, year, ' \
                                 'incoming, expense, saving, ' \
                                 'loan, debt, description FROM wallet_data ' \
@@ -26,7 +26,7 @@ class WalletModel(QSqlTableModel):
     def __init__(self, wallet_file_path):
         super().__init__()
         self.__wallet = wallet_file_path
-        self.__db = QSqlDatabase.addDatabase('QSQLITE')
+        self.__db = None
         self.__init_model()
         self.read_wallet()
 
@@ -55,6 +55,20 @@ class WalletModel(QSqlTableModel):
         self.setHeaderData(WalletItemModelType.INDEX_DEBT.value,
                            Qt.Horizontal,
                            QCoreApplication.translate('WalletModel', 'Debt'))
+
+    def __close_db(self):
+        QSqlDatabase.removeDatabase(self.__wallet)
+
+    def __connect_to_db(self, name):
+        if QSqlDatabase.contains():
+            self.__db = QSqlDatabase.database()
+        else:
+            self.__db = QSqlDatabase.addDatabase('QSQLITE')
+        self.__db.setDatabaseName(name)
+        if not self.__db.open():
+            raise WalletModelException(QCoreApplication.translate('WalletModel',
+                                                                  'Can not open database: %s') %
+                                       self.__db.lastError().text())
 
     def __set_query(self, date=None):
         if not date:
@@ -115,45 +129,43 @@ class WalletModel(QSqlTableModel):
     def create_new_wallet(self, wallet_path):
         self.__wallet = wallet_path
         # Устанавливаем новое имя базы данных
-        self.__db.setDatabaseName(self.__wallet)
-        if not self.__db.open():
-            raise WalletModelException(QCoreApplication.translate('WalletModel',
-                                                                  'Can\'t connect to wallet %s') % self.__wallet)
-        else:
-            # Создаем таблицы
-            create_query = ['DROP TABLE IF EXISTS wallet_data;',
-                            'DROP TABLE IF EXISTS wallet_month_data;',
-                            'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY,'
-                                                                   'day INTEGER,'
-                                                                   'month INTEGER,'
-                                                                   'year INTEGER,'
-                                                                   'incoming REAL,'
-                                                                   'expense REAL,'
-                                                                   'saving REAL,'
-                                                                   'loan REAL,'
-                                                                   'debt REAL,'
-                                                                   'description TEXT);',
-                            'CREATE TABLE IF NOT EXISTS wallet_month_data(ID INTEGER PRIMARY KEY,'
-                                                                         'month INTEGER,'
-                                                                         'year INTEGER,'
-                                                                         'balance_at_start REAL,'
-                                                                         'balance_at_end REAL);'
-                            ]
-            query = QSqlQuery()
-            for cq in create_query:
-                if not query.exec(cq):
-                    raise WalletModelException('Could not initialize database \'%s\' '
-                                               'when execute query \'%s\'' % (self.__wallet, cq))
-        self.read_wallet()
+        self.__connect_to_db(wallet_path)
+        # Создаем таблицы
+        create_query = ['DROP TABLE IF EXISTS wallet_data;',
+                        'DROP TABLE IF EXISTS wallet_month_data;',
+                        'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY,'
+                                                               'day INTEGER,'
+                                                               'month INTEGER,'
+                                                               'year INTEGER,'
+                                                               'incoming REAL,'
+                                                               'expense REAL,'
+                                                               'saving REAL,'
+                                                               'loan REAL,'
+                                                               'debt REAL,'
+                                                               'description TEXT);',
+                        'CREATE TABLE IF NOT EXISTS wallet_month_data(ID INTEGER PRIMARY KEY,'
+                                                                     'month INTEGER,'
+                                                                     'year INTEGER,'
+                                                                     'balance_at_start REAL,'
+                                                                     'balance_at_end REAL);'
+                        ]
+        query = QSqlQuery()
+        for cq in create_query:
+            if not query.exec(cq):
+                raise WalletModelException(QCoreApplication.translate('WalletModel',
+                                                                      'Could not initialize database \'%s\''
+                                                                      'when execute query \'%s\'' %
+                                                                      (self.__wallet, cq)))
+        self.__set_query()
 
-    def read_wallet(self):
-        if self.__db is not None:
-            if self.__db.isOpen():
-                self.__db.close()
-        self.__db.setDatabaseName(self.__wallet)
-        if not self.__db.open():
-            raise WalletModelException(QCoreApplication.translate('WalletModel',
-                                                                  'Can\'t connect to wallet %s') % self.__wallet)
+    def read_wallet(self, wallet=None):
+        self.__close_db()
+        if wallet:
+            self.__wallet = wallet
+        self.beginResetModel()
+        self.clear()
+        self.__connect_to_db(self.__wallet)
+        self.endResetModel()
         self.__set_query()
 
     def add_entry(self, date, item, wallet_type):

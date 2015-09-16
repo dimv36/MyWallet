@@ -59,10 +59,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def __open_wallet(self):
         # Устанавливаем модель
         self._model = WalletModel(self.__current_path + self.__wallet_name)
-        self._model.beginResetModel()
         self._view.setModel(self._model)
         self._view.resizeColumnsToContents()
-        self._model.endResetModel()
 
         # Отправляем сигнал обновления заголовка окна
         self._signals.signal_wallet_changed.emit()
@@ -137,14 +135,15 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     def on_open_wallet(self):
         file_name = QFileDialog.getOpenFileName(self,
                                                 QCoreApplication.translate('MyWallet', 'Choose file'),
-                                                QDir.current().path(),
+                                                self.__current_path,
                                                 QCoreApplication.translate('MyWallet', 'DB-files (*.db)'))[0]
         directory = QFileInfo(file_name).dir().path()
         wallet_name = QFileInfo(file_name).fileName()
         if wallet_name and not file_name == self.__current_path + self.__wallet_name:
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self.__open_wallet()
+            self._model.read_wallet()
+            self._signals.signal_wallet_changed.emit()
 
     # Слот обновления данных доходов/расходов/займов/долгов/остатка на начало месяца приложения
     @pyqtSlot()
