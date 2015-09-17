@@ -57,9 +57,18 @@ class WalletModel(QSqlQueryModel):
                            QCoreApplication.translate('WalletModel', 'Debt'))
 
     def __close_db(self):
+        """
+        Метод закрытия базы данных (бумажника)
+        :return: None
+        """
         QSqlDatabase.removeDatabase(self.__wallet)
 
     def __connect_to_db(self, name):
+        """
+        Подключение к базе данных (бумажнику)
+        :param name: str
+        :return: None
+        """
         if QSqlDatabase.contains():
             self.__db = QSqlDatabase.database()
         else:
@@ -71,12 +80,23 @@ class WalletModel(QSqlQueryModel):
                                        self.__db.lastError().text())
 
     def __set_query(self, date=None):
+        """
+        Устанавливает поисковый запрос для отображения данных
+        :param date: QDate
+        :return:
+        """
         if not date:
             date = QDate.currentDate()
         self.clear()
         self.setQuery(QSqlQuery(self.__WALLET_SELECT_SQL_QUERY % (date.month(), date.year())))
 
     def __update_balance_at_end(self, date):
+        """
+        Обновить остаток на начало месяца
+        Этот метод должен быть вызван во всех методах, где производится модификация данных кошелька
+        :param date: QDate
+        :return:
+        """
         wallet_info = self.get_wallet_info(date)
         balance_at_end = wallet_info.balance_at_start + wallet_info.incoming - wallet_info.expense + wallet_info.savings
         sql = 'UPDATE wallet_month_data SET balance_at_end = %f WHERE month = %d AND year = %d;' % (balance_at_end,
@@ -87,6 +107,11 @@ class WalletModel(QSqlQueryModel):
             raise WalletModelException('Could not set balance at end by query \'%s\'' % query)
 
     def get_wallet_info(self, date=None):
+        """
+        Получить данные по доходам/расходам/накоплениям/долгам/займам за период времени
+        :param date: QDate
+        :return: None
+        """
         def convert_to_float(_query, _record, _field):
             result = float()
             try:
@@ -114,7 +139,8 @@ class WalletModel(QSqlQueryModel):
         wallet_data_query = wallet_data_query.replace('$MONTH', str(date.month()))
         wallet_data_query = wallet_data_query.replace('$YEAR', str(date.year()))
         if not query.exec(wallet_data_query):
-            raise WalletModelException('Could not execute query \'%s\'', wallet_data_query)
+            raise WalletModelException('Could not execute query \'%s\': %s' % (wallet_data_query,
+                                                                               self.__db.lastError().text()))
         elif query.next():
             record = query.record()
             wallet_data.balance_at_start = convert_to_float(query, record, 'balance_at_start')
@@ -127,6 +153,11 @@ class WalletModel(QSqlQueryModel):
         return wallet_data
 
     def create_new_wallet(self, wallet_path):
+        """
+        Создание нового бумажника
+        :param wallet_path: str
+        :return: None
+        """
         self.__wallet = wallet_path
         # Устанавливаем новое имя базы данных
         self.__connect_to_db(wallet_path)
@@ -154,11 +185,18 @@ class WalletModel(QSqlQueryModel):
             if not query.exec(cq):
                 raise WalletModelException(QCoreApplication.translate('WalletModel',
                                                                       'Could not initialize database \'%s\''
-                                                                      'when execute query \'%s\'' %
-                                                                      (self.__wallet, cq)))
+                                                                      'when execute query \'%s\': %s' %
+                                                                      (self.__wallet,
+                                                                       cq,
+                                                                       self.__db.lastError().text())))
         self.__set_query()
 
     def read_wallet(self, wallet=None):
+        """
+        Чтение бумажника
+        :param wallet: имя (путь) к бумажнику str
+        :return: None
+        """
         self.__close_db()
         if wallet:
             self.__wallet = wallet
@@ -169,6 +207,13 @@ class WalletModel(QSqlQueryModel):
         self.__set_query()
 
     def add_entry(self, date, item, wallet_type):
+        """
+        Добавить запись в бумажник
+        :param date: QDate
+        :param item: list
+        :param wallet_type: enum.WalletItemType
+        :return: None
+        """
         self.beginResetModel()
         values = 'NULL, %d, %d, %d,' % (date.day(), date.month(), date.year())
         if wallet_type == WalletItemType.INCOMING:
@@ -186,12 +231,20 @@ class WalletModel(QSqlQueryModel):
         insert_query = 'INSERT INTO wallet_data VALUES(%s);' % values
         query = QSqlQuery()
         if not query.exec(insert_query):
-            raise WalletModelException('Could not insert data: \'%s\'' % insert_query)
+            raise WalletModelException('Could not insert data: \'%s\': %s' % (insert_query,
+                                                                              self.__db.lastError().text()))
         self.__update_balance_at_end(date)
         self.endResetModel()
         self.__set_query()
 
     def remove_entry(self, date, item, wallet_type):
+        """
+        Удалить запись из бумажника
+        :param date: QDate
+        :param item: list
+        :param wallet_type: enum.WalletItemType
+        :return: None
+        """
         self.beginResetModel()
         sql = 'SELECT id FROM wallet_data WHERE day = %d AND month = %d AND year = %d AND '
         if wallet_type == WalletItemType.INCOMING:
@@ -222,24 +275,33 @@ class WalletModel(QSqlQueryModel):
                          item[0],
                          item[1])
         if not query.exec(sql):
-            raise WalletModelException('Could not execute query: \'%s\'' % sql)
+            raise WalletModelException('Could not execute query: \'%s\': %s' % (sql,
+                                                                                self.__db.lastError().text()))
         elif query.next():
             record = query.record()
             record_id = int(record.value(record.indexOf('id')))
             sql = 'DELETE FROM wallet_data WHERE id = %d' % record_id
             if not query.exec(sql):
-                raise WalletModelException('Could not delete item by query: \'%s\'' % sql)
+                raise WalletModelException('Could not delete item by query: \'%s\': %s' % (sql,
+                                                                                           self.__db.lastError().text()
+                                                                                           ))
         self.__update_balance_at_end(date)
         self.endResetModel()
         self.__set_query()
 
     def change_current_month_balance(self, balance):
+        """
+        Изменить баланс на начало месяца текущего месяца
+        :param balance: float
+        :return: None
+        """
         self.beginResetModel()
         current_date = QDate.currentDate()
         query = QSqlQuery()
         sql = 'SELECT count(*) AS count FROM wallet_month_data;'
         if not query.exec(sql):
-            raise WalletModelException('Could not execute query \'%s\'' % sql)
+            raise WalletModelException('Could not execute query \'%s\': %s' % (sql,
+                                                                               self.__db.lastError().text()))
         elif query.next():
             record = query.record()
             table_is_empty = (int(record.value(record.indexOf('count'))))
@@ -256,6 +318,33 @@ class WalletModel(QSqlQueryModel):
                     current_date.year()
                 )
         if not query.exec(sql):
-            raise WalletModelException('Could not update balance by query \'%s\'' % sql)
+            raise WalletModelException('Could not update balance by query \'%s\': %s' % (sql,
+                                                                                         self.__db.lastError().text()))
         self.__update_balance_at_end(current_date)
         self.endResetModel()
+
+    # Следующие методы используются при построении статистики в классе StatisticDialog
+    def get_statistic_periods_items(self):
+        year_query = QSqlQuery()
+        statistic_items = {}
+        year_sql = 'SELECT DISTINCT year AS year FROM wallet_data;'
+        if not year_query.exec(year_sql):
+            raise WalletModelException('Could not get years items by query \'%s\': %s' % (
+                year_sql, self.__db.lastError().text())
+            )
+        while year_query.next():
+            year_record = year_query.record()
+            year = int(year_record.value(year_record.indexOf('year')))
+            months = []
+            month_query = QSqlQuery()
+            month_sql = 'SELECT DISTINCT month AS month FROM wallet_data WHERE year = %d' % year
+            if not month_query.exec(month_sql):
+                raise WalletModelException('Could not get months items by query \'%s\': %s' % (
+                    month_sql,
+                    self.__db.lastError().text()))
+            while month_query.next():
+                month_record = month_query.record()
+                month = int(month_record.value(month_record.indexOf('month')))
+                months.append(month)
+            statistic_items[year] = months
+        return statistic_items

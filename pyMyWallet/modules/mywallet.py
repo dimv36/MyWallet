@@ -270,9 +270,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот отображения статистики
     @pyqtSlot()
     def on_statistic_show(self):
-        raise NotImplementedError()
-        # dialog = StatisticDialog(self._model.root())
-        # dialog.exec()
+        dialog = StatisticDialog(self._model)
+        dialog.exec()
 
     # Слот погашения долга
     @pyqtSlot()
