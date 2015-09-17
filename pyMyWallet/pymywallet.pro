@@ -2,12 +2,11 @@
 SOURCES += \
     modules/dialogs/settingsdialog.py \
     modules/dialogs/newwalletdialog.py \
-    modules/dialogs/changemonthbalance.py \
+    modules/dialogs/changemonthbalancedialog.py \
     modules/dialogs/addsourcesdialog.py \
     modules/dialogs/statisticdialog.py \
     modules/dialogs/payoffdebtdialog.py \
     modules/mvc/walletmodel.py \
-    modules/mvc/walletitem.py \
     modules/mvc/statisticitem.py \
     modules/mvc/statistictreemodel.py \
     modules/mywallet.py \
@@ -17,7 +16,7 @@ SOURCES += \
     modules/ui/ui_settingsdialog.py \
     modules/ui/ui_newwalletdialog.py \
     modules/ui/ui_mywallet.py \
-    modules/ui/ui_changemonthbalance.py \
+    modules/ui/ui_changemonthbalancedialog.py \
     modules/ui/ui_addsourcesdialog.py \
     modules/ui/ui_statisticdialog.py \
     modules/ui/tablewidget.py \
@@ -30,7 +29,7 @@ FORMS += \
     modules/ui/settingsdialog.ui \
     modules/ui/newwalletdialog.ui \
     modules/ui/mywallet.ui \
-    modules/ui/changemonthbalance.ui \
+    modules/ui/changemonthbalancedialog.ui \
     modules/ui/addsourcesdialog.ui \
     modules/ui/statisticdialog.ui \
     modules/ui/payoffdebtdialog.ui
