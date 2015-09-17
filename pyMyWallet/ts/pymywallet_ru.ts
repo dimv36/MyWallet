@@ -526,7 +526,7 @@ at end of month</source>
     <message>
         <location filename="modules/dialogs/statisticdialog.py" line="51"/>
         <source>August</source>
-        <translation>Авшусь</translation>
+        <translation type="unfinished">Август</translation>
     </message>
     <message>
         <location filename="modules/dialogs/statisticdialog.py" line="53"/>
