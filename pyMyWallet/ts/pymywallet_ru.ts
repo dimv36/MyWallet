@@ -441,61 +441,6 @@ at end of month</source>
 <context>
     <name>WalletModel</name>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="30"/>
-        <source>Date</source>
-        <translation type="obsolete">Дата</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="43"/>
-        <source>Incoming</source>
-        <translation>Доходы</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="32"/>
-        <source>State of incoming</source>
-        <translation type="obsolete">Статья доходов</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="46"/>
-        <source>Expense</source>
-        <translation>Расходы</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="34"/>
-        <source>State of expense</source>
-        <translation type="obsolete">Статья расходов</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="52"/>
-        <source>Loan</source>
-        <translation>Займы</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="38"/>
-        <source>State of loan</source>
-        <translation type="obsolete">Статья займов</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="55"/>
-        <source>Debt</source>
-        <translation>Долги</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="40"/>
-        <source>State of debt</source>
-        <translation type="obsolete">Статья долгов</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="49"/>
-        <source>Savings</source>
-        <translation>Накопления</translation>
-    </message>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="36"/>
-        <source>State of savings</source>
-        <translation type="obsolete">Статья накоплений</translation>
-    </message>
-    <message>
         <location filename="modules/mvc/walletmodel.py" line="34"/>
         <source>Day</source>
         <translation>День</translation>
@@ -509,6 +454,31 @@ at end of month</source>
         <location filename="modules/mvc/walletmodel.py" line="40"/>
         <source>Year</source>
         <translation>Год</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="43"/>
+        <source>Incoming</source>
+        <translation>Доходы</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="46"/>
+        <source>Expense</source>
+        <translation>Расходы</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="49"/>
+        <source>Savings</source>
+        <translation>Накопления</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="52"/>
+        <source>Loan</source>
+        <translation>Займ</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="55"/>
+        <source>Debt</source>
+        <translation>Долг</translation>
     </message>
     <message>
         <location filename="modules/mvc/walletmodel.py" line="78"/>
