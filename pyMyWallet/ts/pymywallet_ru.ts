@@ -439,51 +439,64 @@ at end of month</source>
     </message>
 </context>
 <context>
+    <name>WaleltModel</name>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="57"/>
+        <source>Description</source>
+        <translation type="obsolete">Описание</translation>
+    </message>
+</context>
+<context>
     <name>WalletModel</name>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="34"/>
+        <location filename="modules/mvc/walletmodel.py" line="33"/>
         <source>Day</source>
         <translation>День</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="37"/>
+        <location filename="modules/mvc/walletmodel.py" line="36"/>
         <source>Month</source>
         <translation>Месяц</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="40"/>
+        <location filename="modules/mvc/walletmodel.py" line="39"/>
         <source>Year</source>
         <translation>Год</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="43"/>
+        <location filename="modules/mvc/walletmodel.py" line="42"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="46"/>
+        <location filename="modules/mvc/walletmodel.py" line="45"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="49"/>
+        <location filename="modules/mvc/walletmodel.py" line="48"/>
         <source>Savings</source>
         <translation>Накопления</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="52"/>
+        <location filename="modules/mvc/walletmodel.py" line="51"/>
         <source>Loan</source>
         <translation>Займ</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="55"/>
+        <location filename="modules/mvc/walletmodel.py" line="54"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="78"/>
+        <location filename="modules/mvc/walletmodel.py" line="80"/>
         <source>Can not open database: %s</source>
         <translation>Невозможно открыть базу данных: %s</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="57"/>
+        <source>Description</source>
+        <translation>Описание</translation>
     </message>
 </context>
 <context>

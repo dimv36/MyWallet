@@ -27,10 +27,9 @@ class WalletModel(QSqlQueryModel):
         super().__init__()
         self.__wallet = wallet_file_path
         self.__db = None
-        self.__init_model()
         self.read_wallet()
 
-    def __init_model(self):
+    def __set_headers(self):
         self.setHeaderData(WalletItemModelType.INDEX_DAY.value,
                            Qt.Horizontal,
                            QCoreApplication.translate('WalletModel', 'Day'))
@@ -55,6 +54,9 @@ class WalletModel(QSqlQueryModel):
         self.setHeaderData(WalletItemModelType.INDEX_DEBT.value,
                            Qt.Horizontal,
                            QCoreApplication.translate('WalletModel', 'Debt'))
+        self.setHeaderData(WalletItemModelType.INDEX_DESCRIPTION.value,
+                           Qt.Horizontal,
+                           QCoreApplication.translate('WalletModel', 'Description'))
 
     def __close_db(self):
         """
@@ -89,6 +91,7 @@ class WalletModel(QSqlQueryModel):
             date = QDate.currentDate()
         self.clear()
         self.setQuery(QSqlQuery(self.__WALLET_SELECT_SQL_QUERY % (date.month(), date.year())))
+        self.__set_headers()
 
     def __update_balance_at_end(self, date):
         """
