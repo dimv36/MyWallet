@@ -62,7 +62,7 @@ if __name__ == '__main__':
                     for incoming in incomings:
                         value = float(incoming.attrib['value'])
                         cursor.execute('INSERT INTO wallet_data VALUES(NULL, %d, %d, %d, '
-                                       '%d, NULL, NULL, NULL, NULL, \'%s\')' %
+                                       '%f, NULL, NULL, NULL, NULL, \'%s\')' %
                                        (day_value,
                                         month_value,
                                         year_value,
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                     for expense in expenses:
                         value = float(expense.attrib['value'])
                         cursor.execute('INSERT INTO wallet_data VALUES(NULL, %d, %d, %d, '
-                                       'NULL, %d, NULL, NULL, NULL, \'%s\')' %
+                                       'NULL, %f, NULL, NULL, NULL, \'%s\')' %
                                        (day_value,
                                         month_value,
                                         year_value,
@@ -84,7 +84,7 @@ if __name__ == '__main__':
                     for saving in savings:
                         value = float(saving.attrib['value'])
                         cursor.execute('INSERT INTO wallet_data VALUES(NULL, %d, %d, %d, '
-                                       'NULL, NULL, %d, NULL, NULL, \'%s\')' %
+                                       'NULL, NULL, %f, NULL, NULL, \'%s\')' %
                                        (day_value,
                                         month_value,
                                         year_value,
@@ -95,7 +95,7 @@ if __name__ == '__main__':
                     for loan in loans:
                         value = float(loan.attrib['value'])
                         cursor.execute('INSERT INTO wallet_data VALUES(NULL, %d, %d, %d, '
-                                       'NULL, NULL, NULL, %d, NULL, \'%s\')' %
+                                       'NULL, NULL, NULL, %f, NULL, \'%s\')' %
                                        (day_value,
                                         month_value,
                                         year_value,
@@ -106,15 +106,16 @@ if __name__ == '__main__':
                     for debt in debts:
                         value = float(debt.attrib['value'])
                         cursor.execute('INSERT INTO wallet_data VALUES(NULL, %d, %d, %d, '
-                                       'NULL, NULL, NULL, NULL, %d, \'%s\')' %
+                                       '%f, NULL, NULL, NULL, %f, \'%s\')' %
                                        (day_value,
                                         month_value,
                                         year_value,
                                         value,
+                                        value,
                                         debt.attrib['description']))
                         debt_sum += value
                 balance_at_end = balance_at_start + incomings_sum - expenses_sum + savings_sum + debt_sum
-                cursor.execute('INSERT INTO wallet_month_data VALUES(NULL, %d, %d, %d, %d)' % (month_value,
+                cursor.execute('INSERT INTO wallet_month_data VALUES(NULL, %d, %d, %f, %f)' % (month_value,
                                                                                                year_value,
                                                                                                balance_at_start,
                                                                                                balance_at_end))
