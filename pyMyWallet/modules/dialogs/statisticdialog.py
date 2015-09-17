@@ -240,9 +240,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         savings_data = []
         saving_aggregate = float()
         loan_data = []
-        loan_aggregate = float()
         debt_data = []
-        debt_aggreagate = float()
         balance_at_end_data = []
         labels = ['']
         datax = [i + 1 for i in range(0, year_item.child_count())]
@@ -258,10 +256,8 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             expense_data.append(month_data.expense)
             saving_aggregate += month_data.savings
             savings_data.append(saving_aggregate)
-            loan_aggregate += month_data.loan
-            loan_data.append(loan_aggregate)
-            debt_aggreagate += month_data.debt
-            debt_data.append(debt_aggreagate)
+            loan_data.append(month_data.loan)
+            debt_data.append(month_data.debt)
             balance_at_end_data.append(month_data.balance_at_end)
         self._graphic.xAxis.setAutoTickLabels(False)
         self._graphic.xAxis.setRange(min(datax) - 0.1, max(datax) + 0.1)
