@@ -135,7 +135,7 @@ class WalletModel(QSqlQueryModel):
                             '(SELECT sum(incoming) FROM wallet_data ' \
                             'WHERE month = $MONTH AND year = $YEAR) AS incoming, ' \
                             '(SELECT sum(expense) FROM wallet_data WHERE month = $MONTH AND year = $YEAR) AS expense, '\
-                            '(SELECT sum(saving) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS saving, ' \
+                            '(SELECT sum(saving) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS saving, '\
                             '(SELECT sum(loan) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS loan, ' \
                             '(SELECT sum(debt) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS debt ' \
                             'FROM (SELECT 1);'
@@ -167,31 +167,31 @@ class WalletModel(QSqlQueryModel):
         # Создаем таблицы
         create_query = ['DROP TABLE IF EXISTS wallet_data;',
                         'DROP TABLE IF EXISTS wallet_month_data;',
-                        'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY,'
-                                                               'day INTEGER,'
-                                                               'month INTEGER,'
-                                                               'year INTEGER,'
-                                                               'incoming REAL,'
-                                                               'expense REAL,'
-                                                               'saving REAL,'
-                                                               'loan REAL,'
-                                                               'debt REAL,'
-                                                               'description TEXT);',
+                        'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY, '
+                        'day INTEGER,'
+                        'month INTEGER,'
+                        'year INTEGER,'
+                        'incoming REAL,'
+                        'expense REAL,'
+                        'saving REAL,'
+                        'loan REAL,'
+                        'debt REAL,'
+                        'description TEXT);',
                         'CREATE TABLE IF NOT EXISTS wallet_month_data(ID INTEGER PRIMARY KEY,'
-                                                                     'month INTEGER,'
-                                                                     'year INTEGER,'
-                                                                     'balance_at_start REAL,'
-                                                                     'balance_at_end REAL);'
+                        'month INTEGER,'
+                        'year INTEGER,'
+                        'balance_at_start REAL,'
+                        'balance_at_end REAL);'
                         ]
         query = QSqlQuery()
         for cq in create_query:
             if not query.exec(cq):
                 raise WalletModelException(QCoreApplication.translate('WalletModel',
                                                                       'Could not initialize database \'%s\''
-                                                                      'when execute query \'%s\': %s' %
+                                                                      'when execute query \'%s\': %s') %
                                                                       (self.__wallet,
                                                                        cq,
-                                                                       self.__db.lastError().text())))
+                                                                       self.__db.lastError().text()))
         self.__set_query()
 
     def read_wallet(self, wallet=None):
@@ -328,6 +328,10 @@ class WalletModel(QSqlQueryModel):
 
     # Следующие методы используются при построении статистики в классе StatisticDialog
     def get_statistic_periods_items(self):
+        """
+        Получить периоды отображения статистики
+        :return: dict {year: [months}
+        """
         year_query = QSqlQuery()
         statistic_items = {}
         year_sql = 'SELECT DISTINCT year AS year FROM wallet_data;'
