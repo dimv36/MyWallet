@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PayOffDebtDialog</class>
- <widget class="QDialog" name="PayOffDebtDialog">
+ <class>SavingsToIncomingDialog</class>
+ <widget class="QDialog" name="SavingsToIncomingDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,24 +11,20 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pay off debt</string>
+   <string>Savings to incoming</string>
   </property>
   <property name="windowIcon">
    <iconset>
     <normaloff>../resources/kwallet.png</normaloff>../resources/kwallet.png</iconset>
   </property>
   <layout class="QFormLayout" name="_main_layout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="_pay_off_label">
-     <property name="text">
-      <string>Pay off value:</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="_pay_off_combo_box">
+    <widget class="QDoubleSpinBox" name="_convert_to_incoming_combo_box">
      <property name="locale">
       <locale language="English" country="UnitedKingdom"/>
+     </property>
+     <property name="suffix">
+      <string/>
      </property>
      <property name="minimum">
       <double>0.010000000000000</double>
@@ -58,17 +54,24 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="_current_debt_label">
+   <item row="0" column="1">
+    <widget class="QLabel" name="_available_savings_value">
      <property name="text">
-      <string>Current debt:</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="_current_debt_value">
+   <item row="0" column="0">
+    <widget class="QLabel" name="_available_savings_label">
      <property name="text">
-      <string/>
+      <string>Available savings:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="_convert_to_incoming_label">
+     <property name="text">
+      <string>Convert to incoming:</string>
      </property>
     </widget>
    </item>
@@ -79,7 +82,7 @@
   <connection>
    <sender>_button_box</sender>
    <signal>accepted()</signal>
-   <receiver>PayOffDebtDialog</receiver>
+   <receiver>SavingsToIncomingDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -95,7 +98,7 @@
   <connection>
    <sender>_button_box</sender>
    <signal>rejected()</signal>
-   <receiver>PayOffDebtDialog</receiver>
+   <receiver>SavingsToIncomingDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

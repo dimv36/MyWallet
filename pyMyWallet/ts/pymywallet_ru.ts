@@ -110,127 +110,122 @@ at end of month</source>
 <context>
     <name>MyWallet</name>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="149"/>
+        <location filename="modules/ui/ui_mywallet.py" line="152"/>
         <source>MyWallet</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="150"/>
+        <location filename="modules/ui/ui_mywallet.py" line="153"/>
         <source>Balance at the beginning of month:</source>
         <translation>Остаток на начало месяца:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="163"/>
+        <location filename="modules/ui/ui_mywallet.py" line="166"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="160"/>
+        <location filename="modules/ui/ui_mywallet.py" line="163"/>
         <source>Incoming:</source>
         <translation>Доходы:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="154"/>
+        <location filename="modules/ui/ui_mywallet.py" line="157"/>
         <source>In total:</source>
         <translation>Итого:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="153"/>
+        <location filename="modules/ui/ui_mywallet.py" line="156"/>
         <source>Expense:</source>
         <translation>Расходы:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="156"/>
+        <location filename="modules/ui/ui_mywallet.py" line="159"/>
         <source>Loan:</source>
         <translation>Займы:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="157"/>
+        <location filename="modules/ui/ui_mywallet.py" line="160"/>
         <source>Debt:</source>
         <translation>Долги:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="164"/>
+        <location filename="modules/ui/ui_mywallet.py" line="167"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="165"/>
+        <location filename="modules/ui/ui_mywallet.py" line="168"/>
         <source>Wallet</source>
         <translation>Кошелек</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="166"/>
+        <location filename="modules/ui/ui_mywallet.py" line="169"/>
         <source>toolBar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="167"/>
+        <location filename="modules/ui/ui_mywallet.py" line="170"/>
         <source>Open wallet</source>
         <translation>Открыть кошелек</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="168"/>
+        <location filename="modules/ui/ui_mywallet.py" line="171"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="169"/>
+        <location filename="modules/ui/ui_mywallet.py" line="172"/>
         <source>Add item</source>
         <translation>Добавить источники</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="170"/>
+        <location filename="modules/ui/ui_mywallet.py" line="173"/>
         <source>Delete item</source>
         <translation>Удалить источник</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="171"/>
+        <location filename="modules/ui/ui_mywallet.py" line="174"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="172"/>
+        <location filename="modules/ui/ui_mywallet.py" line="175"/>
         <source>Show statistic</source>
         <translation>Показать статистику</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="173"/>
+        <location filename="modules/ui/ui_mywallet.py" line="176"/>
         <source>Change balance</source>
         <translation>Изменить остаток на начало месяца</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="174"/>
+        <location filename="modules/ui/ui_mywallet.py" line="177"/>
         <source>New wallet</source>
         <translation>Новый кошелек</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="175"/>
+        <location filename="modules/ui/ui_mywallet.py" line="178"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="125"/>
+        <location filename="modules/mywallet.py" line="127"/>
         <source>File %s does not exist</source>
         <translation>Файл %s не существует</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="136"/>
+        <location filename="modules/mywallet.py" line="138"/>
         <source>Choose file</source>
         <translation>Выберите файл</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="143"/>
-        <source>XML-files (*.xml)</source>
-        <translation type="obsolete">XML-файлы(*.xml)</translation>
-    </message>
-    <message>
-        <location filename="modules/mywallet.py" line="263"/>
+        <location filename="modules/mywallet.py" line="265"/>
         <source>About application</source>
         <translation>О приложении</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="263"/>
+        <location filename="modules/mywallet.py" line="265"/>
         <source>MyWallet developed in June 2015
 author: Dmitry Voronin
 email: carriingfate92@yandex.ru
@@ -241,24 +236,34 @@ email: carriingfate92@yandex.ru
 Версия: %s</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="162"/>
+        <location filename="modules/ui/ui_mywallet.py" line="165"/>
         <source>Saving:</source>
         <translation>Накопления:</translation>
     </message>
     <message>
-        <location filename="modules/ui/ui_mywallet.py" line="176"/>
+        <location filename="modules/ui/ui_mywallet.py" line="179"/>
         <source>Pay debt off</source>
         <translation>Погасить задолженность</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="136"/>
+        <location filename="modules/mywallet.py" line="138"/>
         <source>DB-files (*.db)</source>
         <translation>Файлы баз данных (*.db)</translation>
     </message>
     <message>
-        <location filename="modules/mywallet.py" line="283"/>
+        <location filename="modules/mywallet.py" line="285"/>
         <source>You can not repay the debt by this amount</source>
         <translation>Вы не можете погасить долги на эту величину</translation>
+    </message>
+    <message>
+        <location filename="modules/ui/ui_mywallet.py" line="180"/>
+        <source>Savings to incoming</source>
+        <translation>Перевести накопления в доход</translation>
+    </message>
+    <message>
+        <location filename="modules/mywallet.py" line="301"/>
+        <source>You can not convert savings to incoming by this amount</source>
+        <translation>Вы не можете перевести накопления в доходы на эту величину</translation>
     </message>
 </context>
 <context>
@@ -303,8 +308,36 @@ email: carriingfate92@yandex.ru
     </message>
     <message>
         <location filename="modules/ui/payoffdebtdialog.ui" line="44"/>
-        <source>Commentes:</source>
+        <source>Comments:</source>
         <translation>Комментарии:</translation>
+    </message>
+    <message>
+        <location filename="modules/ui/payoffdebtdialog.ui" line="64"/>
+        <source>Current debt:</source>
+        <translation>Текущий долг:</translation>
+    </message>
+</context>
+<context>
+    <name>SavingsToIncomingDialog</name>
+    <message>
+        <location filename="modules/ui/ui_savingstoincomingdialog.py" line="56"/>
+        <source>Savings to incoming</source>
+        <translation>Накопления в доходы</translation>
+    </message>
+    <message>
+        <location filename="modules/ui/ui_savingstoincomingdialog.py" line="57"/>
+        <source>Comments:</source>
+        <translation>Комментарии:</translation>
+    </message>
+    <message>
+        <location filename="modules/ui/ui_savingstoincomingdialog.py" line="58"/>
+        <source>Available savings:</source>
+        <translation>Доступные накопления:</translation>
+    </message>
+    <message>
+        <location filename="modules/ui/ui_savingstoincomingdialog.py" line="59"/>
+        <source>Convert to incoming:</source>
+        <translation>Перевести в доход:</translation>
     </message>
 </context>
 <context>
@@ -346,11 +379,6 @@ email: carriingfate92@yandex.ru
         <location filename="modules/ui/ui_statisticdialog.py" line="48"/>
         <source>Statistics</source>
         <translation>Статистика</translation>
-    </message>
-    <message>
-        <location filename="modules/ui/ui_statisticdialog.py" line="44"/>
-        <source>Statistic periods</source>
-        <translation type="obsolete">Периоды отображения статистики</translation>
     </message>
     <message>
         <location filename="modules/dialogs/statisticdialog.py" line="158"/>
@@ -439,14 +467,6 @@ at end of month</source>
     </message>
 </context>
 <context>
-    <name>WaleltModel</name>
-    <message>
-        <location filename="modules/mvc/walletmodel.py" line="57"/>
-        <source>Description</source>
-        <translation type="obsolete">Описание</translation>
-    </message>
-</context>
-<context>
     <name>WalletModel</name>
     <message>
         <location filename="modules/mvc/walletmodel.py" line="33"/>
@@ -497,6 +517,11 @@ at end of month</source>
         <location filename="modules/mvc/walletmodel.py" line="57"/>
         <source>Description</source>
         <translation>Описание</translation>
+    </message>
+    <message>
+        <location filename="modules/mvc/walletmodel.py" line="189"/>
+        <source>Could not initialize database &apos;%s&apos;when execute query &apos;%s&apos;: %s</source>
+        <translation>Ошибка инициализации базы данных &apos;%s&apos; при исполнении запроса &apos;%s&apos;: %s</translation>
     </message>
 </context>
 <context>

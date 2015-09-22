@@ -6,6 +6,7 @@ SOURCES += \
     modules/dialogs/addsourcesdialog.py \
     modules/dialogs/statisticdialog.py \
     modules/dialogs/payoffdebtdialog.py \
+    modules/dialogs/savingstoincomingdialog.py \
     modules/mvc/walletmodel.py \
     modules/mvc/statisticitem.py \
     modules/mvc/statistictreemodel.py \
@@ -19,6 +20,7 @@ SOURCES += \
     modules/ui/ui_changemonthbalancedialog.py \
     modules/ui/ui_addsourcesdialog.py \
     modules/ui/ui_statisticdialog.py \
+    modules/ui/ui_savingstoincomingdialog.py \
     modules/ui/tablewidget.py \
     modules/ui/mouseplot.py \
 
@@ -32,4 +34,5 @@ FORMS += \
     modules/ui/changemonthbalancedialog.ui \
     modules/ui/addsourcesdialog.ui \
     modules/ui/statisticdialog.ui \
-    modules/ui/payoffdebtdialog.ui
+    modules/ui/payoffdebtdialog.ui \
+    modules/ui/savingstoincomingdialog.ui

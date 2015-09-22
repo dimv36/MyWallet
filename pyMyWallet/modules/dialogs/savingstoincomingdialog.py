@@ -1,14 +1,14 @@
 __author__ = 'dimv36'
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
-from modules.ui.ui_payoffdebtdialog import Ui_PayOffDebtDialog
+from modules.ui.ui_savingstoincomingdialog import Ui_SavingsToIncomingDialog
 
 
-class PayOffDebtDialog(QDialog, Ui_PayOffDebtDialog):
-    def __init__(self, current_debt, parent=None):
+class SavingsToIncomingDialog(QDialog, Ui_SavingsToIncomingDialog):
+    def __init__(self, savings, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self._current_debt_value.setText(str(current_debt))
+        self._available_savings_value.setText(str(savings))
         self._button_box.button(self._button_box.Ok).setEnabled(False)
         self.__init_signal_slots()
 
@@ -21,4 +21,4 @@ class PayOffDebtDialog(QDialog, Ui_PayOffDebtDialog):
             self._button_box.button(self._button_box.Ok).setEnabled(True)
 
     def data(self):
-        return [-1 * self._pay_off_combo_box.value(), self._comments_lineedit.text()]
+        return [-1 * self._convert_to_incoming_combo_box.value(), self._comments_lineedit.text()]
