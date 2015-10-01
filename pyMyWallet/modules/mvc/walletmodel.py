@@ -224,7 +224,7 @@ class WalletModel(QSqlQueryModel):
         elif wallet_type == WalletItemType.EXPENSE:
             values += ' NULL, %s, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
         elif wallet_type == WalletItemType.SAVING:
-            values += ' NULL, NULL, %s, NULL, NULL, \'%s\'' % (item[0], item[1])
+            values += ' %f, NULL, %s, NULL, NULL, \'%s\'' % (-1 * float(item[0]), item[0], item[1])
         elif wallet_type == WalletItemType.LOAN:
             values += ' NULL, NULL, NULL, %s, NULL, \'%s\'' % (item[0], item[1])
         elif wallet_type == WalletItemType.DEBT:
@@ -301,25 +301,23 @@ class WalletModel(QSqlQueryModel):
         self.beginResetModel()
         current_date = QDate.currentDate()
         query = QSqlQuery()
-        sql = 'SELECT count(*) AS count FROM wallet_month_data;'
+        sql = 'SELECT 1 AS count FROM wallet_month_data WHERE month = %d AND year = %d;' % (current_date.month(),
+                                                                                            current_date.year())
         if not query.exec(sql):
             raise WalletModelException('Could not execute query \'%s\': %s' % (sql,
                                                                                self.__db.lastError().text()))
-        elif query.next():
-            record = query.record()
-            table_is_empty = (int(record.value(record.indexOf('count'))))
-            if not bool(table_is_empty):
-                sql = 'INSERT INTO wallet_month_data VALUES (NULL, %d, %d, %f, NULL);' % (
-                    current_date.month(),
-                    current_date.year(),
-                    balance
-                )
-            else:
-                sql = 'UPDATE wallet_month_data SET balance_at_start = %f WHERE month = %d AND year = %d;' % (
-                    balance,
-                    current_date.month(),
-                    current_date.year()
-                )
+        elif not query.next():
+            sql = 'INSERT INTO wallet_month_data VALUES (NULL, %d, %d, %f, NULL);' % (
+                current_date.month(),
+                current_date.year(),
+                balance
+            )
+        else:
+            sql = 'UPDATE wallet_month_data SET balance_at_start = %f WHERE month = %d AND year = %d;' % (
+                balance,
+                current_date.month(),
+                current_date.year()
+            )
         if not query.exec(sql):
             raise WalletModelException('Could not update balance by query \'%s\': %s' % (sql,
                                                                                          self.__db.lastError().text()))
