@@ -162,6 +162,7 @@
     <addaction name="_action_delete_item"/>
     <addaction name="_action_change_balance"/>
     <addaction name="_action_pay_debt_off"/>
+    <addaction name="_action_savings_to_incoming"/>
     <addaction name="separator"/>
     <addaction name="_action_show_statistic"/>
    </widget>
@@ -259,6 +260,11 @@
   <action name="_action_pay_debt_off">
    <property name="text">
     <string>Pay debt off</string>
+   </property>
+  </action>
+  <action name="_action_savings_to_incoming">
+   <property name="text">
+    <string>Savings to incoming</string>
    </property>
   </action>
  </widget>

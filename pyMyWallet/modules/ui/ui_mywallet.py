@@ -120,6 +120,8 @@ class Ui_MyWallet(object):
         self._action_about.setObjectName("_action_about")
         self._action_pay_debt_off = QtWidgets.QAction(MyWallet)
         self._action_pay_debt_off.setObjectName("_action_pay_debt_off")
+        self._action_savings_to_incoming = QtWidgets.QAction(MyWallet)
+        self._action_savings_to_incoming.setObjectName("_action_savings_to_incoming")
         self._menu_file.addAction(self._action_new_wallet)
         self._menu_file.addAction(self._action_open_wallet)
         self._menu_file.addAction(self._action_settings)
@@ -132,6 +134,7 @@ class Ui_MyWallet(object):
         self._menu_wallet.addAction(self._action_delete_item)
         self._menu_wallet.addAction(self._action_change_balance)
         self._menu_wallet.addAction(self._action_pay_debt_off)
+        self._menu_wallet.addAction(self._action_savings_to_incoming)
         self._menu_wallet.addSeparator()
         self._menu_wallet.addAction(self._action_show_statistic)
         self._main_menu.addAction(self._menu_file.menuAction())
@@ -174,5 +177,6 @@ class Ui_MyWallet(object):
         self._action_new_wallet.setText(_translate("MyWallet", "New wallet"))
         self._action_about.setText(_translate("MyWallet", "About"))
         self._action_pay_debt_off.setText(_translate("MyWallet", "Pay debt off"))
+        self._action_savings_to_incoming.setText(_translate("MyWallet", "Savings to incoming"))
 
 import modules.resources.resource_rc

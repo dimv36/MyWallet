@@ -30,6 +30,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
 
         self.__current_path = None
         self.__wallet_name = None
+        self.__wallet_data = None
 
         # Подключаем необходимые сигналы ко слотам
         self.init_signal_slots()
@@ -49,6 +50,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self._action_about.pyqtConfigure(triggered=self.on_about)
         self._action_show_statistic.pyqtConfigure(triggered=self.on_statistic_show)
         self._action_pay_debt_off.pyqtConfigure(triggered=self.on_pay_debt_off)
+        self._action_savings_to_incoming.pyqtConfigure(triggered=self.on_savings_to_incoming)
         self._signals.signal_wallet_changed.connect(self.on_update)
 
     def set_current_path(self, path):
@@ -148,16 +150,16 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот обновления данных доходов/расходов/займов/долгов/остатка на начало месяца приложения
     @pyqtSlot()
     def on_update(self):
-        wallet_data = self._model.get_wallet_info()
+        self.__wallet_data = self._model.get_wallet_info()
         # Обновляем заголовок окна
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
-        total = round(wallet_data.balance_at_end, 2)
-        self._label_incoming_value.setText(str(round(wallet_data.incoming, 2)))
-        self._label_expense_value.setText(str(round(wallet_data.expense, 2)))
-        self._label_saving_value.setText(str(round(wallet_data.savings, 2)))
-        self._label_loan_value.setText(str(round(wallet_data.loan, 2)))
-        self._label_debt_value.setText(str(round(wallet_data.debt, 2)))
-        self._label_balance_value.setText(str(round(wallet_data.balance_at_start, 2)))
+        total = round(self.__wallet_data.balance_at_end, 2)
+        self._label_incoming_value.setText(str(round(self.__wallet_data.incoming, 2)))
+        self._label_expense_value.setText(str(round(self.__wallet_data.expense, 2)))
+        self._label_saving_value.setText(str(round(self.__wallet_data.savings, 2)))
+        self._label_loan_value.setText(str(round(self.__wallet_data.loan, 2)))
+        self._label_debt_value.setText(str(round(self.__wallet_data.debt, 2)))
+        self._label_balance_value.setText(str(round(self.__wallet_data.balance_at_start, 2)))
         if total >= 0:
             self._label_total_value.setStyleSheet('QLabel { color : green }')
         else:
@@ -276,10 +278,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     # Слот погашения долга
     @pyqtSlot()
     def on_pay_debt_off(self):
-        dialog = PayOffDebtDialog()
+        dialog = PayOffDebtDialog(self.__wallet_data.debt)
         if dialog.exec() == QDialog.Accepted:
             data = dialog.data()
-            if abs(data[0]) > float(self._label_debt_value.text()):
+            if abs(data[0]) > self.__wallet_data.debt:
                 QMessageBox.warning(self,
                                     QCoreApplication.translate('MyWallet', 'Pay debt off'),
                                     QCoreApplication.translate('MyWallet', 'You can not repay the debt by this amount'))
@@ -287,4 +289,21 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self._model.add_entry(QDate.currentDate(),
                                   data,
                                   WalletItemType.DEBT)
+            self._signals.signal_wallet_changed.emit()
+
+    # Слот преобразования накоплений в доходы
+    @pyqtSlot()
+    def on_savings_to_incoming(self):
+        dialog = SavingsToIncomingDialog(self.__wallet_data.savings)
+        if dialog.exec() == QDialog.Accepted:
+            data = dialog.data()
+            if data[0] > self.__wallet_data.savings:
+                QMessageBox.warning(self,
+                                    QCoreApplication.translate('MyWallet', 'Savings to incoming'),
+                                    QCoreApplication.translate('MyWallet', 'You can not convert savings '
+                                                                           'to incoming by this amount'))
+                return
+            self._model.add_entry(QDate.currentDate(),
+                                  data,
+                                  WalletItemType.SAVING)
             self._signals.signal_wallet_changed.emit()
