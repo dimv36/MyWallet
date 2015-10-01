@@ -305,21 +305,18 @@ class WalletModel(QSqlQueryModel):
         if not query.exec(sql):
             raise WalletModelException('Could not execute query \'%s\': %s' % (sql,
                                                                                self.__db.lastError().text()))
-        elif query.next():
-            record = query.record()
-            table_is_empty = (int(record.value(record.indexOf('count'))))
-            if not bool(table_is_empty):
-                sql = 'INSERT INTO wallet_month_data VALUES (NULL, %d, %d, %f, NULL);' % (
-                    current_date.month(),
-                    current_date.year(),
-                    balance
-                )
-            else:
-                sql = 'UPDATE wallet_month_data SET balance_at_start = %f WHERE month = %d AND year = %d;' % (
-                    balance,
-                    current_date.month(),
-                    current_date.year()
-                )
+        elif not query.next():
+            sql = 'INSERT INTO wallet_month_data VALUES (NULL, %d, %d, %f, NULL);' % (
+                current_date.month(),
+                current_date.year(),
+                balance
+            )
+        else:
+            sql = 'UPDATE wallet_month_data SET balance_at_start = %f WHERE month = %d AND year = %d;' % (
+                balance,
+                current_date.month(),
+                current_date.year()
+            )
         if not query.exec(sql):
             raise WalletModelException('Could not update balance by query \'%s\': %s' % (sql,
                                                                                          self.__db.lastError().text()))
