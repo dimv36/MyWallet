@@ -224,6 +224,7 @@ class WalletModel(QSqlQueryModel):
         elif wallet_type == WalletItemType.EXPENSE:
             values += ' NULL, %s, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
         elif wallet_type == WalletItemType.SAVING:
+            values += ' %f, NULL, %s, NULL, NULL, \'%s\'' % (-1 * float(item[0]), item[0], item[1])
             if item[0] > 0:
                 values += ' NULL, NULL, %s, NULL, NULL, \'%s\'' % (item[0], item[1])
             else:
@@ -304,7 +305,8 @@ class WalletModel(QSqlQueryModel):
         self.beginResetModel()
         current_date = QDate.currentDate()
         query = QSqlQuery()
-        sql = 'SELECT count(*) AS count FROM wallet_month_data;'
+        sql = 'SELECT 1 AS count FROM wallet_month_data WHERE month = %d AND year = %d;' % (current_date.month(),
+                                                                                            current_date.year())
         if not query.exec(sql):
             raise WalletModelException('Could not execute query \'%s\': %s' % (sql,
                                                                                self.__db.lastError().text()))
