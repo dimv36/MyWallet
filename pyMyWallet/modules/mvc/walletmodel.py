@@ -224,11 +224,7 @@ class WalletModel(QSqlQueryModel):
         elif wallet_type == WalletItemType.EXPENSE:
             values += ' NULL, %s, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
         elif wallet_type == WalletItemType.SAVING:
-            values += ' %f, NULL, %s, NULL, NULL, \'%s\'' % (-1 * float(item[0]), item[0], item[1])
-            if item[0] > 0:
-                values += ' NULL, NULL, %s, NULL, NULL, \'%s\'' % (item[0], item[1])
-            else:
-                values += ' %f, NULL, %f, NULL, NULL, \'%s\'' % (-1 * item[0], item[0], item[1])
+            values += ' %s, NULL, %s, NULL, NULL, \'%s\'' % (-1 * float(item[0]), item[0], item[1])
         elif wallet_type == WalletItemType.LOAN:
             values += ' NULL, NULL, NULL, %s, NULL, \'%s\'' % (item[0], item[1])
         elif wallet_type == WalletItemType.DEBT:
