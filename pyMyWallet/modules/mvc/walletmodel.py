@@ -147,6 +147,22 @@ class WalletModel(QSqlQueryModel):
         elif query.next():
             record = query.record()
             wallet_data.balance_at_start = convert_to_float(query, record, 'balance_at_start')
+            if not wallet_data.balance_at_start:
+                # Пытаемся получить баланс на начало месяца на основе данных предыдущего
+                sql = 'SELECT ' \
+                      '(SELECT sum(saving) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS saving, '\
+                      '(SELECT balance_at_end FROM wallet_month_data WHERE month = $MONTH - 1 AND YEAR = $YEAR) ' \
+                      'AS balance_at_end '\
+                      'FROM (SELECT 1);'
+                sql = sql.replace('$MONTH', str(date.month())).replace('$YEAR', str(date.year()))
+                if not query.exec(sql):
+                    raise WalletModelException('Could not execute query \'%s\': %s' % (sql,
+                                                                                       self.__db.lastError().text()))
+                elif query.next():
+                    query_record = query.record()
+                    wallet_data.balance_at_start = convert_to_float(query, query_record, 'balance_at_end') - \
+                                                   convert_to_float(query, query_record, 'saving')
+                    self.change_current_month_balance(wallet_data.balance_at_start)
             wallet_data.balance_at_end = convert_to_float(query, record, 'balance_at_end')
             wallet_data.incoming = convert_to_float(query, record, 'incoming')
             wallet_data.expense = convert_to_float(query, record, 'expense')
