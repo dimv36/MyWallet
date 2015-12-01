@@ -21,4 +21,10 @@ class SavingsToIncomingDialog(QDialog, Ui_SavingsToIncomingDialog):
             self._button_box.button(self._button_box.Ok).setEnabled(True)
 
     def data(self):
-        return [-1 * self._convert_to_incoming_combo_box.value(), self._comments_lineedit.text()]
+        """
+        :return: dict
+        """
+        return {
+            'value': -1 * self._convert_to_incoming_combo_box.value(),
+            'description': self._comments_lineedit.text()
+        }

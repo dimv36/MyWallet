@@ -165,6 +165,8 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         else:
             self._label_total_value.setStyleSheet('QLabel { color : red }')
         self._label_total_value.setText(str(total))
+        self._view.resizeColumnsToContents()
+        self._view.scrollToBottom()
 
     # Слот создания нового бумажника
     @pyqtSlot()
@@ -201,21 +203,20 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self._model.add_entry(date, item, WalletItemType.DEBT)
             self._view.resizeColumnsToContents()
             self._signals.signal_wallet_changed.emit()
-            # Прокручиваем скроллер
-            self._view.scrollToBottom()
 
     # Слот удаления записи из таблицы
     @pyqtSlot()
     def on_delete_item(self):
+        def convert_str_to_float(string):
+            return float() if string == '' else float(string)
+
         selected_indexes = self._view.selectedIndexes()
         if not selected_indexes:
             return
-        # Определяем тип объекта
-        item_type = None
         day = int()
         month = int()
         year = int()
-        item = []
+        item = {}
         for index in selected_indexes:
             index = QModelIndex(index)
             if index.column() == WalletItemModelType.INDEX_DAY.value:
@@ -225,28 +226,18 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             elif index.column() == WalletItemModelType.INDEX_YEAR.value:
                 year = self._model.data(index)
             elif index.column() == WalletItemModelType.INDEX_INCOMING.value:
-                if index.data():
-                    item_type = WalletItemType.INCOMING
-                    item.append(index.data())
+                item['incoming'] = convert_str_to_float(index.data())
             elif index.column() == WalletItemModelType.INDEX_EXPENSE.value:
-                if index.data():
-                    item_type = WalletItemType.EXPENSE
-                    item.append(index.data())
+                item['expense'] = convert_str_to_float(index.data())
             elif index.column() == WalletItemModelType.INDEX_SAVINGS.value:
-                if index.data():
-                    item_type = WalletItemType.SAVING
-                    item.append(index.data())
+                item['saving'] = convert_str_to_float(index.data())
             elif index.column() == WalletItemModelType.INDEX_LOAN.value:
-                if index.data():
-                    item_type = WalletItemType.LOAN
-                    item.append(index.data())
+                item['loan'] = convert_str_to_float(index.data())
             elif index.column() == WalletItemModelType.INDEX_DEBT.value:
-                if index.data():
-                    item_type = WalletItemType.DEBT
-                    item.append(index.data())
+                item['debt'] = convert_str_to_float(index.data())
             elif index.column() == WalletItemModelType.INDEX_DESCRIPTION.value:
-                item.append(index.data())
-        self._model.remove_entry(QDate(year, month, day), item, item_type)
+                item['description'] = index.data()
+        self._model.remove_entry(QDate(year, month, day), item)
         self._signals.signal_wallet_changed.emit()
 
     # Слот изменения остатка на начало месяца
@@ -281,7 +272,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         dialog = PayOffDebtDialog(self.__wallet_data.debt)
         if dialog.exec() == QDialog.Accepted:
             data = dialog.data()
-            if abs(data[0]) > self.__wallet_data.debt:
+            if abs(data['value']) > self.__wallet_data.debt:
                 QMessageBox.warning(self,
                                     QCoreApplication.translate('MyWallet', 'Pay debt off'),
                                     QCoreApplication.translate('MyWallet', 'You can not repay the debt by this amount'))
@@ -297,7 +288,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         dialog = SavingsToIncomingDialog(self.__wallet_data.savings)
         if dialog.exec() == QDialog.Accepted:
             data = dialog.data()
-            if data[0] > self.__wallet_data.savings:
+            if data['value'] > self.__wallet_data.savings:
                 QMessageBox.warning(self,
                                     QCoreApplication.translate('MyWallet', 'Savings to incoming'),
                                     QCoreApplication.translate('MyWallet', 'You can not convert savings '

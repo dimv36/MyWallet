@@ -121,6 +121,8 @@ class WalletModel(QSqlQueryModel):
                 result = float(_query.value(_record.indexOf(_field)))
             except ValueError:
                 pass
+            except TypeError:
+                pass
             return result
 
         if not date:
@@ -229,22 +231,29 @@ class WalletModel(QSqlQueryModel):
         """
         Добавить запись в бумажник
         :param date: QDate
-        :param item: list
+        :param item: dict
         :param wallet_type: enum.WalletItemType
         :return: None
         """
         self.beginResetModel()
         values = 'NULL, %d, %d, %d,' % (date.day(), date.month(), date.year())
         if wallet_type == WalletItemType.INCOMING:
-            values += ' %s, NULL, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
+            values += ' %f, NULL, NULL, NULL, NULL, \'%s\'' % (item['value'], item['description'])
         elif wallet_type == WalletItemType.EXPENSE:
-            values += ' NULL, %s, NULL, NULL, NULL, \'%s\'' % (item[0], item[1])
+            values += ' NULL, %f, NULL, NULL, NULL, \'%s\'' % (item['value'], item['description'])
         elif wallet_type == WalletItemType.SAVING:
-            values += ' %s, NULL, %s, NULL, NULL, \'%s\'' % (-1 * float(item[0]), item[0], item[1])
+            values += ' %f, NULL, %f, NULL, NULL, \'%s\'' % (-1 * item['value'],
+                                                             item['value'],
+                                                             item['description'])
         elif wallet_type == WalletItemType.LOAN:
-            values += ' NULL, NULL, NULL, %s, NULL, \'%s\'' % (item[0], item[1])
+            values += ' NULL, NULL, NULL, %f, NULL, \'%s\'' % (item['value'], item['description'])
         elif wallet_type == WalletItemType.DEBT:
-            values += ' %s, NULL, NULL, NULL, %s, \'%s\'' % (item[0], item[0], item[1])
+            if item['value'] < 0:
+                # Считаем, что это погашение долга
+                values += ' NULL, %f, NULL, NULL, %f, \'%s\'' % (abs(item['value']), item['value'], item['description'])
+            else:
+                # Здесь увеличение долга: увеличивается долг и доход
+                values += ' %f, NULL, NULL, NULL, %f, \'%s\'' % (item['value'], item['value'], item['description'])
         else:
             raise WalletModelException('Unexpected type: %s' % wallet_type)
         insert_query = 'INSERT INTO wallet_data VALUES(%s);' % values
@@ -256,43 +265,34 @@ class WalletModel(QSqlQueryModel):
         self.endResetModel()
         self.__set_query()
 
-    def remove_entry(self, date, item, wallet_type):
+    def remove_entry(self, date, item):
         """
         Удалить запись из бумажника
         :param date: QDate
-        :param item: list
-        :param wallet_type: enum.WalletItemType
+        :param item: dict
         :return: None
         """
         self.beginResetModel()
-        sql = 'SELECT id FROM wallet_data WHERE day = %d AND month = %d AND year = %d AND '
-        if wallet_type == WalletItemType.INCOMING:
-            sql += 'incoming = %f'
-        elif wallet_type == WalletItemType.EXPENSE:
-            sql += 'expense = %f'
-        elif wallet_type == WalletItemType.SAVING:
-            sql += 'saving = %f'
-        elif wallet_type == WalletItemType.LOAN:
-            sql += 'loan = %f'
-        elif wallet_type == WalletItemType.DEBT:
-            sql += 'debt = %f AND incoming = %f'
-        else:
-            raise WalletModelException('Unexpected type: %s', wallet_type)
-        sql += ' AND description = \'%s\' LIMIT 1;'
+        sql = 'SELECT id FROM wallet_data WHERE day = %d AND month = %d AND year = %d AND ' % (date.day(),
+                                                                                               date.month(),
+                                                                                               date.year())
+        if not item['incoming'] == 0.0 and not item['debt'] == 0.0:
+            sql += 'incoming = %f AND debt = %f' % (item['incoming'],
+                                                    item['debt'])
+        elif not item['expense'] == 0.0 and not item['debt'] == 0.0:
+            sql += 'expense = %f AND debt = %f' % (item['expense'],
+                                                   item['debt'])
+        elif not item['incoming'] == 0.0 and not item['saving'] == 0.0:
+            sql += 'incoming = %f AND saving = %f' % (item['incoming'],
+                                                      item['saving'])
+        elif not item['incoming'] == 0.0:
+            sql += 'incoming = %f' % item['incoming']
+        elif not item['expense'] == 0.0:
+            sql += 'expense = %f' % item['expense']
+        elif not item['loan'] == 0.0:
+            sql += 'loan = %f' % item['loan']
+        sql += ' AND description = \'%s\' LIMIT 1;' % item['description']
         query = QSqlQuery()
-        if wallet_type == WalletItemType.DEBT:
-            sql = sql % (date.day(),
-                         date.month(),
-                         date.year(),
-                         item[0],
-                         item[1],
-                         item[2])
-        else:
-            sql = sql % (date.day(),
-                         date.month(),
-                         date.year(),
-                         item[-2],
-                         item[-1])
         if not query.exec(sql):
             raise WalletModelException('Could not execute query: \'%s\': %s' % (sql,
                                                                                 self.__db.lastError().text()))

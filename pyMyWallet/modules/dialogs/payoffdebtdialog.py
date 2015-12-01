@@ -21,4 +21,10 @@ class PayOffDebtDialog(QDialog, Ui_PayOffDebtDialog):
             self._button_box.button(self._button_box.Ok).setEnabled(True)
 
     def data(self):
-        return [-1 * self._pay_off_combo_box.value(), self._comments_lineedit.text()]
+        """
+        :return: dict
+        """
+        return {
+            'value': -1 * self._pay_off_combo_box.value(),
+            'description': self._comments_lineedit.text()
+        }

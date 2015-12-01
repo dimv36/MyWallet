@@ -63,7 +63,10 @@ class TableWidget(QWidget, Ui_TableWidget):
     def get_rows(self):
         result = []
         for i in range(0, self._table.rowCount()):
-            row = (self._table.item(i, 0).text(), self._table.item(i, 1).text())
+            row = {
+                'value': float(self._table.item(i, 0).text()),
+                'description': self._table.item(i, 1).text()
+            }
             result.append(row)
         return result
 
