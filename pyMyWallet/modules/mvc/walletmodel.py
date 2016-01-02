@@ -137,9 +137,9 @@ class WalletModel(QSqlQueryModel):
                             '(SELECT sum(incoming) FROM wallet_data ' \
                             'WHERE month = $MONTH AND year = $YEAR) AS incoming, ' \
                             '(SELECT sum(expense) FROM wallet_data WHERE month = $MONTH AND year = $YEAR) AS expense, '\
-                            '(SELECT sum(saving) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS saving, '\
-                            '(SELECT sum(loan) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS loan, ' \
-                            '(SELECT sum(debt) FROM wallet_data WHERE month <= $MONTH AND year <= $YEAR) AS debt ' \
+                            '(SELECT sum(saving) FROM wallet_data WHERE year <= $YEAR) AS saving, '\
+                            '(SELECT sum(loan) FROM wallet_data WHERE year <= $YEAR) AS loan, ' \
+                            '(SELECT sum(debt) FROM wallet_data WHERE year <= $YEAR) AS debt ' \
                             'FROM (SELECT 1);'
         wallet_data_query = wallet_data_query.replace('$MONTH', str(date.month()))
         wallet_data_query = wallet_data_query.replace('$YEAR', str(date.year()))
