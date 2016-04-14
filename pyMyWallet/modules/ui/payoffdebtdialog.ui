@@ -14,8 +14,8 @@
    <string>Pay off debt</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../resources/kwallet.png</normaloff>../resources/kwallet.png</iconset>
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
   </property>
   <layout class="QFormLayout" name="_main_layout">
    <item row="1" column="0">
@@ -40,6 +40,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="_comments_label">
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
      <property name="text">
       <string>Comments:</string>
      </property>
@@ -50,6 +53,9 @@
    </item>
    <item row="3" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="_button_box">
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

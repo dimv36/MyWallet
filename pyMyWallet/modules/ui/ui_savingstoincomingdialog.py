@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'savingstoincomingdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ class Ui_SavingsToIncomingDialog(object):
         SavingsToIncomingDialog.setObjectName("SavingsToIncomingDialog")
         SavingsToIncomingDialog.resize(400, 121)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../resources/kwallet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/kwallet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         SavingsToIncomingDialog.setWindowIcon(icon)
         self._main_layout = QtWidgets.QFormLayout(SavingsToIncomingDialog)
         self._main_layout.setObjectName("_main_layout")

@@ -1,5 +1,7 @@
 from PyQt5.QtCore import QCoreApplication, Qt, QDate
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
+from os.path import dirname, exists
+from os import mkdir
 from modules.enums import WalletItemModelType, WalletItemType
 
 
@@ -12,6 +14,22 @@ class WalletModel(QSqlQueryModel):
                                 'incoming, expense, saving, ' \
                                 'loan, debt, description FROM wallet_data ' \
                                 'WHERE month = %d AND year = %d ORDER BY day;'
+    __WALLET_CREATE_TABLES_SQL = ['CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY, '
+                                  'day INTEGER, '
+                                  'month INTEGER, '
+                                  'year INTEGER, '
+                                  'incoming REAL, '
+                                  'expense REAL, '
+                                  'saving REAL, '
+                                  'loan REAL, '
+                                  'debt REAL, '
+                                  'description TEXT); ',
+                                  'CREATE TABLE IF NOT EXISTS wallet_month_data(ID INTEGER PRIMARY KEY, '
+                                  'month INTEGER, '
+                                  'year INTEGER, '
+                                  'balance_at_start REAL, '
+                                  'balance_at_end REAL);'
+                                  ]
 
     class WalletData:
         def __init__(self):
@@ -75,6 +93,9 @@ class WalletModel(QSqlQueryModel):
             self.__db = QSqlDatabase.database()
         else:
             self.__db = QSqlDatabase.addDatabase('QSQLITE')
+        base_dir = dirname(name)
+        if not exists(base_dir):
+            mkdir(base_dir)
         self.__db.setDatabaseName(name)
         if not self.__db.open():
             raise WalletModelException(QCoreApplication.translate('WalletModel',
@@ -119,7 +140,7 @@ class WalletModel(QSqlQueryModel):
             result = float()
             try:
                 result = float(_query.value(_record.indexOf(_field)))
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
             except TypeError:
                 pass
@@ -144,8 +165,16 @@ class WalletModel(QSqlQueryModel):
         wallet_data_query = wallet_data_query.replace('$MONTH', str(date.month()))
         wallet_data_query = wallet_data_query.replace('$YEAR', str(date.year()))
         if not query.exec(wallet_data_query):
-            raise WalletModelException('Could not execute query \'%s\': %s' % (wallet_data_query,
-                                                                               self.__db.lastError().text()))
+            create_tables_query = QSqlQuery()
+            for cq in self.__WALLET_CREATE_TABLES_SQL:
+                if not create_tables_query.exec(cq):
+                    raise WalletModelException(QCoreApplication.translate('WalletModel',
+                                                                          'Could not initialize database \'%s\''
+                                                                          'when execute query \'%s\': %s') % (
+                        self.__wallet,
+                        cq,
+                        self.__db.lastError().text())
+                                               )
         elif query.next():
             record = query.record()
             wallet_data.balance_at_start = convert_to_float(query, record, 'balance_at_start')
@@ -337,7 +366,8 @@ class WalletModel(QSqlQueryModel):
         if not query.exec(sql):
             raise WalletModelException('Could not update balance by query \'%s\': %s' % (sql,
                                                                                          self.__db.lastError().text()))
-        self.__update_balance_at_end(current_date)
+        if not balance == float():
+            self.__update_balance_at_end(current_date)
         self.endResetModel()
 
     # Следующие методы используются при построении статистики в классе StatisticDialog
