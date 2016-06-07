@@ -1,6 +1,9 @@
 from PyQt5.QtCore import QCoreApplication, Qt, QDate
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from modules.enums import WalletItemModelType, WalletItemType
+from functools import partial
+
+_ = partial(QCoreApplication.translate, 'WalletModel')
 
 
 class WalletModelException(Exception):
@@ -8,9 +11,10 @@ class WalletModelException(Exception):
 
 
 class WalletModel(QSqlQueryModel):
+    __SUPPORTED_DB = 'QSQLITE'
     __WALLET_SELECT_SQL_QUERY = 'SELECT day, month, year, ' \
                                 'incoming, expense, saving, ' \
-                                'loan, debt, description FROM wallet_data ' \
+                                'debt, description FROM wallet_data ' \
                                 'WHERE month = %d AND year = %d ORDER BY day;'
 
     class WalletData:
@@ -20,66 +24,61 @@ class WalletModel(QSqlQueryModel):
             self.incoming = float()
             self.expense = float()
             self.savings = float()
-            self.loan = float()
             self.debt = float()
 
-    def __init__(self, wallet_file_path):
+    def __init__(self, wallet_file_path=None):
         super().__init__()
         self.__wallet = wallet_file_path
         self.__db = None
-        self.read_wallet()
+        if wallet_file_path:
+            self.read_wallet()
 
     def __set_headers(self):
         self.setHeaderData(WalletItemModelType.INDEX_DAY.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Day'))
+                           _('WalletModel', 'Day'))
         self.setHeaderData(WalletItemModelType.INDEX_MONTH.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Month'))
+                           _('WalletModel', 'Month'))
         self.setHeaderData(WalletItemModelType.INDEX_YEAR.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Year'))
+                           _('WalletModel', 'Year'))
         self.setHeaderData(WalletItemModelType.INDEX_INCOMING.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Incoming'))
+                           _('WalletModel', 'Incoming'))
         self.setHeaderData(WalletItemModelType.INDEX_EXPENSE.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Expense'))
+                           _('WalletModel', 'Expense'))
         self.setHeaderData(WalletItemModelType.INDEX_SAVINGS.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Savings'))
-        self.setHeaderData(WalletItemModelType.INDEX_LOAN.value,
-                           Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Loan'))
+                           _('WalletModel', 'Savings'))
         self.setHeaderData(WalletItemModelType.INDEX_DEBT.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Debt'))
+                           _('WalletModel', 'Debt'))
         self.setHeaderData(WalletItemModelType.INDEX_DESCRIPTION.value,
                            Qt.Horizontal,
-                           QCoreApplication.translate('WalletModel', 'Description'))
+                           _('WalletModel', 'Description'))
 
-    def __close_db(self):
+    @staticmethod
+    def __close_db(name):
         """
         Метод закрытия базы данных (бумажника)
         :return: None
         """
-        QSqlDatabase.removeDatabase(self.__wallet)
+        QSqlDatabase.removeDatabase(name)
 
-    def __connect_to_db(self, name):
+    @staticmethod
+    def __connect_to_db(name):
         """
         Подключение к базе данных (бумажнику)
         :param name: str
-        :return: None
+        :return: QSqlDatabase
         """
-        if QSqlDatabase.contains():
-            self.__db = QSqlDatabase.database()
-        else:
-            self.__db = QSqlDatabase.addDatabase('QSQLITE')
-        self.__db.setDatabaseName(name)
-        if not self.__db.open():
-            raise WalletModelException(QCoreApplication.translate('WalletModel',
-                                                                  'Can not open database: %s') %
-                                       self.__db.lastError().text())
+        db = QSqlDatabase.addDatabase(WalletModel.__SUPPORTED_DB)
+        db.setDatabaseName(name)
+        if not db.open():
+            raise WalletModelException(_('WalletModel', 'Can not open database: %s') % db.lastError().text())
+        return db
 
     def __set_query(self, date=None):
         """
@@ -125,6 +124,7 @@ class WalletModel(QSqlQueryModel):
                 pass
             return result
 
+        print(self.__db)
         if not date:
             date = QDate.currentDate()
         wallet_data = self.WalletData()
@@ -169,22 +169,22 @@ class WalletModel(QSqlQueryModel):
             wallet_data.incoming = convert_to_float(query, record, 'incoming')
             wallet_data.expense = convert_to_float(query, record, 'expense')
             wallet_data.savings = convert_to_float(query, record, 'saving')
-            wallet_data.loan = convert_to_float(query, record, 'loan')
             wallet_data.debt = convert_to_float(query, record, 'debt')
         return wallet_data
 
-    def create_new_wallet(self, wallet_path):
+    @staticmethod
+    def create_new_wallet(wallet_path):
         """
         Создание нового бумажника
         :param wallet_path: str
         :return: None
         """
-        self.__wallet = wallet_path
         # Устанавливаем новое имя базы данных
-        self.__connect_to_db(wallet_path)
+        db = WalletModel.__connect_to_db(wallet_path)
         # Создаем таблицы
         create_query = ['DROP TABLE IF EXISTS wallet_data;',
                         'DROP TABLE IF EXISTS wallet_month_data;',
+                        'DROP TABLE IF EXISTS wallet_categories'
                         'CREATE TABLE IF NOT EXISTS wallet_data(ID INTEGER PRIMARY KEY, '
                         'day INTEGER,'
                         'month INTEGER,'
@@ -192,7 +192,6 @@ class WalletModel(QSqlQueryModel):
                         'incoming REAL,'
                         'expense REAL,'
                         'saving REAL,'
-                        'loan REAL,'
                         'debt REAL,'
                         'description TEXT);',
                         'CREATE TABLE IF NOT EXISTS wallet_month_data(ID INTEGER PRIMARY KEY,'
@@ -207,10 +206,10 @@ class WalletModel(QSqlQueryModel):
                 raise WalletModelException(QCoreApplication.translate('WalletModel',
                                                                       'Could not initialize database \'%s\''
                                                                       'when execute query \'%s\': %s') %
-                                                                      (self.__wallet,
-                                                                       cq,
-                                                                       self.__db.lastError().text()))
-        self.__set_query()
+                                           (wallet_path,
+                                           cq,
+                                           db.lastError().text()))
+        db.close()
 
     def read_wallet(self, wallet=None):
         """
@@ -218,12 +217,13 @@ class WalletModel(QSqlQueryModel):
         :param wallet: имя (путь) к бумажнику str
         :return: None
         """
-        self.__close_db()
+        if self.__wallet:
+            self.__db.close()
         if wallet:
             self.__wallet = wallet
         self.beginResetModel()
         self.clear()
-        self.__connect_to_db(self.__wallet)
+        self.__db = self.__connect_to_db(self.__wallet)
         self.endResetModel()
         self.__set_query()
 
@@ -337,7 +337,7 @@ class WalletModel(QSqlQueryModel):
         if not query.exec(sql):
             raise WalletModelException('Could not update balance by query \'%s\': %s' % (sql,
                                                                                          self.__db.lastError().text()))
-        self.__update_balance_at_end(current_date)
+#        self.__update_balance_at_end(current_date)
         self.endResetModel()
 
     # Следующие методы используются при построении статистики в классе StatisticDialog

@@ -9,7 +9,7 @@ from PyQt5.QtCore import (
     QDir, QSize, QPoint, QFileInfo, QModelIndex, QDate
 )
 
-from modules.mvc.walletmodel import WalletModel
+from modules.mvc.walletmodel import WalletModel, WalletModelException
 from modules.enums import WalletItemType, WalletItemModelType
 from modules.dialogs import *
 from modules.ui.ui_mywallet import Ui_MyWallet
@@ -59,11 +59,14 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self.__current_path = path
 
     def __open_wallet(self):
-        # Устанавливаем модель
-        self._model = WalletModel(self.__current_path + self.__wallet_name)
-        self._view.setModel(self._model)
-        self._view.resizeColumnsToContents()
-
+        if not self.__wallet_name:
+            self._model = WalletModel()
+            return
+        else:
+            # Устанавливаем модель
+            self._model = WalletModel(self.__current_path + self.__wallet_name)
+            self._view.setModel(self._model)
+            self._view.resizeColumnsToContents()
         # Отправляем сигнал обновления заголовка окна
         self._signals.signal_wallet_changed.emit()
 
@@ -83,7 +86,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self.set_current_path(QDir.home().path() + '/MyWallet/')
             elif system() == 'Linux':
                 self.set_current_path(QDir.home().path() + '/.MyWallet/')
-            self.__wallet_name = 'wallet.db'
+            self.__wallet_name = None
         settings.endGroup()
 
     def write_settings(self):
@@ -141,10 +144,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                                                 QCoreApplication.translate('MyWallet', 'DB-files (*.db)'))[0]
         directory = QFileInfo(file_name).dir().path()
         wallet_name = QFileInfo(file_name).fileName()
-        if wallet_name and not file_name == self.__current_path + self.__wallet_name:
+        if wallet_name or (not directory == self.__current_path or not wallet_name == self.__wallet_name):
             self.set_current_path(directory)
             self.__wallet_name = wallet_name
-            self._model.read_wallet()
+            self._model.read_wallet(file_name)
             self._signals.signal_wallet_changed.emit()
 
     # Слот обновления данных доходов/расходов/займов/долгов/остатка на начало месяца приложения
@@ -175,10 +178,18 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         if dialog.exec() == QDialog.Accepted:
             wallet_name = dialog.wallet_name()
             directory = dialog.directory()
-            self._model.create_new_wallet(directory + wallet_name)
-            self.set_current_path(directory)
-            self.__wallet_name = wallet_name
-            self._signals.signal_wallet_changed.emit()
+            if not wallet_name.endswith('.db'):
+                wallet_name = '%s.db' % wallet_name
+            try:
+                self._model.create_new_wallet(directory + wallet_name)
+            except WalletModelException as e:
+                QMessageBox.critical(self,
+                                     QCoreApplication.translate('MyWallet', 'Create new wallet'),
+                                     str(e))
+            else:
+                QMessageBox.information(self,
+                                        QCoreApplication.translate('MyWallet', 'Create new wallet'),
+                                        QCoreApplication.translate('MyWallet', 'Success to create wallet with name \'%s\'' % wallet_name))
 
     # Слот добавления источников данных
     @pyqtSlot()
