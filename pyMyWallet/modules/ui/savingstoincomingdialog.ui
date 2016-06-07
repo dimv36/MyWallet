@@ -14,8 +14,8 @@
    <string>Savings to incoming</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../resources/kwallet.png</normaloff>../resources/kwallet.png</iconset>
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
   </property>
   <layout class="QFormLayout" name="_main_layout">
    <item row="1" column="1">

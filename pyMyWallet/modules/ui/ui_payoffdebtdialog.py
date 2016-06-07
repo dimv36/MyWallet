@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'payoffdebtdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ class Ui_PayOffDebtDialog(object):
         PayOffDebtDialog.setObjectName("PayOffDebtDialog")
         PayOffDebtDialog.resize(400, 121)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../resources/kwallet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/kwallet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         PayOffDebtDialog.setWindowIcon(icon)
         self._main_layout = QtWidgets.QFormLayout(PayOffDebtDialog)
         self._main_layout.setObjectName("_main_layout")
@@ -27,12 +27,14 @@ class Ui_PayOffDebtDialog(object):
         self._pay_off_combo_box.setObjectName("_pay_off_combo_box")
         self._main_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self._pay_off_combo_box)
         self._comments_label = QtWidgets.QLabel(PayOffDebtDialog)
+        self._comments_label.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self._comments_label.setObjectName("_comments_label")
         self._main_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self._comments_label)
         self._comments_lineedit = QtWidgets.QLineEdit(PayOffDebtDialog)
         self._comments_lineedit.setObjectName("_comments_lineedit")
         self._main_layout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self._comments_lineedit)
         self._button_box = QtWidgets.QDialogButtonBox(PayOffDebtDialog)
+        self._button_box.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self._button_box.setOrientation(QtCore.Qt.Horizontal)
         self._button_box.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self._button_box.setObjectName("_button_box")
