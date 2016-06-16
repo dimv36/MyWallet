@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mywallet.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,28 +33,22 @@ class Ui_MyWallet(object):
         self._main_layout.addWidget(self._label_expense_value, 4, 1, 1, 1)
         self._label_total_value = QtWidgets.QLabel(self._central_widget)
         self._label_total_value.setObjectName("_label_total_value")
-        self._main_layout.addWidget(self._label_total_value, 8, 1, 1, 1)
+        self._main_layout.addWidget(self._label_total_value, 7, 1, 1, 1)
         self._label_expense = QtWidgets.QLabel(self._central_widget)
         self._label_expense.setObjectName("_label_expense")
         self._main_layout.addWidget(self._label_expense, 4, 0, 1, 1)
-        self._label_total = QtWidgets.QLabel(self._central_widget)
-        self._label_total.setObjectName("_label_total")
-        self._main_layout.addWidget(self._label_total, 8, 0, 1, 1)
         self._label_balance_value = QtWidgets.QLabel(self._central_widget)
         self._label_balance_value.setObjectName("_label_balance_value")
         self._main_layout.addWidget(self._label_balance_value, 1, 1, 1, 1)
-        self._label_loan = QtWidgets.QLabel(self._central_widget)
-        self._label_loan.setObjectName("_label_loan")
-        self._main_layout.addWidget(self._label_loan, 6, 0, 1, 1)
+        self._label_total = QtWidgets.QLabel(self._central_widget)
+        self._label_total.setObjectName("_label_total")
+        self._main_layout.addWidget(self._label_total, 7, 0, 1, 1)
         self._label_debt = QtWidgets.QLabel(self._central_widget)
         self._label_debt.setObjectName("_label_debt")
-        self._main_layout.addWidget(self._label_debt, 7, 0, 1, 1)
-        self._label_loan_value = QtWidgets.QLabel(self._central_widget)
-        self._label_loan_value.setObjectName("_label_loan_value")
-        self._main_layout.addWidget(self._label_loan_value, 6, 1, 1, 1)
+        self._main_layout.addWidget(self._label_debt, 6, 0, 1, 1)
         self._label_debt_value = QtWidgets.QLabel(self._central_widget)
         self._label_debt_value.setObjectName("_label_debt_value")
-        self._main_layout.addWidget(self._label_debt_value, 7, 1, 1, 1)
+        self._main_layout.addWidget(self._label_debt_value, 6, 1, 1, 1)
         self._label_incoming = QtWidgets.QLabel(self._central_widget)
         self._label_incoming.setObjectName("_label_incoming")
         self._main_layout.addWidget(self._label_incoming, 2, 0, 1, 1)
@@ -154,11 +148,9 @@ class Ui_MyWallet(object):
         self._label_expense_value.setText(_translate("MyWallet", "0"))
         self._label_total_value.setText(_translate("MyWallet", "0"))
         self._label_expense.setText(_translate("MyWallet", "Expense:"))
-        self._label_total.setText(_translate("MyWallet", "In total:"))
         self._label_balance_value.setText(_translate("MyWallet", "0"))
-        self._label_loan.setText(_translate("MyWallet", "Loan:"))
+        self._label_total.setText(_translate("MyWallet", "In total:"))
         self._label_debt.setText(_translate("MyWallet", "Debt:"))
-        self._label_loan_value.setText(_translate("MyWallet", "0"))
         self._label_debt_value.setText(_translate("MyWallet", "0"))
         self._label_incoming.setText(_translate("MyWallet", "Incoming:"))
         self._label_incoming_value.setText(_translate("MyWallet", "0"))

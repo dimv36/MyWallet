@@ -7,6 +7,7 @@ SOURCES += \
     modules/dialogs/statisticdialog.py \
     modules/dialogs/payoffdebtdialog.py \
     modules/dialogs/savingstoincomingdialog.py \
+    modules/mvc/walletdatabase.py \
     modules/mvc/walletmodel.py \
     modules/mvc/statisticitem.py \
     modules/mvc/statistictreemodel.py \

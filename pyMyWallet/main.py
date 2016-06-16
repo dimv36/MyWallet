@@ -3,7 +3,7 @@ __author__ = 'dimv36'
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTranslator, QLocale, QLibraryInfo
+from PyQt5.QtCore import QTranslator
 from modules.mywallet import MyWallet
 
 

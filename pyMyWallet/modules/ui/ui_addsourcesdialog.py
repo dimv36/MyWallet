@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addsourcesdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.1
+# Created by: PyQt5 UI code generator 5.4.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -30,19 +30,16 @@ class Ui_AddSourcesDialog(object):
         self._button_box.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self._button_box.setCenterButtons(False)
         self._button_box.setObjectName("_button_box")
-        self.gridLayout.addWidget(self._button_box, 8, 3, 1, 1)
+        self.gridLayout.addWidget(self._button_box, 7, 3, 1, 1)
         self._incoming = TableWidget()
         self._incoming.setObjectName("_incoming")
         self.gridLayout.addWidget(self._incoming, 4, 1, 1, 3)
         self._expense = TableWidget()
         self._expense.setObjectName("_expense")
         self.gridLayout.addWidget(self._expense, 2, 1, 1, 3)
-        self._loan = TableWidget()
-        self._loan.setObjectName("_loan")
-        self.gridLayout.addWidget(self._loan, 6, 1, 1, 3)
         self._debt = TableWidget()
         self._debt.setObjectName("_debt")
-        self.gridLayout.addWidget(self._debt, 7, 1, 1, 3)
+        self.gridLayout.addWidget(self._debt, 6, 1, 1, 3)
         self._date = QtWidgets.QDateEdit(AddSourcesDialog)
         self._date.setObjectName("_date")
         self.gridLayout.addWidget(self._date, 0, 2, 1, 1)
