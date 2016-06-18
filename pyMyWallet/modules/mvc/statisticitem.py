@@ -1,6 +1,7 @@
 __author__ = 'dimv36'
 from enum import Enum
 
+
 class StatisticItemType(Enum):
     ROOT = 0
     YEAR = 1
@@ -20,6 +21,7 @@ class StatisticItemData:
 
     def __str__(self):
         return self.__repr__()
+
 
 class StatisticItemException(Exception):
     pass
@@ -46,7 +48,7 @@ class StatisticTreeItem:
     def translated_name(self):
         if not self.__statistic_item_data.translated_name:
             return self.__statistic_item_data.name
-        return self.__statistic_item_data.translated_name
+        return None
 
     def type(self):
         return self.__statistic_item_data.type

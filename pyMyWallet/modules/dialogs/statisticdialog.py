@@ -1,61 +1,13 @@
 __author__ = 'dimv36'
-from enum import Enum
 
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
-from PyQt5.QtCore import pyqtSlot, Qt, QCoreApplication, QDate
+from PyQt5.QtCore import pyqtSlot, QDate
 from PyQt5.QtGui import QColor, QPen
 from qcustomplot.qcustomplot import QCPBars, QCPBarsGroup, QCP, QCPScatterStyle
 
-from modules.mvc.statistictreemodel import StatisticTreeItem, StatisticItemType, StatisticItemData, StatisticTreeModel
+from modules.enums import *
+from modules.mvc.statistictreemodel import *
 from modules.ui.ui_statisticdialog import Ui_StatisticDialog
-
-
-class _MonthName(Enum):
-    January = 1
-    February = 2
-    March = 3
-    April = 4
-    May = 5
-    June = 6
-    July = 7
-    August = 8
-    September = 9
-    October = 10
-    November = 11
-    December = 12
-
-    @classmethod
-    def from_string(cls, name):
-        for value in cls._member_map_.values():
-            if value.name == name:
-                return value
-
-    @staticmethod
-    def translated_names(number):
-        if number == _MonthName.January.value:
-            return QCoreApplication.translate('_MonthName', 'January')
-        elif number == _MonthName.February.value:
-            return QCoreApplication.translate('_MonthName', 'February')
-        elif number == _MonthName.March.value:
-            return QCoreApplication.translate('_MonthName', 'March')
-        elif number == _MonthName.April.value:
-            return QCoreApplication.translate('_MonthName', 'April')
-        elif number == _MonthName.May.value:
-            return QCoreApplication.translate('_MonthName', 'May')
-        elif number == _MonthName.June.value:
-            return QCoreApplication.translate('_MonthName', 'June')
-        elif number == _MonthName.July.value:
-            return QCoreApplication.translate('_MonthName', 'July')
-        elif number == _MonthName.August.value:
-            return QCoreApplication.translate('_MonthName', 'August')
-        elif number == _MonthName.September.value:
-            return QCoreApplication.translate('_MonthName', 'September')
-        elif number == _MonthName.October.value:
-            return QCoreApplication.translate('_MonthName', 'October')
-        elif number == _MonthName.November.value:
-            return QCoreApplication.translate('_MonthName', 'November')
-        elif number == _MonthName.December.value:
-            return QCoreApplication.translate('_MonthName', 'December')
 
 
 class StatisticDialog(QDialog, Ui_StatisticDialog):
@@ -66,7 +18,6 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.incoming = QCPBars(customplot.xAxis, customplot.yAxis)
             self.expense = QCPBars(customplot.xAxis, customplot.yAxis)
             self.savings = QCPBars(customplot.xAxis, customplot.yAxis)
-            self.loan = QCPBars(customplot.xAxis, customplot.yAxis)
             self.debt = QCPBars(customplot.xAxis, customplot.yAxis)
             self.balance_at_end = QCPBars(customplot.xAxis, customplot.yAxis)
             self.__width = width
@@ -80,17 +31,15 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             self.__graphic.addPlottable(self.incoming)
             self.__graphic.addPlottable(self.expense)
             self.__graphic.addPlottable(self.savings)
-            self.__graphic.addPlottable(self.loan)
             self.__graphic.addPlottable(self.debt)
             self.__graphic.addPlottable(self.balance_at_end)
             # Make names
-            self.balance_at_start.setName(QCoreApplication.translate('Bars', 'Balance\nat start of month'))
-            self.incoming.setName(QCoreApplication.translate('Bars', 'Incoming'))
-            self.expense.setName(QCoreApplication.translate('Bars', 'Expense'))
-            self.savings.setName(QCoreApplication.translate('Bars', 'Savings'))
-            self.loan.setName(QCoreApplication.translate('Bars', 'Loan'))
-            self.debt.setName(QCoreApplication.translate('Bars', 'Debt'))
-            self.balance_at_end.setName(QCoreApplication.translate('Bars', 'Balance\nat end of month'))
+            self.balance_at_start.setName(tr('Bars', 'Balance\nat start of month'))
+            self.incoming.setName(tr('Bars', 'Incoming'))
+            self.expense.setName(tr('Bars', 'Expense'))
+            self.savings.setName(tr('Bars', 'Savings'))
+            self.debt.setName(tr('Bars', 'Debt'))
+            self.balance_at_end.setName(tr('Bars', 'Balance\nat end of month'))
             # Colors
             # balance at start
             pen.setColor(QColor(255, 100, 0))
@@ -111,14 +60,10 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             pen.setColor(QColor(150, 50, 10))
             self.savings.setPen(pen)
             self.savings.setBrush(QColor(150, 90, 190, 50))
-            # loan
-            pen.setColor(QColor(150, 220, 70))
-            self.loan.setPen(pen)
-            self.loan.setBrush(QColor(150, 220, 70, 50))
             # self.loan.setWidth(0.3)
             # debt
             pen.setColor(QColor(180, 50, 250))
-            self.loan.setPen(pen)
+            self.debt.setPen(pen)
             self.debt.setBrush(QColor(180, 50, 250, 50))
             # self.debt.setWidth(0.3)
             # balance at end
@@ -131,20 +76,34 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
                 self.incoming.setWidth(self.__width)
                 self.expense.setWidth(self.__width)
                 self.savings.setWidth(self.__width)
-                self.loan.setWidth(self.__width)
                 self.debt.setWidth(self.__width)
                 self.balance_at_end.setWidth(self.__width)
+
+    __TRANSLATED_MONTH_NAMES = {
+        MonthName.January.value: ('January', tr('StatisticDialog', 'January')),
+        MonthName.February.value: ('February', tr('StatisticDialog', 'February')),
+        MonthName.March.value: ('March', tr('StatisticDialog', 'March')),
+        MonthName.April.value: ('April', tr('StatisticDialog', 'April')),
+        MonthName.May.value: ('May', tr('StatisticDialog', 'May')),
+        MonthName.June.value: ('June', tr('StatisticDialog', 'June')),
+        MonthName.July.value: ('July', tr('StatisticDialog', 'July')),
+        MonthName.August.value: ('August', tr('StatisticDialog', 'August')),
+        MonthName.September.value: ('September', tr('StatisticDialog', 'September')),
+        MonthName.October.value: ('October', tr('StatisticDialog', 'October')),
+        MonthName.November.value: ('November', tr('StatisticDialog', 'November')),
+        MonthName.December.value: ('December', tr('StatisticDialog', 'December'))
+    }
 
     def __init__(self, model):
         super().__init__()
         self.setupUi(self)
-        self.__model = model
         self.__graphics = []
         self.__bar_group = QCPBarsGroup(self._graphic)
         self.__bar_groups = []
         self.__statistic_model = StatisticTreeModel()
         self._statistic_view.setModel(self.__statistic_model)
         self.__init_plottable()
+        self.__items = model.get_statistic_items()
         self.__create_statistic_items()
         self.__init_signal_slots()
 
@@ -155,7 +114,7 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         grid_pen.setColor(QColor(0, 0, 0, 25))
         self._graphic.yAxis.grid().setSubGridPen(grid_pen)
         self._graphic.xAxis.setSubTickCount(0)
-        self._graphic.yAxis.setLabel(QCoreApplication.translate('StatisticDialog', 'rubles'))
+        self._graphic.yAxis.setLabel(tr('StatisticDialog', 'rubles'))
         # legend
         self._graphic.legend.setVisible(True)
         self._graphic.axisRect().insetLayout().setInsetAlignment(0, Qt.AlignRight | Qt.AlignTop)
@@ -180,15 +139,17 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
                 self.__make_month_statistic(item)
 
     def __create_statistic_items(self):
-        items = self.__model.get_statistic_periods_items()
-        for year in items.keys():
+        for year in self.__items.keys():
+            year_items = self.__items[year]
             year_item_data = StatisticItemData(StatisticItemType.YEAR, year)
             year_item = StatisticTreeItem(year_item_data, self.__statistic_model.root())
             self.__statistic_model.root().insert_child(year_item)
-            for month in items[year]:
+            print(year_items)
+            for item in year_items:
+                month = item[0]
                 month_item_data = StatisticItemData(StatisticItemType.MONTH,
-                                                    _MonthName(int(month)).name,
-                                                    _MonthName.translated_names(month))
+                                                    self.__TRANSLATED_MONTH_NAMES[month][0],
+                                                    self.__TRANSLATED_MONTH_NAMES[month][1])
                 month_item = StatisticTreeItem(month_item_data, year_item)
                 year_item.insert_child(month_item)
         self._statistic_view.expandAll()
@@ -203,11 +164,10 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         month = _MonthName.from_string(month_item.name()).value
         month_data = self.__model.get_wallet_info(QDate(year, month, 1))
         self._graphic.xAxis.setTicks(False)
-        self._graphic.xAxis.setLabel(QCoreApplication.translate('StatisticDialog',
-                                                                '%s %s') % (month_item.translated_name(),
-                                                                            year_item.name()))
+        self._graphic.xAxis.setLabel(tr('StatisticDialog', '%s %s') % (month_item.translated_name(),
+                                                                       year_item.name()))
         self._graphic.yAxis.setRange(-100, max(month_data.balance_at_start, month_data.incoming,
-                                            month_data.expense, month_data.loan,
+                                            month_data.expense,
                                             month_data.debt, month_data.balance_at_end) + 5000)
         self._graphic.xAxis.setRange(0.5, 7)
         bars = self.Bars(self._graphic)
@@ -216,14 +176,12 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self.__bar_group.append(bars.incoming)
         self.__bar_group.append(bars.expense)
         self.__bar_group.append(bars.savings)
-        self.__bar_group.append(bars.loan)
         self.__bar_group.append(bars.debt)
         self.__bar_group.append(bars.balance_at_end)
         bars.balance_at_start.setData([4], [month_data.balance_at_start])
         bars.incoming.setData([4], [month_data.incoming])
         bars.expense.setData([4], [month_data.expense])
         bars.savings.setData([4], [month_data.savings])
-        bars.loan.setData([4], [month_data.loan])
         bars.debt.setData([4], [month_data.debt])
         bars.balance_at_end.setData([4], [month_data.balance_at_end])
         self._graphic.replot()
@@ -239,13 +197,11 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         expense_data = []
         savings_data = []
         saving_aggregate = float()
-        loan_data = []
         debt_data = []
         balance_at_end_data = []
         labels = ['']
         datax = [i + 1 for i in range(0, year_item.child_count())]
-        self._graphic.xAxis.setLabel(QCoreApplication.translate('StatisticDialog',
-                                                                'Statistic by %s  year') % str(year))
+        self._graphic.xAxis.setLabel(tr('StatisticDialog', 'Statistic by %s year') % str(year))
         for i in range(0, year_item.child_count()):
             month_item = year_item.child(i)
             labels.append('%s\n%s' % (month_item.translated_name(), str(year)))
@@ -256,7 +212,6 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
             expense_data.append(month_data.expense)
             saving_aggregate += month_data.savings
             savings_data.append(saving_aggregate)
-            loan_data.append(month_data.loan)
             debt_data.append(month_data.debt)
             balance_at_end_data.append(month_data.balance_at_end)
         self._graphic.xAxis.setAutoTickLabels(False)
@@ -268,38 +223,34 @@ class StatisticDialog(QDialog, Ui_StatisticDialog):
         self._graphic.xAxis.setTickStep(1)
         self._graphic.yAxis.setRange(-100, max(max(balance_at_start_data), max(incoming_data),
                                                max(expense_data), max(savings_data),
-                                               max(loan_data), max(debt_data),
-                                               max(balance_at_end_data)) + 5000)
-        for i in range(0, 7):
+                                               max(debt_data), max(balance_at_end_data)) + 5000)
+        for i in range(WalletMetaDataType.INDEX_BALANCE_AT_START.value,
+                       WalletMetaDataType.INDEX_DEBT.value + 1):
             self._graphic.addGraph()
         self._graphic.xAxis.setTickVectorLabels(labels)
         self._graphic.xAxis.setNumberPrecision(0)
         self._graphic.graph(0).setData(datax, balance_at_start_data)
-        self._graphic.graph(0).setName(QCoreApplication.translate('StatisticDialog', 'Balance\nat start of month'))
+        self._graphic.graph(0).setName(tr('StatisticDialog', 'Balance\nat start of month'))
         self._graphic.graph(0).setPen(QPen(Qt.red))
         self._graphic.graph(0).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCircle, 8))
         self._graphic.graph(1).setData(datax, incoming_data)
-        self._graphic.graph(1).setName(QCoreApplication.translate('StatisticDialog', 'Incoming'))
+        self._graphic.graph(1).setName(tr('StatisticDialog', 'Incoming'))
         self._graphic.graph(1).setPen(QPen(Qt.blue))
         self._graphic.graph(1).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossSquare, 8))
         self._graphic.graph(2).setData(datax, expense_data)
-        self._graphic.graph(2).setName(QCoreApplication.translate('StatisticDialog', 'Expense'))
+        self._graphic.graph(2).setName(tr('StatisticDialog', 'Expense'))
         self._graphic.graph(2).setPen(QPen(Qt.green))
         self._graphic.graph(2).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssStar, 8))
         self._graphic.graph(3).setData(datax, savings_data)
-        self._graphic.graph(3).setName(QCoreApplication.translate('StatisticDialog', 'Savings'))
+        self._graphic.graph(3).setName(tr('StatisticDialog', 'Savings'))
         self._graphic.graph(3).setPen(QPen(Qt.green))
         self._graphic.graph(3).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCross, 8))
-        self._graphic.graph(4).setData(datax, loan_data)
-        self._graphic.graph(4).setName(QCoreApplication.translate('StatisticDialog', 'Loan'))
-        self._graphic.graph(4).setPen(QPen(Qt.yellow))
-        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDisc, 8))
-        self._graphic.graph(5).setData(datax, debt_data)
-        self._graphic.graph(5).setName(QCoreApplication.translate('StatisticDialog', 'Debt'))
-        self._graphic.graph(5).setPen(QPen(Qt.gray))
-        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 8))
-        self._graphic.graph(6).setData(datax, balance_at_end_data)
-        self._graphic.graph(6).setPen(QPen(Qt.darkRed))
-        self._graphic.graph(6).setName(QCoreApplication.translate('StatisticDialog', 'Balance\nat end of month'))
-        self._graphic.graph(6).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
+        self._graphic.graph(4).setData(datax, debt_data)
+        self._graphic.graph(4).setName(tr('StatisticDialog', 'Debt'))
+        self._graphic.graph(4).setPen(QPen(Qt.gray))
+        self._graphic.graph(4).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssDiamond, 8))
+        self._graphic.graph(5).setData(datax, balance_at_end_data)
+        self._graphic.graph(5).setPen(QPen(Qt.darkRed))
+        self._graphic.graph(5).setName(tr('StatisticDialog', 'Balance\nat end of month'))
+        self._graphic.graph(5).setScatterStyle(QCPScatterStyle(QCPScatterStyle.ssCrossCircle, 8))
         self._graphic.replot()

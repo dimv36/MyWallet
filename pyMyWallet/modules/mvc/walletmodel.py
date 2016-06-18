@@ -127,33 +127,13 @@ class WalletModel(QAbstractTableModel):
     def get_metadata(self):
         return self.__db.get_metadata()
 
-    #
-    # # Следующие методы используются при построении статистики в классе StatisticDialog
-    # def get_statistic_periods_items(self):
-    #     """
-    #     Получить периоды отображения статистики
-    #     :return: dict {year: [months}
-    #     """
-    #     year_query = QSqlQuery()
-    #     statistic_items = {}
-    #     year_sql = 'SELECT DISTINCT year AS year FROM wallet_data;'
-    #     if not year_query.exec(year_sql):
-    #         raise WalletModelException(_('WalletModel', 'Could not get years items by query \'%s\': %s') % (
-    #             year_sql, self.__db.lastError().text())
-    #         )
-    #     while year_query.next():
-    #         year_record = year_query.record()
-    #         year = int(year_record.value(year_record.indexOf('year')))
-    #         months = []
-    #         month_query = QSqlQuery()
-    #         month_sql = 'SELECT DISTINCT month AS month FROM wallet_data WHERE year = %d' % year
-    #         if not month_query.exec(month_sql):
-    #             raise WalletModelException(_('WalletModel', 'Could not get months items by query \'%s\': %s') % (
-    #                 month_sql,
-    #                 self.__db.lastError().text()))
-    #         while month_query.next():
-    #             month_record = month_query.record()
-    #             month = int(month_record.value(month_record.indexOf('month')))
-    #             months.append(month)
-    #         statistic_items[year] = months
-    #     return statistic_items
+    # Следующие методы используются при построении статистики в классе StatisticDialog
+    def get_statistic_items(self):
+        """
+        Получить периоды отображения статистики
+        :return: dict {year: {month: WalletData}}
+        """
+        try:
+            return self.__db.get_statistic_items()
+        except WalletDatabaseException as e:
+            raise WalletModelException(tr('WalletModel', e))

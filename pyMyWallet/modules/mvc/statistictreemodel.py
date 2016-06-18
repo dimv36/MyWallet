@@ -1,7 +1,8 @@
 __author__ = 'dimv36'
-from PyQt5.QtCore import QAbstractItemModel, Qt, QCoreApplication
+from PyQt5.QtCore import QAbstractItemModel, Qt
 from PyQt5.QtCore import QModelIndex
-from .statisticitem import *
+from modules import *
+from modules.mvc.statisticitem import *
 
 
 class StatisticTreeModel(QAbstractItemModel):
@@ -9,8 +10,7 @@ class StatisticTreeModel(QAbstractItemModel):
         super().__init__(parent)
         self.__root = StatisticTreeItem(StatisticItemData(StatisticItemType.ROOT,
                                                           'Statistic periods',
-                                                          QCoreApplication.translate('StatisticTreeModel',
-                                                                                     'Statistic periods')))
+                                                          tr('StatisticTreeModel', 'Statistic periods')))
 
     def columnCount(self, parent_index=None, *args, **kwargs):
         return 1
@@ -36,7 +36,6 @@ class StatisticTreeModel(QAbstractItemModel):
     def index(self, row, column, parent_index=None, *args, **kwargs):
         if not self.hasIndex(row, column, parent_index):
             return None
-        parent_item = None
         if not parent_index.isValid():
             parent_item = self.__root
         else:
@@ -61,7 +60,6 @@ class StatisticTreeModel(QAbstractItemModel):
         return self.createIndex(parent_item.row(), 0, parent_item)
 
     def rowCount(self, parent_index=None, *args, **kwargs):
-        parent_item = None
         if not parent_index.isValid():
             parent_item = self.__root
         else:

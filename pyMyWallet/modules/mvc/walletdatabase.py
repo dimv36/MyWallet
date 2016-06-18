@@ -14,6 +14,28 @@ class WalletData:
         self.savings = float()
         self.debt = float()
 
+    def __repr__(self):
+        return 'WalletData(%f, %f, %f, %f, %f, %f)' % \
+               (self.balance_at_start, self.balance_at_end,
+                self.incoming, self.expense,
+                self.savings, self.debt)
+
+
+class WalletDataRange:
+    __WALLET_DATABASE_RANGE_FORMAT = 'date(\'%s\')'
+
+    def __init__(self, start, end, early=None):
+        self.start = self.__WALLET_DATABASE_RANGE_FORMAT % \
+                     start.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+        self.end = self.__WALLET_DATABASE_RANGE_FORMAT % \
+                   end.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+        if early:
+            if not isinstance(early, str):
+                self.early = self.__WALLET_DATABASE_RANGE_FORMAT % \
+                             early.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+            else:
+                self.early = '\'%s\'' % early
+
 
 class WalletDatabaseException(Exception):
     pass
@@ -110,7 +132,7 @@ class WalletDatabase(QObject):
                                   '    description TEXT);'
                                   ]
     __WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE = 'UPDATE wallet_month_data ' \
-                                                    '    SET balance_at_end = balance_at_end + \'%f\' ' \
+                                                    '    SET balance_at_end = \'%f\' ' \
                                                     'WHERE date = date(\'now\', \'start of month\');'
     __WALLET_GET_FIRST_DATE_QUERY = 'SELECT date FROM wallet_data WHERE id = 1;'
     __WALLET_GET_METADATA_ROW_ON_CURRENT_MONTH_QUERY = 'SELECT * FROM wallet_month_data ' \
@@ -136,6 +158,8 @@ class WalletDatabase(QObject):
                                                   'FROM (SELECT 1);'
     __WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY = 'SELECT balance_at_end FROM wallet_month_data WHERE ' \
                                                           'date = date(\'now\', \'start of month\', \'-1 month\');'
+    # Следующие запросы используются для получения статистики
+    __WALLET_GET_METADATA_PERIODS_QUERY = 'SELECT date FROM wallet_month_data;'
 
     __WALLET_DATA_COLUMNS = {
         WalletItemModelType.INDEX_DATE.value: 'date',
@@ -160,7 +184,6 @@ class WalletDatabase(QObject):
 
     @pyqtSlot(dict, bool)
     def __on_update_balance_at_end(self, item, is_remove):
-        print('__on_update_balance_at_end: %s' % item)
         convertor = lambda elem: float(elem) if not elem == 'NULL' else float()
         data = {}
         for i in range(WalletItemModelType.INDEX_INCOMING.value,
@@ -168,13 +191,6 @@ class WalletDatabase(QObject):
             data[i] = -1 * convertor(item[i]) if i == WalletItemModelType.INDEX_EXPENSE.value else convertor(item[i])
         delta = sum(elem for elem in data.values()) - data.get(WalletItemModelType.INDEX_DEBT.value)
         delta *= -1 if is_remove else 1
-        query = self.__WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE % delta
-        try:
-            cursor = self.__connection.cursor()
-            cursor.execute(query)
-            self.__connection.commit()
-        except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to update balance at end: %s' % e))
         if is_remove:
             self.__metadata.incoming -= data.get(WalletItemModelType.INDEX_INCOMING.value)
             self.__metadata.expense -= data.get(WalletItemModelType.INDEX_EXPENSE.value)
@@ -186,6 +202,13 @@ class WalletDatabase(QObject):
             self.__metadata.savings += data.get(WalletItemModelType.INDEX_SAVINGS.value)
             self.__metadata.debt += data.get(WalletItemModelType.INDEX_DEBT.value)
         self.__metadata.balance_at_end += delta
+        query = self.__WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE % self.__metadata.balance_at_end
+        try:
+            cursor = self.__connection.cursor()
+            cursor.execute(query)
+            self.__connection.commit()
+        except sqlite3.Error as e:
+            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to update balance at end: %s' % e))
 
     def connect(self, database):
         if not database:
@@ -193,7 +216,7 @@ class WalletDatabase(QObject):
         if not QFileInfo(database).exists() and database:
             raise WalletDatabaseException(tr('WalletDatabase', 'Wallet \'%s\' does not exists' % database))
         if self.__connection:
-            self.__connection.close()
+            self.disconnect()
         self.__database = database
         self.__connection = sqlite3.connect(database)
 
@@ -203,6 +226,8 @@ class WalletDatabase(QObject):
     def disconnect(self):
         if self.__connection:
             self.__connection.close()
+        self.__data_range = None
+        self.__metadata = None
 
     @staticmethod
     def create_wallet(database):
@@ -217,14 +242,15 @@ class WalletDatabase(QObject):
         db.close()
 
     def get_data(self, data_range=None):
-        # TODO: сделать реализацию получения данных по диапазону дат
         if not self.__connection:
             raise WalletDatabaseException(tr('WalletDatabase', 'Database connection is not open'))
-        query = None
+        query = self.__WALLET_GET_DATA_QUERY_TEMPLATE
         if not data_range:
-            query = self.__WALLET_GET_DATA_QUERY_TEMPLATE
             query = query.replace('$START', 'date(\'now\', \'start of month\')')
             query = query.replace('$END', 'date(\'now\')')
+        else:
+            query = query.replace('$START', data_range.start)
+            query = query.replace('$END', data_range.end)
         cursor = self.__connection.cursor()
         try:
             cursor.execute(query)
@@ -234,14 +260,13 @@ class WalletDatabase(QObject):
         data = [self.WalletDatabaseConvertor.convert_from_database(row) for row in data]
         return data
 
-    def get_metadata(self, data_range=None):
+    def get_metadata(self, data_range=None, cache_result=True):
         if self.__data_range == data_range and self.__metadata:
             return self.__metadata
-        # TODO: сделать реализацию получения данных по диапазону дат
         if not self.__connection:
             raise WalletDatabaseException(tr('WalletDatabase', 'Database connection is not open'))
-        query = None
         cursor = self.__connection.cursor()
+        query = self.__WALLET_GET_WALLET_METADATA_QUERY_TEMPLATE
         if not data_range:
             # Проверяем наличие записи за текущий месяц
             cursor.execute(self.__WALLET_GET_METADATA_ROW_ON_CURRENT_MONTH_QUERY)
@@ -252,13 +277,12 @@ class WalletDatabase(QObject):
                 cursor.execute(self.__WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY)
                 balance_at_end = float() if cursor.fetchone() is None else cursor.fetchone()
                 try:
-                    query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % balance_at_end
-                    cursor.execute(query)
+                    insert_query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % balance_at_end
+                    cursor.execute(insert_query)
                     self.__connection.commit()
                 except sqlite3.Error as e:
                     raise WalletDatabaseException(tr('WalletDatabase', 'Failed to insert metadata: %s' % e))
             # Получаем метаданные
-            query = self.__WALLET_GET_WALLET_METADATA_QUERY_TEMPLATE
             cursor.execute(self.__WALLET_GET_FIRST_DATE_QUERY)
             first_id_tuple = cursor.fetchone()
             query = query.replace('$START', 'date(\'now\', \'start of month\')')
@@ -266,6 +290,10 @@ class WalletDatabase(QObject):
             query = query.replace('$EARLY', ('\'%s\'' % first_id_tuple[0]
                                              if first_id_tuple
                                              else 'date(\'now\', \'start of month\')'))
+        else:
+            query = query.replace('$START', data_range.start)
+            query = query.replace('$END', data_range.end)
+            query = query.replace('$EARLY', data_range.early)
         try:
             cursor.execute(query)
             metadata = cursor.fetchone()
@@ -279,8 +307,9 @@ class WalletDatabase(QObject):
         result.expense = metadata[WalletMetaDataType.INDEX_EXPENSE.value]
         result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS.value]
         result.debt = metadata[WalletMetaDataType.INDEX_DEBT.value]
-        self.__data_range = data_range
-        self.__metadata = result
+        if cache_result:
+            self.__data_range = data_range
+            self.__metadata = result
         return result
 
     def add_data(self, item):
@@ -342,3 +371,36 @@ class WalletDatabase(QObject):
         # а баланс на конец месяца - с добавлением расчитанной разницы
         self.__metadata.balance_at_start = balance
         self.__metadata.balance_at_end += delta
+
+    # Используется для построения статистики
+    def get_statistic_items(self):
+        cursor = self.__connection.cursor()
+        results = {}
+        try:
+            cursor.execute(self.__WALLET_GET_METADATA_PERIODS_QUERY)
+            periods = cursor.fetchall()
+            if not periods:
+                return results
+            periods = [p[0] for p in periods]
+            old = periods[0]
+            for period in periods:
+                # Конвертируем данные в QDate
+                current_month_date = QDate.fromString(period, self.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                year = current_month_date.year()
+                month = current_month_date.month()
+                next_month = (current_month_date.month() + 1
+                              if not current_month_date.month() == 12
+                              else 1)
+                next_year = (current_month_date.year() + 1
+                             if not current_month_date.month() == 12
+                             else current_month_date.year())
+                next_date = QDate(next_year, next_month, current_month_date.day())
+                data_range = WalletDataRange(current_month_date, next_date, old)
+                metadata = self.get_metadata(data_range=data_range, cache_result=False)
+                if year not in results.keys():
+                    results[year] = [(month, metadata)]
+                else:
+                    results[year].append((month, metadata))
+        except sqlite3.Error as e:
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get statistic periods: %s' % e))
+        return results

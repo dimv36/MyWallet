@@ -60,6 +60,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 self.__model.set_wallet_path(self.__current_path, self.__wallet_name)
             self._view.setModel(self.__model)
             self._view.resizeColumnsToContents()
+            self._view.scrollToBottom()
         except WalletModelException as e:
             QMessageBox.critical(self,
                                  tr('MyWallet', 'Could not open wallet'),
@@ -266,7 +267,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
     @pyqtSlot()
     def on_statistic_show(self):
         # TODO: Реализовать
-        raise NotImplementedError()
+        pass
         # dialog = StatisticDialog(self.__model)
         # dialog.exec()
 
