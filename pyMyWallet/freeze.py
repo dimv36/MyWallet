@@ -9,7 +9,7 @@ base = None
 if sys.platform == "win32":
     base = "Win32GUI"
 
-includes = ['lxml.etree', 'lxml._elementpath', 'inspect', 'gzip']
+includes = ['inspect', 'gzip']
 
 setup(
     name=application_title,
