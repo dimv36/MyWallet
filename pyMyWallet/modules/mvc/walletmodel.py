@@ -78,7 +78,7 @@ class WalletModel(QAbstractTableModel):
         try:
             WalletDatabase.create_wallet(wallet_path)
         except WalletDatabaseException as e:
-            raise WalletModelException(tr('WalletModel', 'Could not create new wallet: %s' % e))
+            raise WalletModelException(e)
 
     def add_entry(self, item):
         """
@@ -91,7 +91,7 @@ class WalletModel(QAbstractTableModel):
             row = self.__db.add_data(item)
             self.__data.append(row)
         except WalletDatabaseException as e:
-            raise WalletModelException(tr('WalletModel', '%s' % e))
+            raise WalletModelException(e)
         # Сортируем строки
         self.__data = sorted(self.__data)
         self.endResetModel()
@@ -108,7 +108,7 @@ class WalletModel(QAbstractTableModel):
             row = self.__db.remove_data(item)
             self.__data.remove(row)
         except WalletDatabaseException as e:
-            raise WalletModelException(tr('WalletModel', '%s' % e))
+            raise WalletModelException(e)
         self.endResetModel()
         self.__signal_data_changed.emit()
 
@@ -121,7 +121,7 @@ class WalletModel(QAbstractTableModel):
         try:
             self.__db.change_balance_at_start_of_month(balance)
         except WalletDatabaseException as e:
-            raise WalletModelException(tr('WalletModel', e))
+            raise WalletModelException(e)
         self.__signal_data_changed.emit()
 
     def get_metadata(self):
@@ -136,4 +136,4 @@ class WalletModel(QAbstractTableModel):
         try:
             return self.__db.get_statistic_items()
         except WalletDatabaseException as e:
-            raise WalletModelException(tr('WalletModel', e))
+            raise WalletModelException(e)

@@ -130,7 +130,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
                 except OSError:
                     QMessageBox.warning(self,
                                         tr('MyWallet', 'MyWallet'),
-                                        tr('MyWallet', 'File %s does not exist' % wallet_path)
+                                        tr('MyWallet', 'File %s does not exist') % wallet_path
                                         )
                     self.set_current_path(old_directory)
                     self.__wallet_name = old_wallet
@@ -183,7 +183,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             if QFileInfo.exists(file_name):
                 result = QMessageBox.question(self,
                                               tr('MyWallet', 'Create new wallet'),
-                                              tr('MyWallet', 'Wallet \'%s\' already exists. Rewrite?' % wallet_name))
+                                              tr('MyWallet', 'Wallet \'%s\' already exists. Rewrite?') % wallet_name)
                 if result == QMessageBox.No:
                     return
             if not wallet_name.endswith('.db'):
@@ -195,7 +195,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             else:
                 QMessageBox.information(self,
                                         tr('MyWallet', 'Create new wallet'),
-                                        tr('MyWallet', 'Wallet \'%s\' was created' % wallet_name))
+                                        tr('MyWallet', 'Wallet \'%s\' was created') % wallet_name)
 
     # Слот добавления источников данных
     @pyqtSlot()
@@ -227,7 +227,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             except WalletModelException as e:
                 QMessageBox.critical(self,
                                      tr('MyWallet', 'Add sources dialog'),
-                                     tr('MyWallet', 'Failed to add sources: %s' % e))
+                                     tr('MyWallet', 'Failed to add sources: %s') % e)
             self._view.resizeColumnsToContents()
 
     # Слот удаления записи из таблицы
@@ -242,7 +242,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         except WalletModelException as e:
             QMessageBox.critical(self,
                                  tr('MyWallet', 'Remove sources dialog'),
-                                 tr('MyWallet', 'Failed to remove sources: %s' % e))
+                                 tr('MyWallet', 'Failed to remove sources: %s') % e)
 
     # Слот изменения остатка на начало месяца
     @pyqtSlot()

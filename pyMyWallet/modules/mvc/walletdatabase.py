@@ -208,13 +208,13 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to update balance at end: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to update balance at end: %s') % e)
 
     def connect(self, database):
         if not database:
             raise WalletDatabaseException(tr('WalletDatabase', 'Could not connect to database: database path is empty'))
         if not QFileInfo(database).exists() and database:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Wallet \'%s\' does not exists' % database))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Wallet \'%s\' does not exists') % database)
         if self.__connection:
             self.disconnect()
         self.__database = database
@@ -237,7 +237,7 @@ class WalletDatabase(QObject):
             for cq in WalletDatabase.__WALLET_INIT_WALLET_QUERY:
                 cursor.execute(cq)
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to create wallet: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to create wallet: %s') % e)
         db.commit()
         db.close()
 
@@ -256,7 +256,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             data = cursor.fetchall()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get data: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get data: %s') % e)
         data = [self.WalletDatabaseConvertor.convert_from_database(row) for row in data]
         return data
 
@@ -281,7 +281,7 @@ class WalletDatabase(QObject):
                     cursor.execute(insert_query)
                     self.__connection.commit()
                 except sqlite3.Error as e:
-                    raise WalletDatabaseException(tr('WalletDatabase', 'Failed to insert metadata: %s' % e))
+                    raise WalletDatabaseException(tr('WalletDatabase', 'Failed to insert metadata: %s') % e)
             # Получаем метаданные
             cursor.execute(self.__WALLET_GET_FIRST_DATE_QUERY)
             first_id_tuple = cursor.fetchone()
@@ -299,7 +299,7 @@ class WalletDatabase(QObject):
             metadata = cursor.fetchone()
             metadata = tuple(float(e) if e else float() for e in metadata)
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalledDatabase', 'Could not get metadata: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get metadata: %s') % e)
         result = WalletData()
         result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START.value]
         result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END.value]
@@ -324,7 +324,7 @@ class WalletDatabase(QObject):
             cursor.execute(self.__WALLET_GET_INSERTED_DATA_QUERY)
             row = cursor.fetchone()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not insert data: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not insert data: %s') % e)
         self.__signal_data_changed.emit(values, False)
         return self.WalletDatabaseConvertor.convert_from_database(row)
 
@@ -351,7 +351,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not remove data: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not remove data: %s') % e)
         self.__signal_data_changed.emit(values, True)
         return removed
 
@@ -364,7 +364,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not update balance at start of month: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not update balance at start of month: %s') % e)
         # Определяем разницу, на сколько изменился баланс на начало месяца
         delta = balance - self.__metadata.balance_at_start
         # Устанавливаем баланс на начало месяца в новое значение,
@@ -402,5 +402,5 @@ class WalletDatabase(QObject):
                 else:
                     results[year].append((month, metadata))
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get statistic periods: %s' % e))
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get statistic periods: %s') % e)
         return results

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="ru_RU" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.1" language="ru_RU">
 <context>
     <name>AddSourcesDialog</name>
     <message>
-        <location filename="../modules/ui/ui_addsourcesdialog.py" line="63"/>
+        <location filename="../modules/ui/ui_addsourcesdialog.py" line="60"/>
         <source>Add sources</source>
         <translation>Добавить источники</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_addsourcesdialog.py" line="64"/>
+        <location filename="../modules/ui/ui_addsourcesdialog.py" line="61"/>
         <source>d MMMM yyyy</source>
         <translation>d MMMM yyyy</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_addsourcesdialog.py" line="65"/>
+        <location filename="../modules/ui/ui_addsourcesdialog.py" line="62"/>
         <source>Date:</source>
         <translation>Дата:</translation>
     </message>
@@ -29,11 +30,6 @@
     </message>
     <message>
         <location filename="../modules/dialogs/addsourcesdialog.py" line="19"/>
-        <source>Loan</source>
-        <translation>Займ</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/addsourcesdialog.py" line="20"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
@@ -46,41 +42,36 @@
 <context>
     <name>Bars</name>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="87"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="37"/>
         <source>Balance
 at start of month</source>
         <translation>Баланс 
 на начало месяца</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="88"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="38"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="89"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="39"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="91"/>
-        <source>Loan</source>
-        <translation>Займ</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="92"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="41"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="93"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="42"/>
         <source>Balance
 at end of month</source>
         <translation>Остаток
 на конец месяца</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="90"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="40"/>
         <source>Savings</source>
         <translation>Накопления</translation>
     </message>
@@ -109,122 +100,117 @@ at end of month</source>
 <context>
     <name>MyWallet</name>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="152"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="146"/>
         <source>MyWallet</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="153"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="147"/>
         <source>Balance at the beginning of month:</source>
         <translation>Остаток на начало месяца:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="166"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="158"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="163"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="155"/>
         <source>Incoming:</source>
         <translation>Доходы:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="157"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="152"/>
         <source>In total:</source>
         <translation>Итого:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="156"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="150"/>
         <source>Expense:</source>
         <translation>Расходы:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="159"/>
-        <source>Loan:</source>
-        <translation>Займы:</translation>
-    </message>
-    <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="160"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="153"/>
         <source>Debt:</source>
         <translation>Долги:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="167"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="159"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="168"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="160"/>
         <source>Wallet</source>
         <translation>Кошелек</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="169"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="161"/>
         <source>toolBar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="170"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="162"/>
         <source>Open wallet</source>
         <translation>Открыть кошелек</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="171"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="163"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="172"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="164"/>
         <source>Add item</source>
         <translation>Добавить источники</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="173"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="165"/>
         <source>Delete item</source>
         <translation>Удалить источник</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="174"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="166"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="175"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="167"/>
         <source>Show statistic</source>
         <translation>Показать статистику</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="176"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="168"/>
         <source>Change balance</source>
         <translation>Изменить остаток на начало месяца</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="177"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="169"/>
         <source>New wallet</source>
         <translation>Новый кошелек</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="178"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="170"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="130"/>
+        <location filename="../modules/mywallet.py" line="131"/>
         <source>File %s does not exist</source>
         <translation>Файл %s не существует</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="141"/>
+        <location filename="../modules/mywallet.py" line="142"/>
         <source>Choose file</source>
         <translation>Выберите файл</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="267"/>
+        <location filename="../modules/mywallet.py" line="259"/>
         <source>About application</source>
         <translation>О приложении</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="267"/>
+        <location filename="../modules/mywallet.py" line="259"/>
         <source>MyWallet developed in June 2015
 author: Dmitry Voronin
 email: carriingfate92@yandex.ru
@@ -235,39 +221,74 @@ email: carriingfate92@yandex.ru
 Версия: %s</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="165"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="157"/>
         <source>Saving:</source>
         <translation>Накопления:</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="179"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="171"/>
         <source>Pay debt off</source>
         <translation>Погасить задолженность</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="141"/>
+        <location filename="../modules/mywallet.py" line="142"/>
         <source>DB-files (*.db)</source>
         <translation>Файлы баз данных (*.db)</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="287"/>
+        <location filename="../modules/mywallet.py" line="282"/>
         <source>You can not repay the debt by this amount</source>
         <translation>Вы не можете погасить долги на эту величину</translation>
     </message>
     <message>
-        <location filename="../modules/ui/ui_mywallet.py" line="180"/>
+        <location filename="../modules/ui/ui_mywallet.py" line="172"/>
         <source>Savings to incoming</source>
         <translation>Перевести накопления в доход</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="303"/>
+        <location filename="../modules/mywallet.py" line="298"/>
         <source>You can not convert savings to incoming by this amount</source>
         <translation>Вы не можете перевести накопления в доходы на эту величину</translation>
     </message>
     <message>
-        <location filename="../modules/mywallet.py" line="192"/>
+        <location filename="../modules/mywallet.py" line="196"/>
         <source>Create new wallet</source>
-        <translation type="unfinished"></translation>
+        <translation>Создание нового кошелька</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="65"/>
+        <source>Could not open wallet</source>
+        <translation>Ошибка открытия кошелька</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="228"/>
+        <source>Add sources dialog</source>
+        <translation>Диалог добавления источников</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="243"/>
+        <source>Remove sources dialog</source>
+        <translation>Диалог удаления источников</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="184"/>
+        <source>Wallet &apos;%s&apos; already exists. Rewrite?</source>
+        <translation>Кошелек &apos;%s&apos; уже существует. Перезаписать?</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="196"/>
+        <source>Wallet &apos;%s&apos; was created</source>
+        <translation>Кошелек &apos;%s&apos; был создан</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="228"/>
+        <source>Failed to add sources: %s</source>
+        <translation>Ошибка добавления источников: %s</translation>
+    </message>
+    <message>
+        <location filename="../modules/mywallet.py" line="243"/>
+        <source>Failed to remove sources: %s</source>
+        <translation>Ошибка удаления источников: %s</translation>
     </message>
 </context>
 <context>
@@ -275,7 +296,7 @@ email: carriingfate92@yandex.ru
     <message>
         <location filename="../modules/ui/ui_newwalletdialog.py" line="54"/>
         <source>New wallet</source>
-        <translation>Новый бумажник</translation>
+        <translation>Новый кошелек</translation>
     </message>
     <message>
         <location filename="../modules/ui/ui_newwalletdialog.py" line="55"/>
@@ -385,64 +406,119 @@ email: carriingfate92@yandex.ru
         <translation>Статистика</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="158"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="117"/>
         <source>rubles</source>
         <translation>рубли</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="206"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="167"/>
         <source>%s %s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="247"/>
-        <source>Statistic by %s  year</source>
-        <translation>Статистика %s года</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="282"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="237"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="286"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="241"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="294"/>
-        <source>Loan</source>
-        <translation>Займ</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="298"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="249"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="278"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="233"/>
         <source>Balance
 at start of month</source>
         <translation>Баланс 
 на начало месяца</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="303"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="254"/>
         <source>Balance
 at end of month</source>
         <translation>Остаток
 на конец месяца</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="290"/>
+        <location filename="../modules/dialogs/statisticdialog.py" line="245"/>
         <source>Savings</source>
         <translation>Накопления</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="83"/>
+        <source>January</source>
+        <translation>Январь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="84"/>
+        <source>February</source>
+        <translation>Февраль</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="85"/>
+        <source>March</source>
+        <translation>Март</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="86"/>
+        <source>April</source>
+        <translation>Апрель</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="87"/>
+        <source>May</source>
+        <translation>Май</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="88"/>
+        <source>June</source>
+        <translation>Июнь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="89"/>
+        <source>July</source>
+        <translation>Июль</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="90"/>
+        <source>August</source>
+        <translation>Август</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="91"/>
+        <source>September</source>
+        <translation>Сентябрь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="92"/>
+        <source>October</source>
+        <translation>Октябрь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="93"/>
+        <source>November</source>
+        <translation>Ноябрь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="94"/>
+        <source>December</source>
+        <translation>Декабрь</translation>
+    </message>
+    <message>
+        <location filename="../modules/dialogs/statisticdialog.py" line="204"/>
+        <source>Statistic by %s year</source>
+        <translation>Статистика за %s год</translation>
     </message>
 </context>
 <context>
     <name>StatisticTreeModel</name>
     <message>
-        <location filename="../modules/mvc/statistictreemodel.py" line="10"/>
+        <location filename="../modules/mvc/statistictreemodel.py" line="11"/>
         <source>Statistic periods</source>
         <translation>Периоды отображения статистики</translation>
     </message>
@@ -471,124 +547,104 @@ at end of month</source>
     </message>
 </context>
 <context>
-    <name>WalletModel</name>
+    <name>WalletDatabase</name>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="14"/>
-        <source>Day</source>
-        <translation type="unfinished">День</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="215"/>
+        <source>Could not connect to database: database path is empty</source>
+        <translation>Ошибка подключения к базе данных: имя подключения пустое</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="15"/>
-        <source>Month</source>
-        <translation type="unfinished">Месяц</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="267"/>
+        <source>Database connection is not open</source>
+        <translation>Соединение с базой данных не открыто</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="16"/>
-        <source>Year</source>
-        <translation type="unfinished">Год</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="346"/>
+        <source>Could not get removable data: is database broken?</source>
+        <translation>Ошибка получения удаляемых данных: база данных повреждена?</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="17"/>
-        <source>Incoming</source>
-        <translation type="unfinished">Доходы</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="211"/>
+        <source>Failed to update balance at end: %s</source>
+        <translation>Ошибка обновления баланса на конец месяца: %s</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="18"/>
-        <source>Expense</source>
-        <translation type="unfinished">Расходы</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="217"/>
+        <source>Wallet &apos;%s&apos; does not exists</source>
+        <translation>Кошелек &apos;%s&apos; не существует</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="19"/>
-        <source>Savings</source>
-        <translation type="unfinished">Накопления</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="240"/>
+        <source>Failed to create wallet: %s</source>
+        <translation>Ошибка создания кошелька: %s</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="51"/>
-        <source>Loan</source>
-        <translation type="obsolete">Займ</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="259"/>
+        <source>Could not get data: %s</source>
+        <translation>Ошибка получения данных: %s</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="20"/>
-        <source>Debt</source>
-        <translation type="unfinished">Долг</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="284"/>
+        <source>Failed to insert metadata: %s</source>
+        <translation>Ошибка вставки метаданных: %s</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="123"/>
-        <source>Can not open database: %s</source>
-        <translation type="obsolete">Невозможно открыть базу данных: %s</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="327"/>
+        <source>Could not insert data: %s</source>
+        <translation>Ошибка вствки данных: %s</translation>
     </message>
     <message>
-        <location filename="../modules/mvc/walletmodel.py" line="21"/>
-        <source>Description</source>
-        <translation type="unfinished">Описание</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="354"/>
+        <source>Could not remove data: %s</source>
+        <translation>Ошибка удаления данных: %s</translation>
     </message>
     <message>
-        <location filename="modules/mvc/walletmodel.py" line="189"/>
-        <source>Could not initialize database &apos;%s&apos;when execute query &apos;%s&apos;: %s</source>
-        <translation type="obsolete">Ошибка инициализации базы данных &apos;%s&apos; при исполнении запроса &apos;%s&apos;: %s</translation>
+        <location filename="../modules/mvc/walletdatabase.py" line="367"/>
+        <source>Could not update balance at start of month: %s</source>
+        <translation>Ошибка обновления баланса на начало месяца: %s</translation>
+    </message>
+    <message>
+        <location filename="../modules/mvc/walletdatabase.py" line="405"/>
+        <source>Could not get statistic periods: %s</source>
+        <translation>Ошибка получения периодов для статистики: %s</translation>
+    </message>
+    <message>
+        <location filename="../modules/mvc/walletdatabase.py" line="302"/>
+        <source>Could not get metadata: %s</source>
+        <translation>Ошибка получения метаданных: %s</translation>
     </message>
 </context>
 <context>
-    <name>_MonthName</name>
+    <name>WalletModel</name>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="36"/>
-        <source>January</source>
-        <translation>Январь</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="14"/>
+        <source>Incoming</source>
+        <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="38"/>
-        <source>February</source>
-        <translation>Февраль</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="15"/>
+        <source>Expense</source>
+        <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="40"/>
-        <source>March</source>
-        <translation>Март</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="16"/>
+        <source>Savings</source>
+        <translation>Накопления</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="42"/>
-        <source>April</source>
-        <translation>Апрель</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="17"/>
+        <source>Debt</source>
+        <translation>Долг</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="44"/>
-        <source>May</source>
-        <translation>Май</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="18"/>
+        <source>Description</source>
+        <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="46"/>
-        <source>June</source>
-        <translation>Июнь</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="48"/>
-        <source>July</source>
-        <translation>Июль</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="50"/>
-        <source>August</source>
-        <translation>Август</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="52"/>
-        <source>September</source>
-        <translation>Сентябрь</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="56"/>
-        <source>November</source>
-        <translation>Ноябрь</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="58"/>
-        <source>December</source>
-        <translation>Декабрь</translation>
-    </message>
-    <message>
-        <location filename="../modules/dialogs/statisticdialog.py" line="54"/>
-        <source>October</source>
-        <translation>Октябрь</translation>
+        <location filename="../modules/mvc/walletmodel.py" line="13"/>
+        <source>Date</source>
+        <translation>Дата</translation>
     </message>
 </context>
 </TS>
