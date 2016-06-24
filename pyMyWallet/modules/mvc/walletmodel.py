@@ -9,23 +9,26 @@ class WalletModelException(Exception):
 
 
 class WalletModel(QAbstractTableModel):
-    __HEADERS = {
-        WalletItemModelType.INDEX_DATE.value: tr('WalletModel', 'Date'),
-        WalletItemModelType.INDEX_INCOMING.value: tr('WalletModel', 'Incoming'),
-        WalletItemModelType.INDEX_EXPENSE.value: tr('WalletModel', 'Expense'),
-        WalletItemModelType.INDEX_SAVINGS.value: tr('WalletModel', 'Savings'),
-        WalletItemModelType.INDEX_DEBT.value: tr('WalletModel', 'Debt'),
-        WalletItemModelType.INDEX_DESCRIPTION.value: tr('WalletModel', 'Description')
-    }
+    __HEADERS = {}
     __signal_data_changed = pyqtSignal()
     signal_wallet_metadata_changed = pyqtSignal([WalletData])
 
     def __init__(self):
         super().__init__()
+        self.__init_headers()
         self.__data = []
         self.__db = WalletDatabase()
         # Инициализация сигналов и слотов
         self.__signal_data_changed.connect(self.__on_update)
+
+    @staticmethod
+    def __init_headers():
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_DATE.value] = tr('WalletModel', 'Date')
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_INCOMING.value] = tr('WalletModel', 'Incoming')
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_EXPENSE.value] = tr('WalletModel', 'Expense')
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_SAVINGS.value] = tr('WalletModel', 'Savings')
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_DEBT.value] = tr('WalletModel', 'Debt')
+        WalletModel.__HEADERS[WalletItemModelType.INDEX_DESCRIPTION.value] = tr('WalletModel', 'Description')
 
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self.__data)
