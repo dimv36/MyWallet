@@ -73,7 +73,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         settings = QSettings('MyWallet')
         if system() == 'Windows':
             self.set_current_path(QDir.home().path() + '/MyWallet/')
-            settings = QSettings('MyWallet', self.__current_path + 'mywallet.conf', QSettings.IniFormat)
+            settings = QSettings(self.__current_path + 'mywallet.conf', QSettings.IniFormat)
         settings.beginGroup(self.MAIN_SETTINGS)
         self.resize(settings.value('size', type=QSize))
         self.move(settings.value('position', type=QPoint))
@@ -90,7 +90,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
 
     def write_settings(self):
         settings = QSettings('MyWallet')
-        if system() == 'Windows':
+        if system() == 'Windows' and self.__current_path:
             settings = QSettings(self.__current_path + 'mywallet.conf', QSettings.IniFormat)
         settings.beginGroup(self.MAIN_SETTINGS)
         settings.setValue('size', self.size())
