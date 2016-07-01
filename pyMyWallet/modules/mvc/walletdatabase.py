@@ -138,7 +138,7 @@ class WalletDatabase(QObject):
     __WALLET_GET_METADATA_ROW_ON_CURRENT_MONTH_QUERY = 'SELECT * FROM wallet_month_data ' \
                                                        'WHERE date = date(\'now\', \'start of month\');'
     __WALLET_INSERT_METADATA_QUERY_TEMPLATE = 'INSERT INTO wallet_month_data VALUES ' \
-                                              '    (NULL, date(\'now\', \'start of month\'), %f, 0.0);'
+                                              '    (NULL, date(\'now\', \'start of month\'), %f, %f);'
     __WALLET_UPDATE_METADATA_BALANCE_AT_START_QUERY_TEMPLATE = 'UPDATE wallet_month_data ' \
                                                                'SET balance_at_start = \'%f\'' \
                                                                'WHERE date = date(\'now\', \'start of month\');'
@@ -156,8 +156,12 @@ class WalletDatabase(QObject):
                                                   ' (SELECT sum(debt) FROM wallet_data ' \
                                                   '     WHERE date BETWEEN $EARLY AND $END) ' \
                                                   'FROM (SELECT 1);'
-    __WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY = 'SELECT balance_at_end FROM wallet_month_data WHERE ' \
-                                                          'date = date(\'now\', \'start of month\', \'-1 month\');'
+    __WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY = 'SELECT ' \
+                                                          ' (SELECT balance_at_end FROM wallet_month_data ' \
+                                                          '     WHERE date = date(\'now\', \'start of month\', ' \
+                                                          '      \'-1 month\')), ' \
+                                                          ' (SELECT sum(saving) FROM wallet_data) ' \
+                                                          'FROM (SELECT 1);'
     # Следующие запросы используются для получения статистики
     __WALLET_GET_METADATA_PERIODS_QUERY = 'SELECT date FROM wallet_month_data;'
 
@@ -275,9 +279,16 @@ class WalletDatabase(QObject):
                 # Тогда добавляем запись в таблицу wallet_month_data на основе balance_at_end прошлого месяца
                 # (если есть), иначе 0.0
                 cursor.execute(self.__WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY)
-                balance_at_end = float() if cursor.fetchone() is None else cursor.fetchone()
+                row = cursor.fetchone()
+                balance_at_end = float() if row is None else row[0]
+                savings = float() if row is None else row[1]
+                balance_at_start = balance_at_end - savings
                 try:
-                    insert_query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % balance_at_end
+                    # Формируем новую запись в таблице wallet_month_data, указав в качестве баланса на начало месяца
+                    # данные на конец предыдущего месяца за вычетов накоплений, а в качестве остатка на конец месяца -
+                    # баланс на конец месяца
+                    insert_query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % (balance_at_start,
+                                                                                   balance_at_start + savings)
                     cursor.execute(insert_query)
                     self.__connection.commit()
                 except sqlite3.Error as e:
