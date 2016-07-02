@@ -197,12 +197,12 @@ class WalletDatabase(QObject):
         delta *= -1 if is_remove else 1
         if is_remove:
             self.__metadata.incoming -= data.get(WalletItemModelType.INDEX_INCOMING.value)
-            self.__metadata.expense -= data.get(WalletItemModelType.INDEX_EXPENSE.value)
+            self.__metadata.expense -= abs(data.get(WalletItemModelType.INDEX_EXPENSE.value))
             self.__metadata.savings -= data.get(WalletItemModelType.INDEX_SAVINGS.value)
             self.__metadata.debt -= data.get(WalletItemModelType.INDEX_DEBT.value)
         else:
             self.__metadata.incoming += data.get(WalletItemModelType.INDEX_INCOMING.value)
-            self.__metadata.expense += data.get(WalletItemModelType.INDEX_EXPENSE.value)
+            self.__metadata.expense += abs(data.get(WalletItemModelType.INDEX_EXPENSE.value))
             self.__metadata.savings += data.get(WalletItemModelType.INDEX_SAVINGS.value)
             self.__metadata.debt += data.get(WalletItemModelType.INDEX_DEBT.value)
         self.__metadata.balance_at_end += delta
