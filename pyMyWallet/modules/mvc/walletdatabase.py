@@ -382,6 +382,13 @@ class WalletDatabase(QObject):
         # а баланс на конец месяца - с добавлением расчитанной разницы
         self.__metadata.balance_at_start = balance
         self.__metadata.balance_at_end += delta
+        # Обновляем баланс на конец месяца
+        try:
+            query = self.__WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE % self.__metadata.balance_at_end
+            cursor.execute(query)
+            self.__connection.commit()
+        except sqlite3.Error as e:
+            raise WalletDatabaseException(tr('WalletDatabase', 'Could not update balance at end of month: %s') % e)
 
     # Используется для построения статистики
     def get_statistic_items(self):
