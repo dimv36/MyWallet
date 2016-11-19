@@ -8,16 +8,18 @@ from modules.ui.ui_tablewidget import Ui_TableWidget
 class EditingDelegate(QItemDelegate):
     def __init__(self):
         super().__init__()
+        self.__locale = QLocale(QLocale.English)
 
     def createEditor(self, parent, style=None, index=None):
         editor = QDoubleSpinBox(parent)
         editor.setMinimum(0.01)
         editor.setMaximum(1000000.00)
-        editor.setLocale(QLocale(QLocale.English))
+        editor.setLocale(self.__locale)
         return editor
 
     def setModelData(self, editor, model, index):
         text = str(editor.value())
+        text += '0' if len(text.split(self.__locale.decimalPoint())[-1]) == 1 else ''
         model.setData(index, text, Qt.EditRole)
 
     def setEditorData(self, editor, index):
