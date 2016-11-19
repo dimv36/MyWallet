@@ -1,0 +1,7 @@
+from .addsourcesdialog import AddSourcesDialog
+from .changemonthbalancedialog import ChangeMonthBalanceDialog
+from .newwalletdialog import NewWalletDialog
+from .settingsdialog import SettingsDialog
+from .statisticdialog import StatisticDialog
+from .payoffdebtdialog import PayOffDebtDialog
+from .savingstoincomingdialog import SavingsToIncomingDialog
