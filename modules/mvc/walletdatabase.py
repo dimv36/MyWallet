@@ -1,5 +1,5 @@
 __author__ = 'dimv36'
-from PyQt5.QtCore import QDate, QFileInfo, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QDate, QFileInfo, QObject, pyqtSignal, pyqtSlot, QDir
 import sqlite3
 from modules import *
 from modules.enums import *
@@ -235,6 +235,9 @@ class WalletDatabase(QObject):
 
     @staticmethod
     def create_wallet(database):
+        target_dir = QFileInfo(database).absoluteDir()
+        if not target_dir.exists():
+            QDir().mkdir(target_dir.absolutePath())
         db = sqlite3.connect(database)
         cursor = db.cursor()
         try:
@@ -280,8 +283,8 @@ class WalletDatabase(QObject):
                 # (если есть), иначе 0.0
                 cursor.execute(self.__WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY)
                 row = cursor.fetchone()
-                balance_at_end = float() if row is None else row[0]
-                savings = float() if row is None else row[1]
+                balance_at_end = float() if row[0] is None else row[0]
+                savings = float() if row[1] is None else row[1]
                 balance_at_start = balance_at_end - savings
                 try:
                     # Формируем новую запись в таблице wallet_month_data, указав в качестве баланса на начало месяца

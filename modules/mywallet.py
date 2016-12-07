@@ -75,8 +75,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
             self.set_current_path(QDir.home().path() + '/MyWallet/')
             settings = QSettings(self.__current_path + 'mywallet.conf', QSettings.IniFormat)
         settings.beginGroup(self.MAIN_SETTINGS)
-        self.resize(settings.value('size', type=QSize))
-        self.move(settings.value('position', type=QPoint))
+        if settings.value('size'):
+            self.resize(settings.value('size', type=QSize))
+        if settings.value('position'):
+            self.move(settings.value('position', type=QPoint))
         if settings.value('path') and settings.value('wallet_name'):
             self.set_current_path(settings.value('path'))
             self.__wallet_name = settings.value('wallet_name')
