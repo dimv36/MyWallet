@@ -42,7 +42,7 @@ class WalletDatabaseException(Exception):
 
 
 class WalletDatabase(QObject):
-    __signal_data_changed = pyqtSignal(dict, bool)
+    __signal_data_changed = pyqtSignal(object, object)
 
     class WalletDatabaseConvertor:
         WALLET_DATE_DB_FORMAT = 'yyyy-MM-dd'
@@ -186,7 +186,7 @@ class WalletDatabase(QObject):
         if getattr(self, '_WalletDatabase__connection', None):
             self.disconnect()
 
-    @pyqtSlot(dict, bool)
+    @pyqtSlot(object, object)
     def __on_update_balance_at_end(self, item, is_remove):
         convertor = lambda elem: float(elem) if not elem == 'NULL' else float()
         data = {}
