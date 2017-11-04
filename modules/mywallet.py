@@ -10,7 +10,7 @@ from PyQt5.QtCore import (
 )
 
 from modules import *
-from modules.mvc.walletmodel import WalletModel, WalletData, WalletModelException
+from modules.mvc.walletmodel import *
 from modules.enums import WalletItemModelType
 from modules.dialogs import *
 from modules.ui.ui_mywallet import Ui_MyWallet
@@ -27,6 +27,7 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         self.__current_path = None
         self.__wallet_name = None
         self.__model = WalletModel()
+        self.__proxy_model = WalletProxySortingModel(WalletDateRange())
 
         # Подключаем необходимые сигналы ко слотам
         self.init_signal_slots()
@@ -58,7 +59,10 @@ class MyWallet(QMainWindow, Ui_MyWallet):
         try:
             if self.__wallet_name and self.__current_path:
                 self.__model.set_wallet_path(self.__current_path, self.__wallet_name)
-            self._view.setModel(self.__model)
+
+            self.__proxy_model.setSourceModel(self.__model)
+            self._view.setModel(self.__proxy_model)
+            # self._view.setModel(self.__model)
             self._view.resizeColumnsToContents()
             self._view.scrollToBottom()
         except WalletModelException as e:

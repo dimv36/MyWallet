@@ -1,7 +1,18 @@
 __author__ = 'dimv36'
-from PyQt5.QtCore import Qt, QAbstractTableModel
+from PyQt5.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel
 from modules.mvc.walletdatabase import *
 from modules.enums import *
+
+
+class WalletDateRange:
+    def __init__(self, start=None, end=None):
+        if start is None:
+            current_date = QDate.currentDate()
+            default_date = QDate(current_date.year(), current_date.month(), 1)
+            self.start = default_date
+        else:
+            self.start = start
+        self.end = end
 
 
 class WalletModelException(Exception):
@@ -140,3 +151,20 @@ class WalletModel(QAbstractTableModel):
             return self.__db.get_statistic_items()
         except WalletDatabaseException as e:
             raise WalletModelException(e)
+
+
+class WalletProxySortingModel(QSortFilterProxyModel):
+    def __init__(self, date_range=None):
+        super().__init__()
+        self.__date_range = date_range
+
+    def set_date_range(date_range):
+        self.__date_range = date_range
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        index_date = self.sourceModel().index(source_row, WalletItemModelType.INDEX_DATE.value, source_parent)
+        date_format = WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_VIEW_FORMAT
+        item_date = QDate.fromString(index_date.data(), date_format)
+        if item_date >= self.__date_range.start:
+            return True
+        return False

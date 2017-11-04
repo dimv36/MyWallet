@@ -97,10 +97,10 @@ class WalletDatabase(QObject):
                 elements[WalletItemModelType.INDEX_INCOMING.value] = str(value)
             return elements
 
-    __WALLET_GET_DATA_QUERY_TEMPLATE = 'SELECT date, ' \
-                                       '   incoming, expense, saving, ' \
-                                       '   debt, description FROM wallet_data ' \
-                                       'WHERE date BETWEEN $START AND $END ORDER BY date;'
+    __WALLET_GET_DATA_QUERY = 'SELECT date, ' \
+                              '   incoming, expense, saving, ' \
+                              '   debt, description FROM wallet_data ' \
+                              'ORDER BY date;'
     __WALLET_GET_INSERTED_DATA_QUERY = 'SELECT date, ' \
                                        '    incoming, expense, saving, ' \
                                        '    debt, description ' \
@@ -251,16 +251,9 @@ class WalletDatabase(QObject):
     def get_data(self, data_range=None):
         if not self.__connection:
             raise WalletDatabaseException(tr('WalletDatabase', 'Database connection is not open'))
-        query = self.__WALLET_GET_DATA_QUERY_TEMPLATE
-        if not data_range:
-            query = query.replace('$START', 'date(\'now\', \'start of month\')')
-            query = query.replace('$END', 'date(\'now\')')
-        else:
-            query = query.replace('$START', data_range.start)
-            query = query.replace('$END', data_range.end)
         cursor = self.__connection.cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(self.__WALLET_GET_DATA_QUERY)
             data = cursor.fetchall()
         except sqlite3.Error as e:
             raise WalletDatabaseException(tr('WalletDatabase', 'Could not get data: %s') % e)
