@@ -50,7 +50,7 @@ class WalletModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             header = self.__HEADERS.get(section, None)
             if not header:
-                raise Warning('Unexpected section: %d', section)
+                raise Warning('Unexpected section: {}'.format(section))
             return header
         elif orientation == Qt.Vertical:
             return section
@@ -69,7 +69,7 @@ class WalletModel(QAbstractTableModel):
         self.signal_wallet_metadata_changed.emit(result)
 
     def set_wallet_path(self, directory, wallet):
-        path = '%s/%s' % (directory, wallet)
+        path = '{}/{}'.format(directory, wallet)
         if path and not self.__db.connection_path() == path:
             try:
                 self.beginResetModel()

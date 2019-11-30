@@ -64,7 +64,6 @@ class MainWindow(QMainWindow):
 
             self.__proxy_model.setSourceModel(self.__model)
             self.ui.view.setModel(self.__proxy_model)
-            # self.ui.view.setModel(self.__model)
             self.ui.view.resizeColumnsToContents()
             self.ui.view.scrollToBottom()
         except WalletModelException as e:
@@ -190,15 +189,15 @@ class MainWindow(QMainWindow):
             wallet_name = dialog.wallet_name()
             if not wallet_name:
                 return
-            file_name = '%s/%s' % (directory, wallet_name)
+            file_name = '{}/{}'.format(directory, wallet_name)
             if QFileInfo.exists(file_name):
                 result = QMessageBox.question(self,
                                               self.tr('Create new wallet'),
-                                              self.tr('Wallet \'%s\' already exists. Rewrite?') % wallet_name)
+                                              self.tr('Wallet \'{}\' already exists. Rewrite?').format(wallet_name))
                 if result == QMessageBox.No:
                     return
             if not wallet_name.endswith('.db'):
-                file_name = '%s.db' % file_name
+                file_name = '{}.db'.format(file_name)
             try:
                 WalletModel.create_new_wallet(file_name)
             except WalletModelException as e:
@@ -206,7 +205,7 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.information(self,
                                         self.tr('Create new wallet'),
-                                        self.tr('Wallet \'%s\' was created') % wallet_name)
+                                        self.tr('Wallet \'{}\' was created').format(wallet_name))
 
     # Слот добавления источников данных
     @Slot()
@@ -238,7 +237,7 @@ class MainWindow(QMainWindow):
             except WalletModelException as e:
                 QMessageBox.critical(self,
                                      self.tr('Add sources dialog'),
-                                     self.tr('Failed to add sources: %s') % e)
+                                     self.tr('Failed to add sources: {}').format(e))
             self.ui.view.resizeColumnsToContents()
 
     # Слот удаления записи из таблицы
@@ -253,7 +252,7 @@ class MainWindow(QMainWindow):
         except WalletModelException as e:
             QMessageBox.critical(self,
                                  self.tr('Remove sources dialog'),
-                                 self.tr('Failed to remove sources: %s') % e)
+                                 self.tr('Failed to remove sources: {}').format(e))
 
     # Слот изменения остатка на начало месяца
     @Slot()
@@ -272,7 +271,7 @@ class MainWindow(QMainWindow):
                           self.tr('MyWallet developed in June 2015\n'
                                   'author: Dmitry Voronin\n'
                                   'email: carriingfate92@yandex.ru\n'
-                                  'version: %s') % MY_WALLET_VERSION_STR)
+                                  'version: {}').format(MY_WALLET_VERSION_STR))
 
     # Слот отображения статистики
     @Slot()

@@ -83,7 +83,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
    <receiver>PayOffDebtDialog</receiver>
    <slot>accept()</slot>
@@ -99,7 +99,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
    <receiver>PayOffDebtDialog</receiver>
    <slot>reject()</slot>

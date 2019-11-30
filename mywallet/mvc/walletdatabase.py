@@ -34,7 +34,7 @@ class WalletDataRange:
                 self.early = self.__WALLET_DATABASE_RANGE_FORMAT % \
                              early.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
             else:
-                self.early = '\'%s\'' % early
+                self.early = '\'{}\''.format(early)
 
 
 class WalletDatabaseException(Exception):

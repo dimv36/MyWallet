@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>656</width>
-    <height>520</height>
+    <height>361</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,21 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="7" column="3">
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_date">
+     <property name="text">
+      <string>Date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QDateEdit" name="date">
+     <property name="displayFormat">
+      <string>d MMMM yyyy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -49,31 +63,51 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="3">
-    <widget class="TableWidget" name="incoming" native="true"/>
-   </item>
-   <item row="2" column="1" colspan="3">
-    <widget class="TableWidget" name="expense" native="true"/>
-   </item>
-   <item row="6" column="1" colspan="3">
-    <widget class="TableWidget" name="debt" native="true"/>
-   </item>
-   <item row="0" column="2">
-    <widget class="QDateEdit" name="date">
-     <property name="displayFormat">
-      <string>d MMMM yyyy</string>
+   <item row="1" column="1" colspan="3">
+    <widget class="QScrollArea" name="scroll_area">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
+     <widget class="QWidget" name="form_layout">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>640</width>
+        <height>269</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="TableWidget" name="incoming" native="true"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="TableWidget" name="expense" native="true"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="TableWidget" name="savings" native="true"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="TableWidget" name="debt" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_date">
-     <property name="text">
-      <string>Date:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" colspan="3">
-    <widget class="TableWidget" name="savings" native="true"/>
    </item>
   </layout>
  </widget>

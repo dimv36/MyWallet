@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ChangeMonthDialog</class>
- <widget class="QDialog" name="ChangeMonthDialog">
+ <class>ChangeMonthBalanceDialog</class>
+ <widget class="QDialog" name="ChangeMonthBalanceDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -45,9 +45,9 @@
  </resources>
  <connections>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>ChangeMonthDialog</receiver>
+   <receiver>ChangeMonthBalanceDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -61,9 +61,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>ChangeMonthDialog</receiver>
+   <receiver>ChangeMonthBalanceDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
