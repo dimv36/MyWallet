@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SavingsToIncomingDialog</class>
+ <widget class="QDialog" name="SavingsToIncomingDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>121</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Savings to incoming</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+  </property>
+  <layout class="QFormLayout" name="main_layout">
+   <item row="1" column="1">
+    <widget class="QDoubleSpinBox" name="convert_to_incoming_combo_box">
+     <property name="locale">
+      <locale language="English" country="UnitedKingdom"/>
+     </property>
+     <property name="suffix">
+      <string/>
+     </property>
+     <property name="minimum">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100000.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="comments_label">
+     <property name="text">
+      <string>Comments:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="comments_lineedit"/>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="button_box">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="available_savings_value">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="available_savings_label">
+     <property name="text">
+      <string>Available savings:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="convert_to_incoming_label">
+     <property name="text">
+      <string>Convert to incoming:</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_button_box</sender>
+   <signal>accepted()</signal>
+   <receiver>SavingsToIncomingDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>SavingsToIncomingDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
