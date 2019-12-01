@@ -10,8 +10,8 @@ from PySide2.QtCore import (
 )
 
 from mywallet import *
-from .mvc.walletmodel import *
-from .enums import WalletItemModelType
+from .mvc.walletmodel import (
+    WalletModel, WalletProxySortingModel, WalletModelException, WalletData, WalletDateRange)
 from .dialogs import *
 from .ui.ui_mainwindow import Ui_MainWindow
 from .version import MY_WALLET_VERSION_STR
@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
                                   (self.ui.action_pay_debt_off, self._on_pay_debt_off),
                                   (self.ui.action_savings_to_incoming, self._on_savings_to_incoming)):
             action.triggered.connect(handler)
-        self.__model.signal_wallet_metadata_changed.connect(self._on_update)
+        self.__model.wallet_metadata_changed.connect(self._on_update)
 
     def set_current_path(self, path):
         if not path.endswith('/'):
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
             self.ui.view.scrollToBottom()
         except WalletModelException as e:
             QMessageBox.critical(self,
-                                 tr('MyWallet', 'Could not open wallet'),
+                                 self.tr('Could not open wallet'),
                                  str(e))
             self.__current_path = None
             self.__wallet_name = None
@@ -136,15 +136,15 @@ class MainWindow(QMainWindow):
                 self.__wallet_name = wallet_name
                 wallet_path = self.__current_path + self.__wallet_name
                 try:
-                    self.read_wallet_and_updateui.view(wallet_path)
+                    self.read_wallet_and_update_view(wallet_path)
                     pass
                 except OSError:
                     QMessageBox.warning(self,
-                                        tr('MyWallet'),
-                                        tr('File %s does not exist') % wallet_path)
+                                        self.tr('MyWallet'),
+                                        self.tr('File \'{}\' does not exist').format(wallet_path))
                     self.set_current_path(old_directory)
                     self.__wallet_name = old_wallet
-                    self.read_wallet_and_updateui.view(self.__current_path + self.__wallet_name)
+                    self.read_wallet_and_update_view(self.__current_path + self.__wallet_name)
 
     # Слот окрытия кошелька
     @Slot()
@@ -219,21 +219,21 @@ class MainWindow(QMainWindow):
             debt = dialog.debt()
             try:
                 for item in incoming:
-                    self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: date,
-                                            WalletItemModelType.INDEX_INCOMING.value: item['value'],
-                                            WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
+                                            WalletModel.INDEX_INCOMING: item['value'],
+                                            WalletModel.INDEX_DESCRIPTION: item['description']})
                 for item in expense:
-                    self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: date,
-                                            WalletItemModelType.INDEX_EXPENSE.value: item['value'],
-                                            WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
+                                            WalletModel.INDEX_EXPENSE: item['value'],
+                                            WalletModel.INDEX_DESCRIPTION: item['description']})
                 for item in savings:
-                    self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: date,
-                                            WalletItemModelType.INDEX_SAVINGS.value: item['value'],
-                                            WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
+                                            WalletModel.INDEX_SAVINGS: item['value'],
+                                            WalletModel.INDEX_DESCRIPTION: item['description']})
                 for item in debt:
-                    self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: date,
-                                            WalletItemModelType.INDEX_DEBT.value: item['value'],
-                                            WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
+                                            WalletModel.INDEX_DEBT: item['value'],
+                                            WalletModel.INDEX_DESCRIPTION: item['description']})
             except WalletModelException as e:
                 QMessageBox.critical(self,
                                      self.tr('Add sources dialog'),
@@ -293,9 +293,9 @@ class MainWindow(QMainWindow):
                                     self.tr('Pay debt off'),
                                     self.tr('You can not repay the debt by this amount'))
                 return
-            self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: QDate.currentDate(),
-                                    WalletItemModelType.INDEX_DEBT.value: item['value'],
-                                    WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+            self.__model.add_entry({WalletModel.INDEX_DATE: QDate.currentDate(),
+                                    WalletModel.INDEX_DEBT: item['value'],
+                                    WalletModel.INDEX_DESCRIPTION: item['description']})
 
     # Слот преобразования накоплений в доходы
     @Slot()
@@ -309,6 +309,6 @@ class MainWindow(QMainWindow):
                                     self.tr('Savings to incoming'),
                                     self.tr('You can not convert savings to incoming by this amount'))
                 return
-            self.__model.add_entry({WalletItemModelType.INDEX_DATE.value: QDate.currentDate(),
-                                    WalletItemModelType.INDEX_SAVINGS.value: item['value'],
-                                    WalletItemModelType.INDEX_DESCRIPTION.value: item['description']})
+            self.__model.add_entry({WalletModel.INDEX_DATE: QDate.currentDate(),
+                                    WalletModel.INDEX_SAVINGS: item['value'],
+                                    WalletModel.INDEX_DESCRIPTION: item['description']})

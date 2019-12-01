@@ -1,6 +1,6 @@
 __author__ = 'dimv36'
-from PySide2.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel
-from .walletdatabase import *
+from PySide2.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel, Signal, Slot, QDate
+from .walletdatabase import WalletDatabase, WalletData
 from mywallet.enums import *
 
 
@@ -21,24 +21,29 @@ class WalletModelException(Exception):
 
 class WalletModel(QAbstractTableModel):
     __HEADERS = {}
-    _signal_data_changed = Signal()
-    signal_wallet_metadata_changed = Signal([WalletData])
+    _data_changed = Signal()
+    wallet_metadata_changed = Signal([WalletData])
 
     def __init__(self):
         super().__init__()
         self.__init_headers()
         self.__data = []
         self.__db = WalletDatabase()
+        self.__init_signal_slots()
+
+    def __init_signal_slots(self):
         # Инициализация сигналов и слотов
-        self._signal_data_changed.connect(self.__on_update)
+        self._data_changed.connect(self.__on_update)
 
     def __init_headers(self):
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_DATE.value] = self.tr('Date')
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_INCOMING.value] = self.tr('Incoming')
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_EXPENSE.value] = self.tr('Expense')
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_SAVINGS.value] = self.tr('Savings')
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_DEBT.value] = self.tr('Debt')
-        WalletModel.__HEADERS[WalletItemModelType.INDEX_DESCRIPTION.value] = self.tr('Description')
+        self.__HEADERS = {
+            WalletModelColumns.INDEX_DATE: self.tr('Date'),
+            WalletModelColumns.INDEX_INCOMING: self.tr('Incoming'),
+            WalletModelColumns.INDEX_EXPENSE: self.tr('Expense'),
+            WalletModelColumns.INDEX_SAVINGS: self.tr('Savings'),
+            WalletModelColumns.INDEX_DEBT: self.tr('Debt'),
+            WalletModelColumns.INDEX_DESCRIPTION: self.tr('Description')
+        }
 
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self.__data)
@@ -66,7 +71,7 @@ class WalletModel(QAbstractTableModel):
     @Slot()
     def __on_update(self):
         result = self.__db.get_metadata()
-        self.signal_wallet_metadata_changed.emit(result)
+        self.wallet_metadata_changed.emit(result)
 
     def set_wallet_path(self, directory, wallet):
         path = '{}/{}'.format(directory, wallet)
@@ -79,7 +84,7 @@ class WalletModel(QAbstractTableModel):
             except WalletDatabaseException as e:
                 raise WalletModelException(e)
             # Отправляем сигнал на изменение данных
-            self._signal_data_changed.emit()
+            self._data_changed.emit()
 
     @staticmethod
     def create_new_wallet(wallet_path):
@@ -108,7 +113,7 @@ class WalletModel(QAbstractTableModel):
         # Сортируем строки
         self.__data = sorted(self.__data)
         self.endResetModel()
-        self.__signal_data_changed.emit()
+        self._data_changed.emit()
 
     def remove_entry(self, item):
         """
@@ -123,7 +128,7 @@ class WalletModel(QAbstractTableModel):
         except WalletDatabaseException as e:
             raise WalletModelException(e)
         self.endResetModel()
-        self.__signal_data_changed.emit()
+        self._data_changed.emit()
 
     def change_balance_at_start_of_month(self, balance):
         """
@@ -135,7 +140,7 @@ class WalletModel(QAbstractTableModel):
             self.__db.change_balance_at_start_of_month(balance)
         except WalletDatabaseException as e:
             raise WalletModelException(e)
-        self.__signal_data_changed.emit()
+        self._data_changed.emit()
 
     def get_metadata(self):
         return self.__db.get_metadata()
@@ -161,8 +166,8 @@ class WalletProxySortingModel(QSortFilterProxyModel):
         self.__date_range = date_range
 
     def filterAcceptsRow(self, source_row, source_parent):
-        index_date = self.sourceModel().index(source_row, WalletItemModelType.INDEX_DATE.value, source_parent)
-        date_format = WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_VIEW_FORMAT
+        index_date = self.sourceModel().index(source_row, WalletModelColumns.INDEX_DATE, source_parent)
+        date_format = WalletDatabase.Convertor.WALLET_DATE_VIEW_FORMAT
         item_date = QDate.fromString(index_date.data(), date_format)
         if item_date >= self.__date_range.start:
             return True

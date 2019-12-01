@@ -2,7 +2,7 @@ __author__ = 'dimv36'
 from PySide2.QtCore import QDate, QFileInfo, QObject, QDir, Signal, Slot
 import sqlite3
 from mywallet import *
-from mywallet.enums import *
+from mywallet.enums import WalletModelColumns, WalletMetaDataType
 
 
 class WalletData:
@@ -26,13 +26,13 @@ class WalletDataRange:
 
     def __init__(self, start, end, early=None):
         self.start = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                     start.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                     start.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
         self.end = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                   end.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                   end.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
         if early:
             if not isinstance(early, str):
                 self.early = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                             early.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                             early.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
             else:
                 self.early = '\'{}\''.format(early)
 
@@ -44,7 +44,7 @@ class WalletDatabaseException(Exception):
 class WalletDatabase(QObject):
     _data_changed = Signal(WalletData, bool)
 
-    class WalletDatabaseConvertor:
+    class Convertor:
         WALLET_DATE_DB_FORMAT = 'yyyy-MM-dd'
         WALLET_DATE_VIEW_FORMAT = 'dd MMMM yyyy'
 
@@ -53,18 +53,18 @@ class WalletDatabase(QObject):
             results = {}
             for column in range(0, len(row)):
                 element = row[column]
-                if column == WalletItemModelType.INDEX_DATE.value:
-                    date = QDate.fromString(element, WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
-                    data = date.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_VIEW_FORMAT)
-                elif column == WalletItemModelType.INDEX_DESCRIPTION.value:
+                if column == WalletModelColumns.INDEX_DATE:
+                    date = QDate.fromString(element, WalletDatabase.Convertor.WALLET_DATE_DB_FORMAT)
+                    data = date.toString(WalletDatabase.Convertor.WALLET_DATE_VIEW_FORMAT)
+                elif column == WalletModelColumns.INDEX_DESCRIPTION:
                     data = element
-                elif (column == WalletItemModelType.INDEX_INCOMING.value or
-                      column == WalletItemModelType.INDEX_EXPENSE.value or
-                      column == WalletItemModelType.INDEX_SAVINGS.value or
-                      column == WalletItemModelType.INDEX_DEBT.value):
+                elif (column == WalletModelColumns.INDEX_INCOMING or
+                      column == WalletModelColumns.INDEX_EXPENSE or
+                      column == WalletModelColumns.INDEX_SAVINGS or
+                      column == WalletModelColumns.INDEX_DEBT):
                     data = str() if element is None else STR_FLOAT_FORMAT % element
                 else:
-                    raise Warning('Unexpected Column type: %d' % column)
+                    raise Warning('Unexpected Column type: {}'.format(column))
                 results[column] = data
             return tuple(results[e] for e in results)
 
@@ -74,27 +74,27 @@ class WalletDatabase(QObject):
             for column in range(0, max(item.keys()) + 1):
                 data = 'NULL'
                 element = item.get(column, 'NULL')
-                if column == WalletItemModelType.INDEX_DATE.value and element:
+                if column == WalletModelColumns.INDEX_DATE and element:
                     if isinstance(element, QDate):
-                        data = '\'%s\'' % element.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                        data = '\'%s\'' % element.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
                     elif isinstance(element, str):
-                        date = QDate.fromString(element, WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_VIEW_FORMAT)
-                        data = '\'%s\'' % date.toString(WalletDatabase.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
-                elif column == WalletItemModelType.INDEX_DESCRIPTION.value and element:
+                        date = QDate.fromString(element, WalletModelColumns.Convertor.WALLET_DATE_VIEW_FORMAT)
+                        data = '\'%s\'' % date.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+                elif column == WalletModelColumns.INDEX_DESCRIPTION and element:
                     data = '\'%s\'' % element
-                elif (column == WalletItemModelType.INDEX_INCOMING.value or
-                      column == WalletItemModelType.INDEX_EXPENSE.value or
-                      column == WalletItemModelType.INDEX_SAVINGS.value or
-                      column == WalletItemModelType.INDEX_DEBT.value) and element:
+                elif (column == WalletModelColumns.INDEX_INCOMING or
+                      column == WalletModelColumns.INDEX_EXPENSE or
+                      column == WalletModelColumns.INDEX_SAVINGS or
+                      column == WalletModelColumns.INDEX_DEBT) and element:
                     data = '%s' % element
                 elements[column] = data
             # Обработка исключительных ситуаций
-            value = item.get(WalletItemModelType.INDEX_SAVINGS.value, None)
+            value = item.get(WalletModelColumns.INDEX_SAVINGS, None)
             if value:
-                elements[WalletItemModelType.INDEX_INCOMING.value] = str(-1 * float(value))
-            value = item.get(WalletItemModelType.INDEX_DEBT.value, None)
+                elements[WalletModelColumns.INDEX_INCOMING] = str(-1 * float(value))
+            value = item.get(WalletModelColumns.INDEX_DEBT, None)
             if value:
-                elements[WalletItemModelType.INDEX_INCOMING.value] = str(value)
+                elements[WalletModelColumns.INDEX_INCOMING] = str(value)
             return elements
 
     __WALLET_GET_DATA_QUERY = 'SELECT date, ' \
@@ -166,12 +166,12 @@ class WalletDatabase(QObject):
     __WALLET_GET_METADATA_PERIODS_QUERY = 'SELECT date FROM wallet_month_data;'
 
     __WALLET_DATA_COLUMNS = {
-        WalletItemModelType.INDEX_DATE.value: 'date',
-        WalletItemModelType.INDEX_INCOMING.value: 'incoming',
-        WalletItemModelType.INDEX_EXPENSE.value: 'expense',
-        WalletItemModelType.INDEX_SAVINGS.value: 'saving',
-        WalletItemModelType.INDEX_DEBT.value: 'debt',
-        WalletItemModelType.INDEX_DESCRIPTION.value: 'description'
+        WalletModelColumns.INDEX_DATE: 'date',
+        WalletModelColumns.INDEX_INCOMING: 'incoming',
+        WalletModelColumns.INDEX_EXPENSE: 'expense',
+        WalletModelColumns.INDEX_SAVINGS: 'saving',
+        WalletModelColumns.INDEX_DEBT: 'debt',
+        WalletModelColumns.INDEX_DESCRIPTION: 'description'
     }
 
     def __init__(self):
@@ -190,21 +190,21 @@ class WalletDatabase(QObject):
     def _on_update_balance_at_end(self, item, is_remove):
         convertor = lambda elem: float(elem) if not elem == 'NULL' else float()
         data = {}
-        for i in range(WalletItemModelType.INDEX_INCOMING.value,
-                       WalletItemModelType.INDEX_DESCRIPTION.value):
-            data[i] = -1 * convertor(item[i]) if i == WalletItemModelType.INDEX_EXPENSE.value else convertor(item[i])
-        delta = sum(elem for elem in data.values()) - data.get(WalletItemModelType.INDEX_DEBT.value)
+        for i in range(WalletModelColumns.INDEX_INCOMING,
+                       WalletModelColumns.INDEX_DESCRIPTION):
+            data[i] = -1 * convertor(item[i]) if i == WalletModelColumns.INDEX_EXPENSE else convertor(item[i])
+        delta = sum(elem for elem in data.values()) - data.get(WalletModelColumns.INDEX_DEBT)
         delta *= -1 if is_remove else 1
         if is_remove:
-            self.__metadata.incoming -= data.get(WalletItemModelType.INDEX_INCOMING.value)
-            self.__metadata.expense -= abs(data.get(WalletItemModelType.INDEX_EXPENSE.value))
-            self.__metadata.savings -= data.get(WalletItemModelType.INDEX_SAVINGS.value)
-            self.__metadata.debt -= data.get(WalletItemModelType.INDEX_DEBT.value)
+            self.__metadata.incoming -= data.get(WalletModelColumns.INDEX_INCOMING)
+            self.__metadata.expense -= abs(data.get(WalletModelColumns.INDEX_EXPENSE))
+            self.__metadata.savings -= data.get(WalletModelColumns.INDEX_SAVINGS)
+            self.__metadata.debt -= data.get(WalletModelColumns.INDEX_DEBT)
         else:
-            self.__metadata.incoming += data.get(WalletItemModelType.INDEX_INCOMING.value)
-            self.__metadata.expense += abs(data.get(WalletItemModelType.INDEX_EXPENSE.value))
-            self.__metadata.savings += data.get(WalletItemModelType.INDEX_SAVINGS.value)
-            self.__metadata.debt += data.get(WalletItemModelType.INDEX_DEBT.value)
+            self.__metadata.incoming += data.get(WalletModelColumns.INDEX_INCOMING)
+            self.__metadata.expense += abs(data.get(WalletModelColumns.INDEX_EXPENSE))
+            self.__metadata.savings += data.get(WalletModelColumns.INDEX_SAVINGS)
+            self.__metadata.debt += data.get(WalletModelColumns.INDEX_DEBT)
         self.__metadata.balance_at_end += delta
         query = self.__WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE % self.__metadata.balance_at_end
         try:
@@ -212,13 +212,13 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to update balance at end: %s') % e)
+            raise WalletDatabaseException(self.tr('Failed to update balance at end: {}').format(e))
 
     def db_connect(self, database):
         if not database:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not connect to database: database path is empty'))
+            raise WalletDatabaseException(self.tr('Could not connect to database: database path is empty'))
         if not QFileInfo(database).exists() and database:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Wallet \'%s\' does not exists') % database)
+            raise WalletDatabaseException(self.tr('Wallet \'{}\' does not exists').format(database))
         if self.__connection:
             self.disconnect()
         self.__database = database
@@ -244,27 +244,27 @@ class WalletDatabase(QObject):
             for cq in WalletDatabase.__WALLET_INIT_WALLET_QUERY:
                 cursor.execute(cq)
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Failed to create wallet: %s') % e)
+            raise WalletDatabaseException(self.tr('Failed to create wallet: {}').format(e))
         db.commit()
         db.close()
 
     def get_data(self, data_range=None):
         if not self.__connection:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Database connection is not open'))
+            raise WalletDatabaseException(self.tr('Database connection is not open'))
         cursor = self.__connection.cursor()
         try:
             cursor.execute(self.__WALLET_GET_DATA_QUERY)
             data = cursor.fetchall()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get data: %s') % e)
-        data = [self.WalletDatabaseConvertor.convert_from_database(row) for row in data]
+            raise WalletDatabaseException(self.tr('Could not get data: {}').format(e))
+        data = [self.Convertor.convert_from_database(row) for row in data]
         return data
 
     def get_metadata(self, data_range=None, cache_result=True):
         if self.__data_range == data_range and self.__metadata:
             return self.__metadata
         if not self.__connection:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Database connection is not open'))
+            raise WalletDatabaseException(self.tr('Database connection is not open'))
         cursor = self.__connection.cursor()
         query = self.__WALLET_GET_WALLET_METADATA_QUERY_TEMPLATE
         if not data_range:
@@ -288,7 +288,7 @@ class WalletDatabase(QObject):
                     cursor.execute(insert_query)
                     self.__connection.commit()
                 except sqlite3.Error as e:
-                    raise WalletDatabaseException(tr('WalletDatabase', 'Failed to insert metadata: %s') % e)
+                    raise WalletDatabaseException(self.tr('Failed to insert metadata: {}').format(e))
             # Получаем метаданные
             cursor.execute(self.__WALLET_GET_FIRST_DATE_QUERY)
             first_id_tuple = cursor.fetchone()
@@ -306,14 +306,14 @@ class WalletDatabase(QObject):
             metadata = cursor.fetchone()
             metadata = tuple(float(e) if e else float() for e in metadata)
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get metadata: %s') % e)
+            raise WalletDatabaseException(self.tr('Could not get metadata: {}').format(e))
         result = WalletData()
-        result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START.value]
-        result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END.value]
-        result.incoming = metadata[WalletMetaDataType.INDEX_INCOMING.value]
-        result.expense = metadata[WalletMetaDataType.INDEX_EXPENSE.value]
-        result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS.value]
-        result.debt = metadata[WalletMetaDataType.INDEX_DEBT.value]
+        result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START]
+        result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END]
+        result.incoming = metadata[WalletMetaDataType.INDEX_INCOMING]
+        result.expense = metadata[WalletMetaDataType.INDEX_EXPENSE]
+        result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS]
+        result.debt = metadata[WalletMetaDataType.INDEX_DEBT]
         if cache_result:
             self.__data_range = data_range
             self.__metadata = result
@@ -331,8 +331,8 @@ class WalletDatabase(QObject):
             cursor.execute(self.__WALLET_GET_INSERTED_DATA_QUERY)
             row = cursor.fetchone()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not insert data: %s') % e)
-        self.__signal_data_changed.emit(values, False)
+            raise WalletDatabaseException(self.tr('Could not insert data: {}').format(e))
+        self._data_changed.emit(values, False)
         return self.WalletDatabaseConvertor.convert_from_database(row)
 
     def remove_data(self, item):
@@ -350,7 +350,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             row = cursor.fetchone()
             if not row:
-                raise WalletDatabaseException(tr('WalletDatabase', 'Could not get removable data: is database broken?'))
+                raise WalletDatabaseException(self.tr('Could not get removable data: is database broken?'))
             row_id = row[0]
             removed = self.WalletDatabaseConvertor.convert_from_database(row[1:])
             # Удаляем данные
@@ -358,8 +358,8 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not remove data: %s') % e)
-        self.__signal_data_changed.emit(values, True)
+            raise WalletDatabaseException(self.tr('Could not remove data: {}').format(e))
+        self._data_changed.emit(values, True)
         return removed
 
     def change_balance_at_start_of_month(self, balance):
@@ -371,7 +371,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not update balance at start of month: %s') % e)
+            raise WalletDatabaseException(self.tr('Could not update balance at start of month: {}').format(e))
         # Определяем разницу, на сколько изменился баланс на начало месяца
         delta = balance - self.__metadata.balance_at_start
         # Устанавливаем баланс на начало месяца в новое значение,
@@ -384,7 +384,7 @@ class WalletDatabase(QObject):
             cursor.execute(query)
             self.__connection.commit()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not update balance at end of month: %s') % e)
+            raise WalletDatabaseException(self.tr('Could not update balance at end of month: {}').format(e))
 
     # Используется для построения статистики
     def get_statistic_items(self):
@@ -416,5 +416,5 @@ class WalletDatabase(QObject):
                 else:
                     results[year].append((month, metadata))
         except sqlite3.Error as e:
-            raise WalletDatabaseException(tr('WalletDatabase', 'Could not get statistic periods: %s') % e)
+            raise WalletDatabaseException(self.tr('Could not get statistic periods: {}').format(e))
         return results
