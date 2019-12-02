@@ -1,6 +1,6 @@
 __author__ = 'dimv36'
 from PySide2.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel, Signal, Slot, QDate
-from .walletdatabase import WalletDatabase, WalletData
+from .walletdatabase import WalletDatabase, WalletData, WalletDatabaseException
 from mywallet.enums import *
 
 

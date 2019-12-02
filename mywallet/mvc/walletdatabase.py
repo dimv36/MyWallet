@@ -76,10 +76,10 @@ class WalletDatabase(QObject):
                 element = item.get(column, 'NULL')
                 if column == WalletModelColumns.INDEX_DATE and element:
                     if isinstance(element, QDate):
-                        data = '\'%s\'' % element.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+                        data = '\'%s\'' % element.toString(WalletDatabase.Convertor.WALLET_DATE_DB_FORMAT)
                     elif isinstance(element, str):
-                        date = QDate.fromString(element, WalletModelColumns.Convertor.WALLET_DATE_VIEW_FORMAT)
-                        data = '\'%s\'' % date.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+                        date = QDate.fromString(element, WalletDatabase.Convertor.WALLET_DATE_VIEW_FORMAT)
+                        data = '\'%s\'' % date.toString(WalletDatabase.Convertor.WALLET_DATE_DB_FORMAT)
                 elif column == WalletModelColumns.INDEX_DESCRIPTION and element:
                     data = '\'%s\'' % element
                 elif (column == WalletModelColumns.INDEX_INCOMING or
@@ -320,7 +320,7 @@ class WalletDatabase(QObject):
         return result
 
     def add_data(self, item):
-        values = self.WalletDatabaseConvertor.convert_to_database(item)
+        values = self.Convertor.convert_to_database(item)
         data = ', '.join([str(values[e]) for e in values])
         data = 'NULL, %s' % data
         insert_query = self.__WALLET_INSERT_DATA_QUERY_TEMPLATE % data
@@ -333,10 +333,10 @@ class WalletDatabase(QObject):
         except sqlite3.Error as e:
             raise WalletDatabaseException(self.tr('Could not insert data: {}').format(e))
         self._data_changed.emit(values, False)
-        return self.WalletDatabaseConvertor.convert_from_database(row)
+        return self.Convertor.convert_from_database(row)
 
     def remove_data(self, item):
-        values = self.WalletDatabaseConvertor.convert_to_database(item)
+        values = self.Convertor.convert_to_database(item)
         key_values = {}
         for i in range(0, len(values)):
             column = self.__WALLET_DATA_COLUMNS[i]
@@ -352,7 +352,7 @@ class WalletDatabase(QObject):
             if not row:
                 raise WalletDatabaseException(self.tr('Could not get removable data: is database broken?'))
             row_id = row[0]
-            removed = self.WalletDatabaseConvertor.convert_from_database(row[1:])
+            removed = self.Convertor.convert_from_database(row[1:])
             # Удаляем данные
             query = self.__WALLET_REMOVE_DATA_QUERY_TEMPLATE % row_id
             cursor.execute(query)
@@ -399,7 +399,7 @@ class WalletDatabase(QObject):
             old = periods[0]
             for period in periods:
                 # Конвертируем данные в QDate
-                current_month_date = QDate.fromString(period, self.WalletDatabaseConvertor.WALLET_DATE_DB_FORMAT)
+                current_month_date = QDate.fromString(period, self.Convertor.WALLET_DATE_DB_FORMAT)
                 year = current_month_date.year()
                 month = current_month_date.month()
                 next_month = (current_month_date.month() + 1

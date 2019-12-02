@@ -13,6 +13,7 @@ from mywallet import *
 from .mvc.walletmodel import (
     WalletModel, WalletProxySortingModel, WalletModelException, WalletData, WalletDateRange)
 from .dialogs import *
+from .enums import WalletModelColumns
 from .ui.ui_mainwindow import Ui_MainWindow
 from .version import MY_WALLET_VERSION_STR
 
@@ -219,21 +220,21 @@ class MainWindow(QMainWindow):
             debt = dialog.debt()
             try:
                 for item in incoming:
-                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
-                                            WalletModel.INDEX_INCOMING: item['value'],
-                                            WalletModel.INDEX_DESCRIPTION: item['description']})
+                    self.__model.add_entry({WalletModelColumns.INDEX_DATE: date,
+                                            WalletModelColumns.INDEX_INCOMING: item['value'],
+                                            WalletModelColumns.INDEX_DESCRIPTION: item['description']})
                 for item in expense:
-                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
-                                            WalletModel.INDEX_EXPENSE: item['value'],
-                                            WalletModel.INDEX_DESCRIPTION: item['description']})
+                    self.__model.add_entry({WalletModelColumns.INDEX_DATE: date,
+                                            WalletModelColumns.INDEX_EXPENSE: item['value'],
+                                            WalletModelColumns.INDEX_DESCRIPTION: item['description']})
                 for item in savings:
-                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
-                                            WalletModel.INDEX_SAVINGS: item['value'],
-                                            WalletModel.INDEX_DESCRIPTION: item['description']})
+                    self.__model.add_entry({WalletModelColumns.INDEX_DATE: date,
+                                            WalletModelColumns.INDEX_SAVINGS: item['value'],
+                                            WalletModelColumns.INDEX_DESCRIPTION: item['description']})
                 for item in debt:
-                    self.__model.add_entry({WalletModel.INDEX_DATE: date,
-                                            WalletModel.INDEX_DEBT: item['value'],
-                                            WalletModel.INDEX_DESCRIPTION: item['description']})
+                    self.__model.add_entry({WalletModelColumns.INDEX_DATE: date,
+                                            WalletModelColumns.INDEX_DEBT: item['value'],
+                                            WalletModelColumns.INDEX_DESCRIPTION: item['description']})
             except WalletModelException as e:
                 QMessageBox.critical(self,
                                      self.tr('Add sources dialog'),
@@ -293,9 +294,9 @@ class MainWindow(QMainWindow):
                                     self.tr('Pay debt off'),
                                     self.tr('You can not repay the debt by this amount'))
                 return
-            self.__model.add_entry({WalletModel.INDEX_DATE: QDate.currentDate(),
-                                    WalletModel.INDEX_DEBT: item['value'],
-                                    WalletModel.INDEX_DESCRIPTION: item['description']})
+            self.__model.add_entry({WalletModelColumns.INDEX_DATE: QDate.currentDate(),
+                                    WalletModelColumns.INDEX_DEBT: item['value'],
+                                    WalletModelColumns.INDEX_DESCRIPTION: item['description']})
 
     # Слот преобразования накоплений в доходы
     @Slot()
@@ -309,6 +310,6 @@ class MainWindow(QMainWindow):
                                     self.tr('Savings to incoming'),
                                     self.tr('You can not convert savings to incoming by this amount'))
                 return
-            self.__model.add_entry({WalletModel.INDEX_DATE: QDate.currentDate(),
-                                    WalletModel.INDEX_SAVINGS: item['value'],
-                                    WalletModel.INDEX_DESCRIPTION: item['description']})
+            self.__model.add_entry({WalletModelColumns.INDEX_DATE: QDate.currentDate(),
+                                    WalletModelColumns.INDEX_SAVINGS: item['value'],
+                                    WalletModelColumns.INDEX_DESCRIPTION: item['description']})
