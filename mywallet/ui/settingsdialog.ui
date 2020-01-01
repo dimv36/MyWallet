@@ -34,10 +34,14 @@
      </property>
      <layout class="QGridLayout" name="wallet_box_layout">
       <item row="0" column="1" colspan="2">
-       <widget class="QLineEdit" name="directory"/>
+       <widget class="QLineEdit" name="directory_edit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="wallet_name_label">
+       <widget class="QLabel" name="wallet_label">
         <property name="text">
          <string>Wallet:</string>
         </property>
@@ -58,7 +62,7 @@
        </widget>
       </item>
       <item row="1" column="1" colspan="3">
-       <widget class="QLineEdit" name="wallet_name"/>
+       <widget class="QLineEdit" name="wallet_edit"/>
       </item>
      </layout>
     </widget>
