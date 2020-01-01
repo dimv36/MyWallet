@@ -24,6 +24,14 @@ def exec_cmd(*args):
         return (False, str(e))
 
 
+def check_if_binary_exists(binary):
+    # On linux, we suppose that `binary`
+    # located in same dir as Python interpreter
+    p = pathlib.Path(sys.executable)
+    binary_path = p.parent / binary
+    return binary_path.exists(), str(binary_path)
+
+
 def _get_pyside2_root():
     try:
         import PySide2 as p
@@ -40,8 +48,8 @@ def genui():
 
     uic_bin, rcc_bin = None, None
     if platform.system() == 'Linux':
-        uic_found, uic_bin = exec_cmd('which', 'pyside2-uic',)
-        rcc_found, rcc_bin = exec_cmd('which', 'pyside2-rcc')
+        uic_found, uic_bin = check_if_binary_exists('pyside2-uic',)
+        rcc_found, rcc_bin = check_if_binary_exists('pyside2-rcc')
     elif platform.system() == 'Windows':
         # uic and rcc installed at PythonHome/Scripts
         python_bin_dir = pathlib.Path(sys.executable).parent
@@ -72,7 +80,7 @@ def genui():
 def localize():
     lupdate_bin = None
     if platform.system() == 'Linux':
-        lupdate_found, lupdate_bin = exec_cmd('which', 'pyside2-lupdate')
+        lupdate_found, lupdate_bin = check_if_binary_exists('pyside2-lupdate')
     elif platform.system() == 'Windows':
         # as above, lupdate installed at PythonHome/Scripts
         python_bin_dir = pathlib.Path(sys.executable).parent
@@ -97,7 +105,7 @@ def localize():
 def localization_compile(lrelease='lrelease-qt5'):
     lrelease_bin = None
     if platform.system() == 'Linux':
-        lrelease_found, lrelease_bin = exec_cmd('which', lrelease)
+        lrelease_found, lrelease_bin = check_if_binary_exists(lrelease)
     elif platform.system() == 'Windows':
         # lrelease can be found at PySide2 dir
         lrelease_bin = _get_pyside2_root() / 'lrelease.exe'

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>141</height>
+    <height>162</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resource.qrc">
-    <normaloff>:/kwallet.png</normaloff>:/kwallet.png</iconset>
+    <normaloff>:/kservices.png</normaloff>:/kservices.png</iconset>
   </property>
   <layout class="QGridLayout" name="main_layout">
    <item row="0" column="0">
@@ -39,14 +39,14 @@
       <item row="1" column="0">
        <widget class="QLabel" name="wallet_name_label">
         <property name="text">
-         <string>Wallet</string>
+         <string>Wallet:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="directory_label">
         <property name="text">
-         <string>Directory</string>
+         <string>Directory:</string>
         </property>
        </widget>
       </item>
@@ -80,34 +80,34 @@
  </resources>
  <connections>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
    <receiver>SettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>243</x>
+     <y>139</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>243</x>
+     <y>80</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
    <receiver>SettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>243</x>
+     <y>139</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>243</x>
+     <y>80</y>
     </hint>
    </hints>
   </connection>

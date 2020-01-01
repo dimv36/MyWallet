@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>434</width>
-    <height>101</height>
+    <height>123</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,14 +23,14 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_directory">
        <property name="text">
-        <string>Directory</string>
+        <string>Directory:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_wallet">
        <property name="text">
-        <string>Wallet name</string>
+        <string>Wallet name:</string>
        </property>
       </widget>
      </item>
@@ -76,34 +76,34 @@
  </resources>
  <connections>
   <connection>
-   <sender>_button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>NewWalletDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_button_box</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
    <receiver>NewWalletDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>216</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>216</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>NewWalletDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
