@@ -15,24 +15,28 @@ class WalletData:
         self.debt = float()
 
     def __repr__(self):
-        return 'WalletData(%f, %f, %f, %f, %f, %f)' % \
-               (self.balance_at_start, self.balance_at_end,
-                self.incoming, self.expense,
-                self.savings, self.debt)
+        return 'WalletData({}, {}, {}, {}, {}, {}})'.format(
+               (self.balance_at_start,
+                self.balance_at_end,
+                self.incoming,
+                self.expense,
+                self.savings,
+                self.debt))
 
 
 class WalletDataRange:
-    __WALLET_DATABASE_RANGE_FORMAT = 'date(\'%s\')'
+    __WALLET_DATABASE_RANGE_FORMAT = 'date(\'{}\')'
+
+    def _date_to_wallet(self, date):
+        conv = date.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+        return self.__WALLET_DATABASE_RANGE_FORMAT.format(conv)
 
     def __init__(self, start, end, early=None):
-        self.start = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                     start.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
-        self.end = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                   end.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+        self.start = self._date_to_wallet(start)
+        self.end = self._date_to_wallet(end)
         if early:
             if not isinstance(early, str):
-                self.early = self.__WALLET_DATABASE_RANGE_FORMAT % \
-                             early.toString(WalletModelColumns.Convertor.WALLET_DATE_DB_FORMAT)
+                self.early = self._date_to_wallet(early)
             else:
                 self.early = '\'{}\''.format(early)
 
@@ -97,10 +101,6 @@ class WalletDatabase(QObject):
                 elements[WalletModelColumns.INDEX_INCOMING] = str(value)
             return elements
 
-    __WALLET_GET_DATA_QUERY = 'SELECT date, ' \
-                              '   incoming, expense, saving, ' \
-                              '   debt, description FROM wallet_data ' \
-                              'ORDER BY date;'
     __WALLET_GET_INSERTED_DATA_QUERY = 'SELECT date, ' \
                                        '    incoming, expense, saving, ' \
                                        '    debt, description ' \
@@ -110,27 +110,6 @@ class WalletDatabase(QObject):
                                                  ' WHERE %s LIMIT 1;'
     __WALLET_REMOVE_DATA_QUERY_TEMPLATE = 'DELETE FROM wallet_data WHERE id = %d;'
     __WALLET_INSERT_DATA_QUERY_TEMPLATE = 'INSERT INTO wallet_data VALUES(%s);'
-    __WALLET_INIT_WALLET_QUERY = ['DROP TABLE IF EXISTS wallet_data;',
-                                  'DROP TABLE IF EXISTS wallet_month_data;',
-                                  'DROP TABLE IF EXISTS wallet_categories;',
-                                  'CREATE TABLE wallet_data'
-                                  '   (ID INTEGER PRIMARY KEY, '
-                                  '     date TEXT, '
-                                  '     incoming REAL, '
-                                  '     expense REAL, '
-                                  '     saving REAL, '
-                                  '     debt REAL, '
-                                  '     description TEXT); ',
-                                  'CREATE TABLE wallet_month_data'
-                                  '   (ID INTEGER PRIMARY KEY, '
-                                  '    date TEXT,'
-                                  '    balance_at_start REAL, '
-                                  '    balance_at_end REAL);',
-                                  'CREATE TABLE wallet_categories'
-                                  '   (ID INTEGER PRIMARY KEY, '
-                                  '    wallet_item_type INTEGER, '
-                                  '    description TEXT);'
-                                  ]
     __WALLET_UPDATE_BALANCE_AT_END_QUERY_TEMPLATE = 'UPDATE wallet_month_data ' \
                                                     '    SET balance_at_end = \'%f\' ' \
                                                     'WHERE date = date(\'now\', \'start of month\');'
@@ -178,7 +157,6 @@ class WalletDatabase(QObject):
         super().__init__()
         self.__database = None
         self.__connection = None
-        self.__data_range = None
         self.__metadata = None
         self._data_changed.connect(self._on_update_balance_at_end)
 
@@ -230,7 +208,6 @@ class WalletDatabase(QObject):
     def disconnect(self):
         if self.__connection:
             self.__connection.close()
-        self.__data_range = None
         self.__metadata = None
 
     @staticmethod
@@ -241,66 +218,95 @@ class WalletDatabase(QObject):
         db = sqlite3.connect(database)
         cursor = db.cursor()
         try:
-            for cq in WalletDatabase.__WALLET_INIT_WALLET_QUERY:
-                cursor.execute(cq)
+            init_query = '''
+                DROP TABLE IF EXISTS wallet_data;
+                DROP TABLE IF EXISTS wallgvnet_month_data;
+                DROP TABLE IF EXISTS wallet_categories;
+                CREATE TABLE wallet_data(
+                    ID INTEGER PRIMARY KEY,
+                    date TEXT,
+                    incoming REAL,
+                    expense REAL,
+                    saving REAL,
+                    debt REAL,
+                    description TEXT
+                );
+                CREATE TABLE wallet_month_data(
+                    ID INTEGER PRIMARY KEY,
+                    date TEXT,
+                    balance_at_start REAL,
+                    balance_at_end REAL
+                );
+                CREATE TABLE wallet_categories(
+                    ID INTEGER PRIMARY KEY,
+                    wallet_item_type INTEGER,
+                    description TEXT
+                );
+            '''
+            cursor.execute(init_query)
+            db.commit()
+            db.close()
         except sqlite3.Error as e:
             raise WalletDatabaseException(self.tr('Failed to create wallet: {}').format(e))
-        db.commit()
-        db.close()
 
-    def get_data(self, data_range=None):
+    def get_data(self):
         if not self.__connection:
             raise WalletDatabaseException(self.tr('Database connection is not open'))
         cursor = self.__connection.cursor()
         try:
-            cursor.execute(self.__WALLET_GET_DATA_QUERY)
+            query = '''
+                    SELECT date,
+                              incoming,
+                              expense,
+                              saving,
+                              debt,
+                              description
+                    FROM wallet_data
+                    ORDER BY date;
+                    '''
+            cursor.execute(query)
             data = cursor.fetchall()
         except sqlite3.Error as e:
             raise WalletDatabaseException(self.tr('Could not get data: {}').format(e))
         data = [self.Convertor.convert_from_database(row) for row in data]
         return data
 
-    def get_metadata(self, data_range=None, cache_result=True):
-        if self.__data_range == data_range and self.__metadata:
+    def get_metadata(self, cache_result=True):
+        if self.__metadata:
             return self.__metadata
         if not self.__connection:
             raise WalletDatabaseException(self.tr('Database connection is not open'))
         cursor = self.__connection.cursor()
         query = self.__WALLET_GET_WALLET_METADATA_QUERY_TEMPLATE
-        if not data_range:
-            # Проверяем наличие записи за текущий месяц
-            cursor.execute(self.__WALLET_GET_METADATA_ROW_ON_CURRENT_MONTH_QUERY)
-            if cursor.fetchone() is None:
-                # Запись за последний месяц не найдена
-                # Тогда добавляем запись в таблицу wallet_month_data на основе balance_at_end прошлого месяца
-                # (если есть), иначе 0.0
-                cursor.execute(self.__WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY)
-                row = cursor.fetchone()
-                balance_at_end = float() if row[0] is None else row[0]
-                savings = float() if row[1] is None else row[1]
-                balance_at_start = balance_at_end - savings
-                try:
-                    # Формируем новую запись в таблице wallet_month_data, указав в качестве баланса на начало месяца
-                    # данные на конец предыдущего месяца за вычетов накоплений, а в качестве остатка на конец месяца -
-                    # баланс на конец месяца
-                    insert_query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % (balance_at_start,
-                                                                                   balance_at_start + savings)
-                    cursor.execute(insert_query)
-                    self.__connection.commit()
-                except sqlite3.Error as e:
-                    raise WalletDatabaseException(self.tr('Failed to insert metadata: {}').format(e))
-            # Получаем метаданные
-            cursor.execute(self.__WALLET_GET_FIRST_DATE_QUERY)
-            first_id_tuple = cursor.fetchone()
-            query = query.replace('$START', 'date(\'now\', \'start of month\')')
-            query = query.replace('$END', 'date(\'now\')')
-            query = query.replace('$EARLY', ('\'%s\'' % first_id_tuple[0]
-                                             if first_id_tuple
-                                             else 'date(\'now\', \'start of month\')'))
-        else:
-            query = query.replace('$START', data_range.start)
-            query = query.replace('$END', data_range.end)
-            query = query.replace('$EARLY', data_range.early)
+        # Проверяем наличие записи за текущий месяц
+        cursor.execute(self.__WALLET_GET_METADATA_ROW_ON_CURRENT_MONTH_QUERY)
+        if cursor.fetchone() is None:
+            # Запись за последний месяц не найдена
+            # Тогда добавляем запись в таблицу wallet_month_data на основе balance_at_end прошлого месяца
+            # (если есть), иначе 0.0
+            cursor.execute(self.__WALLET_GET_BALANCE_AT_END_OF_PREVIOUS_MONTH_QUERY)
+            row = cursor.fetchone()
+            balance_at_end = float() if row[0] is None else row[0]
+            savings = float() if row[1] is None else row[1]
+            balance_at_start = balance_at_end - savings
+            try:
+                # Формируем новую запись в таблице wallet_month_data, указав в качестве баланса на начало месяца
+                # данные на конец предыдущего месяца за вычетов накоплений, а в качестве остатка на конец месяца -
+                # баланс на конец месяца
+                insert_query = self.__WALLET_INSERT_METADATA_QUERY_TEMPLATE % (balance_at_start,
+                                                                               balance_at_start + savings)
+                cursor.execute(insert_query)
+                self.__connection.commit()
+            except sqlite3.Error as e:
+                raise WalletDatabaseException(self.tr('Failed to insert metadata: {}').format(e))
+        # Получаем метаданные
+        cursor.execute(self.__WALLET_GET_FIRST_DATE_QUERY)
+        first_id_tuple = cursor.fetchone()
+        query = query.replace('$START', 'date(\'now\', \'start of month\')')
+        query = query.replace('$END', 'date(\'now\')')
+        query = query.replace('$EARLY', ('\'%s\'' % first_id_tuple[0]
+                                         if first_id_tuple
+                                         else 'date(\'now\', \'start of month\')'))
         try:
             cursor.execute(query)
             metadata = cursor.fetchone()
@@ -315,7 +321,6 @@ class WalletDatabase(QObject):
         result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS]
         result.debt = metadata[WalletMetaDataType.INDEX_DEBT]
         if cache_result:
-            self.__data_range = data_range
             self.__metadata = result
         return result
 

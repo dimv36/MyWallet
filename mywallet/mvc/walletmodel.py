@@ -1,39 +1,95 @@
 __author__ = 'dimv36'
-from PySide2.QtCore import Qt, QAbstractTableModel, QSortFilterProxyModel, Signal, Slot, QDate
-from .walletdatabase import WalletDatabase, WalletData, WalletDatabaseException
+import sqlite3
+import functools
+from PySide2.QtCore import Qt, QAbstractTableModel, QItemDelegate, Signal, Slot, QDate
 from mywallet.enums import *
 
 
 class WalletDateRange:
+    __WALLET_DATABASE_RANGE_FORMAT = 'date(\'{}\')'
+
     def __init__(self, start=None, end=None):
+        now = QDate.currentDate()
         if start is None:
-            current_date = QDate.currentDate()
-            default_date = QDate(current_date.year(), current_date.month(), 1)
+            default_date = QDate(now.year(), now.month(), 1)
             self.start = default_date
         else:
             self.start = start
-        self.end = end
+        if end is None:
+            self.end = now
+        else:
+            self.end = end
+
+    def __repr__(self):
+        return '{}({}, {})'.format(self.__class__.__name__,
+                                   self.start, self.end)
+
+    @staticmethod
+    def to_sqlite3(first, second):
+        def convert(date):
+            conv = date.toString(WalletModel.SQLITE_DATE_FORMAT)
+            return conv
+
+        return convert(first), convert(second)
+
+    @staticmethod
+    def from_sqlite3(first, second):
+        def convert(str_date):
+            return QDate.fromString(str_date, WalletModel.SQLITE_DATE_FORMAT)
+
+        date_range = WalletDateRange(convert(first), convert(second))
+        return date_range
+
+
+class WalletData:
+    def __init__(self):
+        self.balance_at_start = float()
+        self.balance_at_end = float()
+        self.incoming = float()
+        self.expense = float()
+        self.savings = float()
+        self.debt = float()
+        self.date_range = WalletDateRange()
+
+    def __repr__(self):
+        return 'WalletData({}, {}, {}, {}, {}, {}})'.format(
+               (self.balance_at_start,
+                self.balance_at_end,
+                self.incoming,
+                self.expense,
+                self.savings,
+                self.debt))
 
 
 class WalletModelException(Exception):
     pass
 
 
+def funcname(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        print('Exec {} with args: {} kwargs: {}'.format(f.__name__, args, kwargs))
+        ret = f(*args, **kwargs)
+        print('Retcode: {}'.format(ret if ret is not None else '<None>'))
+        print('========================')
+        return ret
+    return wrapped
+
+
 class WalletModel(QAbstractTableModel):
     __HEADERS = {}
-    _data_changed = Signal()
+    _data_changed = Signal(WalletDateRange)
     wallet_metadata_changed = Signal([WalletData])
+    DATE_VIEW_FORMAT = 'dd MMMM yyyy'
+    SQLITE_DATE_FORMAT = 'yyyy-MM-dd'
 
     def __init__(self):
         super().__init__()
-        self.__init_headers()
         self.__data = []
-        self.__db = WalletDatabase()
+        self.__wallet_path = None
+        self.__connection = None
+        self.__init_headers()
         self.__init_signal_slots()
-
-    def __init_signal_slots(self):
-        # Инициализация сигналов и слотов
-        self._data_changed.connect(self.__on_update)
 
     def __init_headers(self):
         self.__HEADERS = {
@@ -44,6 +100,10 @@ class WalletModel(QAbstractTableModel):
             WalletModelColumns.INDEX_DEBT: self.tr('Debt'),
             WalletModelColumns.INDEX_DESCRIPTION: self.tr('Description')
         }
+
+    def __init_signal_slots(self):
+        # Инициализация сигналов и слотов
+        self._data_changed.connect(self._on_update)
 
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self.__data)
@@ -69,22 +129,136 @@ class WalletModel(QAbstractTableModel):
         return self.__data[index.row()][index.column()]
 
     @Slot()
-    def __on_update(self):
-        result = self.__db.get_metadata()
-        self.wallet_metadata_changed.emit(result)
+    def _on_update(self, date_range):
+        self.wallet_metadata_changed.emit(self.metadata(date_range))
 
-    def set_wallet_path(self, directory, wallet):
-        path = '{}/{}'.format(directory, wallet)
-        if path and not self.__db.connection_path() == path:
+    @property
+    def available_data_range(self):
+        try:
+            cursor = self.__connection.cursor()
+            query = '''
+                    SELECT min(date),
+                           max(date)
+                    FROM wallet_data;
+                    '''
+            cursor.execute(query)
+            return WalletDateRange.from_sqlite3(*cursor.fetchall()[0])
+        except sqlite3.Error as e:
+            raise WalletModelException(e)
+
+    def collect_items(self, date_range=WalletDateRange()):
+        try:
+            self.beginResetModel()
+            cursor = self.__connection.cursor()
+            date_range_query = WalletDateRange.to_sqlite3(date_range.start,
+                                                          date_range.end)
+            query = '''
+                    SELECT date,
+                           incoming,
+                           expense,
+                           saving,
+                           debt,
+                           description
+                    FROM wallet_data
+                    WHERE date BETWEEN ? AND ?
+                    ORDER BY date;
+                    '''
+            cursor.execute(query, date_range_query)
+            self.__data = cursor.fetchall()
+            self.endResetModel()
+        except sqlite3.Error as e:
+            raise WalletModelException(e)
+        # Отправляем сигнал на изменение данных
+        self._data_changed.emit(date_range)
+
+    def metadata(self, date_range=WalletDateRange()):
+        if not self.__connection:
+            raise WalletDatabaseException(self.tr('Database connection is not open'))
+        cursor = self.__connection.cursor()
+        query = '''
+                SELECT
+                        (SELECT balance_at_start FROM wallet_month_data
+                              WHERE date BETWEEN date('now', 'start of month') AND date('now')),
+                        (SELECT balance_at_end FROM wallet_month_data
+                              WHERE date BETWEEN date('now', 'start of month') AND date('now')),
+                        (SELECT sum(incoming) FROM wallet_data
+                              WHERE date BETWEEN date('now', 'start of month') AND date('now')),
+                        (SELECT sum(expense) FROM wallet_data
+                              WHERE date BETWEEN date('now', 'start of month') AND date('now')),
+                        (SELECT sum(saving) FROM wallet_data
+                              WHERE date BETWEEN ? AND date('now')),
+                        (SELECT sum(debt) FROM wallet_data
+                              WHERE date BETWEEN ? AND date('now'))
+                FROM (SELECT 1);
+                '''
+        # Проверяем наличие записи за текущий месяц
+        check_query = '''
+                      SELECT *
+                      FROM wallet_month_data
+                      WHERE date = date('now', 'start of month');
+                      '''
+        cursor.execute(check_query)
+        if cursor.fetchone() is None:
+            # Запись за последний месяц не найдена
+            # Тогда добавляем запись в таблицу wallet_month_data на основе balance_at_end прошлого месяца
+            # (если есть), иначе 0.0
+            previous_month_balance_query = '''
+                                           SELECT
+                                                  (SELECT balance_at_end FROM wallet_month_data
+                                                   WHERE date = date('now', 'start of month', '-1 month')),
+                                                  (SELECT sum(saving) FROM wallet_data)
+                                            FROM (SELECT 1);
+                                           '''
+            cursor.execute(previous_month_balance_query)
+            row = cursor.fetchone()
+            balance_at_end = float() if row[0] is None else row[0]
+            savings = float() if row[1] is None else row[1]
+            balance_at_start = balance_at_end - savings
             try:
-                self.beginResetModel()
-                self.__db.db_connect(path)
-                self.__data = self.__db.get_data()
-                self.endResetModel()
-            except WalletDatabaseException as e:
+                # Формируем новую запись в таблице wallet_month_data, указав в качестве баланса на начало месяца
+                # данные на конец предыдущего месяца за вычетов накоплений, а в качестве остатка на конец месяца -
+                # баланс на конец месяца
+                insert_query = '''
+                               INSERT INTO wallet_month_data
+                               VALUES(
+                                    NULL, date('now', 'start of month'), ?, ?);
+                               '''
+                cursor.execute(insert_query, (balance_at_start, balance_at_start + savings))
+                self.__connection.commit()
+            except sqlite3.Error as e:
+                raise WalletDatabaseException(self.tr('Failed to insert metadata: {}').format(e))
+        # Получаем метаданные
+        cursor.execute('SELECT date FROM wallet_data WHERE id = 1;')
+        first_id_tuple = cursor.fetchone()
+        query_items = ('\'{}\''.format(first_id_tuple[0])
+                       if first_id_tuple else 'date(\'now\', \'start of month\')'
+                       for i in range(2))
+        try:
+            cursor.execute(query, tuple(query_items))
+            metadata = cursor.fetchone()
+            metadata = tuple(float(e) if e else float() for e in metadata)
+        except sqlite3.Error as e:
+            raise WalletDatabaseException(self.tr('Could not get metadata: {}').format(e))
+        result = WalletData()
+        result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START]
+        result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END]
+        result.incoming = metadata[WalletMetaDataType.INDEX_INCOMING]
+        result.expense = metadata[WalletMetaDataType.INDEX_EXPENSE]
+        result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS]
+        result.debt = metadata[WalletMetaDataType.INDEX_DEBT]
+        result.date_range = date_range
+        return result
+
+    def open_wallet(self, path):
+        if path and not path == self.__wallet_path:
+            try:
+                if self.__connection:
+                    self.__connection.close()
+                self.__connection = sqlite3.connect(path)
+                self.__wallet_path = path
+                self.collect_items()
+            except Exception as e:
                 raise WalletModelException(e)
-            # Отправляем сигнал на изменение данных
-            self._data_changed.emit()
 
     @staticmethod
     def create_new_wallet(wallet_path):
@@ -142,9 +316,6 @@ class WalletModel(QAbstractTableModel):
             raise WalletModelException(e)
         self._data_changed.emit()
 
-    def get_metadata(self):
-        return self.__db.get_metadata()
-
     # Следующие методы используются при построении статистики в классе StatisticDialog
     def get_statistic_items(self):
         """
@@ -157,18 +328,5 @@ class WalletModel(QAbstractTableModel):
             raise WalletModelException(e)
 
 
-class WalletProxySortingModel(QSortFilterProxyModel):
-    def __init__(self, date_range=None):
-        super().__init__()
-        self.__date_range = date_range
-
-    def set_date_range(date_range):
-        self.__date_range = date_range
-
-    def filterAcceptsRow(self, source_row, source_parent):
-        index_date = self.sourceModel().index(source_row, WalletModelColumns.INDEX_DATE, source_parent)
-        date_format = WalletDatabase.Convertor.WALLET_DATE_VIEW_FORMAT
-        item_date = QDate.fromString(index_date.data(), date_format)
-        if item_date >= self.__date_range.start:
-            return True
-        return False
+class WalletDateItemDelegate(QItemDelegate):
+    pass

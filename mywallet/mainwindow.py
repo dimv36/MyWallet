@@ -11,7 +11,7 @@ from PySide2.QtCore import (
 
 from mywallet import *
 from .mvc.walletmodel import (
-    WalletModel, WalletProxySortingModel, WalletModelException, WalletData, WalletDateRange)
+    WalletModel, WalletModelException, WalletData, WalletDateRange)
 from .dialogs import *
 from .enums import WalletModelColumns
 from .ui.ui_mainwindow import Ui_MainWindow
@@ -29,7 +29,6 @@ class MainWindow(QMainWindow):
         self.__current_path = None
         self.__wallet_name = None
         self.__model = WalletModel()
-        self.__proxy_model = WalletProxySortingModel(WalletDateRange())
 
         # Подключаем необходимые сигналы ко слотам
         self.init_signal_slots()
@@ -52,6 +51,8 @@ class MainWindow(QMainWindow):
                                   (self.ui.action_savings_to_incoming, self._on_savings_to_incoming)):
             action.triggered.connect(handler)
         self.__model.wallet_metadata_changed.connect(self._on_update)
+        for widget in (self.ui.start_date_edit, self.ui.end_date_edit):
+            widget.dateChanged.connect(self._on_date_range_changed)
 
     def set_current_path(self, path):
         if not path.endswith('/'):
@@ -61,10 +62,9 @@ class MainWindow(QMainWindow):
     def __open_wallet(self):
         try:
             if self.__wallet_name and self.__current_path:
-                self.__model.set_wallet_path(self.__current_path, self.__wallet_name)
-
-            self.__proxy_model.setSourceModel(self.__model)
-            self.ui.view.setModel(self.__proxy_model)
+                self.__model.open_wallet('{}/{}'.format(self.__current_path, self.__wallet_name))
+                self.__update_date_range(self.__model.available_data_range)
+            self.ui.view.setModel(self.__model)
             self.ui.view.resizeColumnsToContents()
             self.ui.view.scrollToBottom()
         except WalletModelException as e:
@@ -74,6 +74,15 @@ class MainWindow(QMainWindow):
             self.__current_path = None
             self.__wallet_name = None
             self.write_settings()
+
+    def __update_date_range(self, date_range):
+        start, end = date_range.start, date_range.end
+        for widget in (self.ui.start_date_edit,
+                       self.ui.end_date_edit):
+            widget.blockSignals(True)
+            widget.setMinimumDate(start)
+            widget.setMaximumDate(end)
+            widget.blockSignals(False)
 
     def read_settings(self):
         settings = QSettings('MyWallet')
@@ -167,6 +176,9 @@ class MainWindow(QMainWindow):
     def _on_update(self, data):
         # Обновляем заголовок окна
         self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
+        start, end = data.date_range.start, data.date_range.end
+        self.ui.start_date_edit.setDate(start)
+        self.ui.end_date_edit.setDate(end)
         self.ui.label_incoming_value.setText(STR_FLOAT_FORMAT % data.incoming)
         self.ui.label_expense_value.setText(STR_FLOAT_FORMAT % data.expense)
         self.ui.label_saving_value.setText(STR_FLOAT_FORMAT % data.savings)
@@ -313,3 +325,14 @@ class MainWindow(QMainWindow):
             self.__model.add_entry({WalletModelColumns.INDEX_DATE: QDate.currentDate(),
                                     WalletModelColumns.INDEX_SAVINGS: item['value'],
                                     WalletModelColumns.INDEX_DESCRIPTION: item['description']})
+
+    # Слот изменения периода отчета
+    @Slot()
+    def _on_date_range_changed(self):
+        print('changed', self.sender().objectName())
+        start = self.ui.start_date_edit.date()
+        end = self.ui.end_date_edit.date()
+        date_range = WalletDateRange(start, end)
+        self.__model.collect_items(date_range)
+        self.ui.view.resizeColumnsToContents()
+        self.ui.view.scrollToBottom()
