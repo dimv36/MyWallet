@@ -1,8 +1,13 @@
 __author__ = 'dimv36'
 import sqlite3
 import functools
-from PySide2.QtCore import Qt, QAbstractTableModel, QItemDelegate, Signal, Slot, QDate
+from PySide2.QtCore import Qt, QAbstractTableModel, QDate, Signal, Slot
+from PySide2.QtWidgets import QItemDelegate
 from mywallet.enums import *
+
+
+__all__ = ['WalletDateRange', 'WalletData', 'WalletModelException',
+           'WalletModel', 'WalletItemDelegate']
 
 
 class WalletDateRange:
@@ -63,17 +68,6 @@ class WalletData:
 
 class WalletModelException(Exception):
     pass
-
-
-def funcname(f):
-    @functools.wraps(f)
-    def wrapped(*args, **kwargs):
-        print('Exec {} with args: {} kwargs: {}'.format(f.__name__, args, kwargs))
-        ret = f(*args, **kwargs)
-        print('Retcode: {}'.format(ret if ret is not None else '<None>'))
-        print('========================')
-        return ret
-    return wrapped
 
 
 class WalletModel(QAbstractTableModel):
@@ -154,10 +148,10 @@ class WalletModel(QAbstractTableModel):
                                                           date_range.end)
             query = '''
                     SELECT date,
-                           incoming,
-                           expense,
-                           saving,
-                           debt,
+                           CASE incoming IS NULL WHEN 0 THEN incoming ELSE '' END,
+                           CASE expense  IS NULL WHEN 0 THEN expense  ELSE '' END,
+                           CASE saving   IS NULL WHEN 0 THEN saving   ELSE '' END,
+                           CASE debt     IS NULL WHEN 0 THEN debt     ELSE '' END,
                            description
                     FROM wallet_data
                     WHERE date BETWEEN ? AND ?
@@ -328,5 +322,18 @@ class WalletModel(QAbstractTableModel):
             raise WalletModelException(e)
 
 
-class WalletDateItemDelegate(QItemDelegate):
-    pass
+class WalletItemDelegate(QItemDelegate):
+    import re
+    _DATE_RE = re.compile(r'\d{4}-\d{2}-\d{2}')
+    _FLOAT_RE = re.compile(r'\d+[.\d]?')
+
+    def drawDisplay(self, painter, option, rect, text):
+        if self._DATE_RE.match(text):
+            date = QDate.fromString(text, WalletModel.SQLITE_DATE_FORMAT)
+            displayed = date.toString(WalletModel.DATE_VIEW_FORMAT)
+        elif self._FLOAT_RE.match(text):
+            value = float(text)
+            displayed = '{0:.2f}'.format(value)
+        else:
+            displayed = text
+        super(WalletItemDelegate, self).drawDisplay(painter, option, rect, displayed)

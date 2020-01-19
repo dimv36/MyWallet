@@ -10,8 +10,7 @@ from PySide2.QtCore import (
 )
 
 from mywallet import *
-from .mvc.walletmodel import (
-    WalletModel, WalletModelException, WalletData, WalletDateRange)
+from .mvc.walletmodel import *
 from .dialogs import *
 from .enums import WalletModelColumns
 from .ui.ui_mainwindow import Ui_MainWindow
@@ -30,6 +29,7 @@ class MainWindow(QMainWindow):
         self.__wallet_name = None
         self.__model = WalletModel()
 
+        self.ui.view.setItemDelegate(WalletItemDelegate())
         # Подключаем необходимые сигналы ко слотам
         self.init_signal_slots()
         # Читаем настройки из конфигурационного файла
