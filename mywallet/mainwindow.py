@@ -9,7 +9,6 @@ from PySide2.QtCore import (
     QSettings, QDir, QFileInfo, QDate, Slot
 )
 
-from mywallet import *
 from .mvc.walletmodel import *
 from .dialogs import *
 from .enums import WalletModelColumns
@@ -179,16 +178,16 @@ class MainWindow(QMainWindow):
         start, end = data.date_range.start, data.date_range.end
         self.ui.start_date_edit.setDate(start)
         self.ui.end_date_edit.setDate(end)
-        self.ui.label_incoming_value.setText(STR_FLOAT_FORMAT % data.incoming)
-        self.ui.label_expense_value.setText(STR_FLOAT_FORMAT % data.expense)
-        self.ui.label_saving_value.setText(STR_FLOAT_FORMAT % data.savings)
-        self.ui.label_debt_value.setText(STR_FLOAT_FORMAT % data.debt)
-        self.ui.label_balance_value.setText(STR_FLOAT_FORMAT % data.balance_at_start)
+        self.ui.label_incoming_value.setText('{0:.2f}'.format(data.incoming))
+        self.ui.label_expense_value.setText('{0:.2f}'.format(data.expense))
+        self.ui.label_saving_value.setText('{0:.2f}'.format(data.savings))
+        self.ui.label_debt_value.setText('{0:.2f}'.format(data.debt))
+        self.ui.label_balance_value.setText('{0:.2f}'.format(data.balance_at_start))
         if data.balance_at_end >= 0:
             self.ui.label_total_value.setStyleSheet('QLabel { color : green }')
         else:
             self.ui.label_total_value.setStyleSheet('QLabel { color : red }')
-        self.ui.label_total_value.setText(STR_FLOAT_FORMAT % data.balance_at_end)
+        self.ui.label_total_value.setText('{0:.2f}'.format(data.balance_at_end))
         self.ui.view.resizeColumnsToContents()
         self.ui.view.scrollToBottom()
 

@@ -7,7 +7,7 @@ from mywallet.mainwindow import MainWindow
 
 
 if __name__ == '__main__':
-    module_name = 'diffui'
+    module_name = 'mywallet'
 
     # Fix for black screen ???
     QApplication.setAttribute(Qt.AA_UseSoftwareOpenGL)
