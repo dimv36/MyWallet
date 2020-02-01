@@ -174,7 +174,7 @@ class MainWindow(QMainWindow):
     @Slot(WalletData)
     def _on_update(self, data):
         # Обновляем заголовок окна
-        self.setWindowTitle(self.__current_path + self.__wallet_name + ' [MyWallet]')
+        self.setWindowTitle('{}{} [MyWallet]'.format(self.__current_path, self.__wallet_name))
         start, end = data.date_range.start, data.date_range.end
         self.ui.start_date_edit.setDate(start)
         self.ui.end_date_edit.setDate(end)
