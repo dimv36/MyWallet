@@ -107,7 +107,7 @@ class WalletModel(QAbstractTableModel):
 
     def headerData(self, section, orientation, role=None):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            header = self.__HEADERS.get(section, None)
+            header = self.__HEADERS.get(section + 1, None)
             if not header:
                 raise Warning('Unexpected section: {}'.format(section))
             return header
@@ -120,7 +120,7 @@ class WalletModel(QAbstractTableModel):
             len(self.__data) <= index.row() or
                 not role == Qt.DisplayRole):
             return None
-        return self.__data[index.row()][index.column()]
+        return self.__data[index.row()][index.column() + 1]
 
     @Slot()
     def _on_update(self, date_range):
@@ -147,7 +147,8 @@ class WalletModel(QAbstractTableModel):
             date_range_query = WalletDateRange.to_sqlite3(date_range.start,
                                                           date_range.end)
             query = '''
-                    SELECT date,
+                    SELECT id,
+                           date,
                            CASE incoming IS NULL WHEN 0 THEN incoming ELSE '' END,
                            CASE expense  IS NULL WHEN 0 THEN expense  ELSE '' END,
                            CASE saving   IS NULL WHEN 0 THEN saving   ELSE '' END,
@@ -295,7 +296,16 @@ class WalletModel(QAbstractTableModel):
             db.commit()
             db.close()
         except sqlite3.Error as e:
-            raise WalletDatabaseException(self.tr('Failed to create wallet: {}').format(e))
+            raise WalletModelException(self.tr('Failed to create wallet: {}').format(e))
+
+    def _run_query(self, query, data):
+        try:
+            cursor = self.__connection.cursor()
+            cursor.execute(query, data)
+        except sqlite3.Error as e:
+            raise WalletModelException(self.tr('Execution \'{}\' failure: {}').format(query, e))
+        else:
+            self.__connection.commit()
 
     def add_entry(self, item):
         """
@@ -303,31 +313,39 @@ class WalletModel(QAbstractTableModel):
         :param item: dict
         :return: None
         """
-        self.beginResetModel()
-        try:
-            row = self.__db.add_data(item)
-            self.__data.append(row)
-        except WalletDatabaseException as e:
-            raise WalletModelException(e)
-        # Сортируем строки
-        self.__data = sorted(self.__data)
-        self.endResetModel()
-        self._data_changed.emit()
+        def to_sqlite3(row):
+            items = []
+            for i in range(WalletModelColumns.INDEX_DATE, WalletModelColumns.INDEX_DESCRIPTION + 1):
+                value = row.get(i, None)
+                if i == WalletModelColumns.INDEX_DATE:
+                    value = value.toString(self.SQLITE_DATE_FORMAT)
+                items.append(value)
+            return tuple(i for i in items)
 
-    def remove_entry(self, item):
+        try:
+            query = 'INSERT INTO wallet_data VALUES(NULL, ?, ?, ?, ?, ?, ?);'
+            self._run_query(query, to_sqlite3(item))
+        except WalletModelException as e:
+            raise WalletModelException(self.tr('Failed to insert item: {}').format(e))
+        self.collect_items()
+
+    def remove_entry(self, idx):
         """
         Удалить запись из бумажника
         :param item: dict
         :return: None
         """
-        self.beginResetModel()
         try:
-            row = self.__db.remove_data(item)
-            self.__data.remove(row)
-        except WalletDatabaseException as e:
-            raise WalletModelException(e)
-        self.endResetModel()
-        self._data_changed.emit()
+            item = self.__data[idx]
+            row_id, *unused = item
+        except Exception as e:
+            raise WalletModelException(self.tr('Failed to determine row ID: {}').format(e))
+        try:
+            query = 'DELETE FROM wallet_data WHERE id = ?;'
+            self._run_query(query, (row_id,))
+        except WalletModelException as e:
+            raise WalletModelException(self.tr('Failed to remove item: {}').format(e))
+        self.collect_items()
 
     def change_balance_at_start_of_month(self, balance):
         """

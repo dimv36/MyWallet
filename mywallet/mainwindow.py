@@ -259,9 +259,9 @@ class MainWindow(QMainWindow):
         selected_indexes = self.ui.view.selectedIndexes()
         if not selected_indexes:
             return
-        item = {index.column(): index.data() for index in selected_indexes}
+        first_idx, *unused = selected_indexes
         try:
-            self.__model.remove_entry(item)
+            self.__model.remove_entry(first_idx.row())
         except WalletModelException as e:
             QMessageBox.critical(self,
                                  self.tr('Remove sources dialog'),

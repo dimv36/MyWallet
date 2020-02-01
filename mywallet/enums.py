@@ -3,12 +3,13 @@ from enum import Enum
 
 
 class WalletModelColumns:
-    (INDEX_DATE,
+    (INDEX_ID,
+     INDEX_DATE,
      INDEX_INCOMING,
      INDEX_EXPENSE,
      INDEX_SAVINGS,
      INDEX_DEBT,
-     INDEX_DESCRIPTION) = range(0, 6)
+     INDEX_DESCRIPTION) = range(0, 7)
 
 
 class WalletMetaDataType:
