@@ -168,7 +168,7 @@ class WalletModel(QAbstractTableModel):
 
     def metadata(self, date_range=WalletDateRange()):
         if not self.__connection:
-            raise WalletDatabaseException(self.tr('Database connection is not open'))
+            raise WalletModelException(self.tr('Database connection is not open'))
         cursor = self.__connection.cursor()
         query = '''
                 SELECT
@@ -220,7 +220,7 @@ class WalletModel(QAbstractTableModel):
                 cursor.execute(insert_query, (balance_at_start, balance_at_start + savings))
                 self.__connection.commit()
             except sqlite3.Error as e:
-                raise WalletDatabaseException(self.tr('Failed to insert metadata: {}').format(e))
+                raise WalletModelException(self.tr('Failed to insert metadata: {}').format(e))
         # Получаем метаданные
         cursor.execute('SELECT date FROM wallet_data WHERE id = 1;')
         first_id_tuple = cursor.fetchone()
@@ -232,7 +232,7 @@ class WalletModel(QAbstractTableModel):
             metadata = cursor.fetchone()
             metadata = tuple(float(e) if e else float() for e in metadata)
         except sqlite3.Error as e:
-            raise WalletDatabaseException(self.tr('Could not get metadata: {}').format(e))
+            raise WalletModelException(self.tr('Could not get metadata: {}').format(e))
         result = WalletData()
         result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START]
         result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END]
@@ -353,11 +353,34 @@ class WalletModel(QAbstractTableModel):
         :param balance: float
         :return: None
         """
+        # Запись о балансе на начало месяца уже должна быть вставлена
+        # в методе get_metadata, поэтому тут используется UPDATE запрос
         try:
-            self.__db.change_balance_at_start_of_month(balance)
-        except WalletDatabaseException as e:
-            raise WalletModelException(e)
-        self._data_changed.emit()
+            cursor = self.__connection.cursor()
+            balance_at_start_query = '''UPDATE wallet_month_data
+                                        SET balance_at_start = ?
+                                        WHERE date = date('now', 'start of month');
+                                     '''
+            cursor.execute(balance_at_start_query, (balance,))
+            # Одну таблицу обновили - теперь вторую
+            # Определяем разницу, на сколько изменился баланс на начало месяца
+            metadata = self.metadata()
+            delta = balance - metadata.balance_at_start
+            # Устанавливаем баланс на начало месяца в новое значение,
+            # а баланс на конец месяца - с добавлением расчитанной разницы
+            metadata.balance_at_start = balance
+            metadata.balance_at_end += delta
+            # Обновляем баланс на конец месяца
+            balance_at_end_query = '''UPDATE wallet_month_data
+                                      SET balance_at_end = ?
+                                      WHERE date = date('now', 'start of month');
+                                   '''
+            cursor.execute(balance_at_end_query, (metadata.balance_at_end,))
+        except sqlite3.Error as e:
+            raise WalletModelException(self.tr('Failed to update balance at start of month: {}').format(e))
+        else:
+            self.__connection.commit()
+            self._data_changed.emit(WalletDateRange())
 
     # Следующие методы используются при построении статистики в классе StatisticDialog
     def get_statistic_items(self):
