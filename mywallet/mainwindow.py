@@ -297,7 +297,7 @@ class MainWindow(QMainWindow):
     # Слот погашения долга
     @Slot()
     def _on_pay_debt_off(self):
-        current_debt = self.__model.get_metadata().debt
+        current_debt = self.__model.metadata().debt
         dialog = PayOffDebtDialog(current_debt)
         if dialog.exec() == QDialog.Accepted:
             item = dialog.data()
@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):
     # Слот преобразования накоплений в доходы
     @Slot()
     def _on_savings_to_incoming(self):
-        current_savings = self.__model.get_metadata().savings
+        current_savings = self.__model.metadata().savings
         dialog = SavingsToIncomingDialog(current_savings)
         if dialog.exec() == QDialog.Accepted:
             item = dialog.data()
@@ -329,7 +329,6 @@ class MainWindow(QMainWindow):
     # Слот изменения периода отчета
     @Slot()
     def _on_date_range_changed(self):
-        print('changed', self.sender().objectName())
         start = self.ui.start_date_edit.date()
         end = self.ui.end_date_edit.date()
         date_range = WalletDateRange(start, end)
