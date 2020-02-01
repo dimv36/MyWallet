@@ -214,8 +214,7 @@ class WalletModel(QAbstractTableModel):
                 # баланс на конец месяца
                 insert_query = '''
                                INSERT INTO wallet_month_data
-                               VALUES(
-                                    NULL, date('now', 'start of month'), ?, ?);
+                               VALUES (NULL, date('now', 'start of month'), ?, ?);
                                '''
                 cursor.execute(insert_query, (balance_at_start, balance_at_start + savings))
                 self.__connection.commit()
