@@ -1,7 +1,7 @@
 __author__ = 'dimv36'
 import sqlite3
 import functools
-from PySide2.QtCore import Qt, QAbstractTableModel, QDate, Signal, Slot
+from PySide2.QtCore import Qt, QAbstractTableModel, QDate, QFileInfo, Signal, Slot
 from PySide2.QtWidgets import QItemDelegate
 from mywallet.enums import *
 
@@ -261,9 +261,41 @@ class WalletModel(QAbstractTableModel):
         :return: None
         """
         try:
-            WalletDatabase.create_wallet(wallet_path)
-        except WalletDatabaseException as e:
-            raise WalletModelException(e)
+            target_dir = QFileInfo(wallet_path).absoluteDir()
+            if not target_dir.exists():
+                QDir().mkdir(target_dir.absolutePath())
+            db = sqlite3.connect(wallet_path)
+            cursor = db.cursor()
+            init_query = '''
+                DROP TABLE IF EXISTS wallet_data;
+                DROP TABLE IF EXISTS wallgvnet_month_data;
+                DROP TABLE IF EXISTS wallet_categories;
+                CREATE TABLE wallet_data(
+                    ID INTEGER PRIMARY KEY,
+                    date TEXT,
+                    incoming REAL,
+                    expense REAL,
+                    saving REAL,
+                    debt REAL,
+                    description TEXT
+                );
+                CREATE TABLE wallet_month_data(
+                    ID INTEGER PRIMARY KEY,
+                    date TEXT,
+                    balance_at_start REAL,
+                    balance_at_end REAL
+                );
+                CREATE TABLE wallet_categories(
+                    ID INTEGER PRIMARY KEY,
+                    wallet_item_type INTEGER,
+                    description TEXT
+                );
+            '''
+            cursor.executescript(init_query)
+            db.commit()
+            db.close()
+        except sqlite3.Error as e:
+            raise WalletDatabaseException(self.tr('Failed to create wallet: {}').format(e))
 
     def add_entry(self, item):
         """
