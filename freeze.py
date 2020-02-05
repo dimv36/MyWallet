@@ -61,13 +61,11 @@ bin_path_items = {
     'PySide2': {
         'excludes': [
                         'examples', 'glue', 'include', 'qml', 'scripts', 'support',
-                        'typesystems',
-                        ('resources', ('qtwebengine_devtools_resources.pak',)),
+                        'typesystems', 'resources',
                     ] + pyside2_binaries + pyside2_libs(pyside2_modules) + qt_libs,
         'includes': [
                         ('plugins', ('platforms', 'platformthemes', 'styles')),
-                        ('translations\\qtbase_ru.qm', 'translations\\qtwebengine_ru.qm',
-                         'translations\\qtwebengine_locales\\ru.pak'),
+                        ('translations\\qtbase_ru.qm', 'translations\\qtwebengine_ru.qm'),
                     ]
     },
     'mywallet': {
@@ -79,7 +77,7 @@ bin_path_items = {
                         ('translations', ('mywallet_ru.ts',)),
                     ],
         'includes': [
-                        ('resources', ('__init__.pyc', 'resources_rc.pyc'))
+                        ('resources', ('__init__.pyc', 'resource_rc.pyc'))
                     ]
     },
     'shiboken2': {
