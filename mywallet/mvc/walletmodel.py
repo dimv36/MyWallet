@@ -307,6 +307,20 @@ class WalletModel(QAbstractTableModel):
         else:
             self.__connection.commit()
 
+    def _update_metadata(self, item, remove=False):
+        current_metadata = self.metadata()
+        multiple = 1 if not remove else -1
+        if item[WalletModelColumns.INDEX_INCOMING]:
+            current_metadata.balance_at_end += multiple * item[WalletModelColumns.INDEX_INCOMING]
+        elif item[WalletModelColumns.INDEX_EXPENSE]:
+            current_metadata.balance_at_end -= multiple * item[WalletModelColumns.INDEX_EXPENSE]
+        # TODO: Savings?
+        update_metadata_query = '''UPDATE wallet_month_data
+                                   SET balance_at_end = ?
+                                   WHERE date = date('now', 'start of month');
+                                '''
+        self._run_query(update_metadata_query, (current_metadata.balance_at_end,))
+
     def add_entry(self, item):
         """
         Добавить запись в бумажник
@@ -327,6 +341,7 @@ class WalletModel(QAbstractTableModel):
             self._run_query(query, to_sqlite3(item))
         except WalletModelException as e:
             raise WalletModelException(self.tr('Failed to insert item: {}').format(e))
+        self._update_metadata(item)
         self.collect_items()
 
     def remove_entry(self, idx):
@@ -345,6 +360,7 @@ class WalletModel(QAbstractTableModel):
             self._run_query(query, (row_id,))
         except WalletModelException as e:
             raise WalletModelException(self.tr('Failed to remove item: {}').format(e))
+        self._update_metadata(item, remove=True)
         self.collect_items()
 
     def change_balance_at_start_of_month(self, balance):

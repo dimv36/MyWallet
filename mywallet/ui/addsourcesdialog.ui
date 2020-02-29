@@ -93,17 +93,17 @@
        <property name="horizontalSpacing">
         <number>0</number>
        </property>
-       <item row="0" column="0">
-        <widget class="TableWidget" name="incoming" native="true"/>
+       <item row="3" column="0">
+        <widget class="TableWidget" name="savings" native="true"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="TableWidget" name="debt" native="true"/>
        </item>
        <item row="1" column="0">
         <widget class="TableWidget" name="expense" native="true"/>
        </item>
        <item row="2" column="0">
-        <widget class="TableWidget" name="savings" native="true"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="TableWidget" name="debt" native="true"/>
+        <widget class="TableWidget" name="incoming" native="true"/>
        </item>
       </layout>
      </widget>
