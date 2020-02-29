@@ -14,13 +14,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QGridLayout" name="main_layout">
    <item row="0" column="0">
     <widget class="QGroupBox" name="group_box">
      <property name="title">
-      <string>GroupBox</string>
+      <string notr="true">GroupBox</string>
      </property>
      <property name="checkable">
       <bool>true</bool>

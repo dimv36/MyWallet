@@ -3,22 +3,6 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="mywallet/mainwindow.py" line="71"/>
-        <source>MyWallet</source>
-        <comment>Could not open wallet</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mainwindow.py" line="143"/>
-        <source>MyWallet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mainwindow.py" line="144"/>
-        <source>File %s does not exist</source>
-        <translation type="unfinished">Файл %s не существует</translation>
-    </message>
-    <message>
         <location filename="mywallet/dialogs/statisticdialog.py" line="37"/>
         <source>Bars</source>
         <comment>Balance
@@ -185,90 +169,6 @@ at end of month</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="215"/>
-        <source>WalletDatabase</source>
-        <comment>Failed to update balance at end: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="219"/>
-        <source>WalletDatabase</source>
-        <comment>Could not connect to database: database path is empty</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="221"/>
-        <source>WalletDatabase</source>
-        <comment>Wallet &apos;%s&apos; does not exists</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="247"/>
-        <source>WalletDatabase</source>
-        <comment>Failed to create wallet: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="267"/>
-        <source>WalletDatabase</source>
-        <comment>Database connection is not open</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="259"/>
-        <source>WalletDatabase</source>
-        <comment>Could not get data: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="291"/>
-        <source>WalletDatabase</source>
-        <comment>Failed to insert metadata: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="309"/>
-        <source>WalletDatabase</source>
-        <comment>Could not get metadata: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="334"/>
-        <source>WalletDatabase</source>
-        <comment>Could not insert data: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="353"/>
-        <source>WalletDatabase</source>
-        <comment>Could not get removable data: is database broken?</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="361"/>
-        <source>WalletDatabase</source>
-        <comment>Could not remove data: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="374"/>
-        <source>WalletDatabase</source>
-        <comment>Could not update balance at start of month: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="387"/>
-        <source>WalletDatabase</source>
-        <comment>Could not update balance at end of month: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mywallet/mvc/walletdatabase.py" line="419"/>
-        <source>WalletDatabase</source>
-        <comment>Could not get statistic periods: %s</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="mywallet/mvc/statistictreemodel.py" line="13"/>
         <source>StatisticTreeModel</source>
         <comment>Statistic periods</comment>
@@ -278,30 +178,21 @@ at end of month</comment>
 <context>
     <name>AddSourcesDialog</name>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_addsourcesdialog.py" line="73"/>
+        <location filename="mywallet/ui/ui_addsourcesdialog.py" line="74"/>
         <source>Add sources</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Добавить источники</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Добавить источники</numerusform>
+            <numerusform>Добавить источники</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_addsourcesdialog.py" line="75"/>
-        <source>d MMMM yyyy</source>
-        <translation type="unfinished">
-            <numerusform>d MMMM yyyy</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_addsourcesdialog.py" line="74"/>
         <source>Date:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Дата:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Дата:</numerusform>
+            <numerusform>Дата:</numerusform>
         </translation>
     </message>
     <message>
@@ -330,279 +221,288 @@ at end of month</comment>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_changemonthbalancedialog.py" line="39"/>
         <source>Change month balance</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Изменить остаток на начало месяца</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Изменить остаток на начало месяца</numerusform>
+            <numerusform>Изменить остаток на начало месяца</numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mywallet/mainwindow.py" line="153"/>
+        <location filename="mywallet/mainwindow.py" line="162"/>
         <source>Choose file</source>
-        <translation type="unfinished">Выберите файл</translation>
+        <translation>Выберите файл</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="155"/>
+        <location filename="mywallet/mainwindow.py" line="164"/>
         <source>DB-files (*.db)</source>
-        <translation type="unfinished">Файлы баз данных (*.db)</translation>
+        <translation>Файлы баз данных (*.db)</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="207"/>
+        <location filename="mywallet/mainwindow.py" line="219"/>
         <source>Create new wallet</source>
-        <translation type="unfinished">Создание нового кошелька</translation>
-    </message>
-    <message>
-        <location filename="mywallet/mainwindow.py" line="196"/>
-        <source>Wallet &apos;{}&apos; already exists. Rewrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Создание нового бумажника</translation>
     </message>
     <message>
         <location filename="mywallet/mainwindow.py" line="208"/>
+        <source>Wallet &apos;{}&apos; already exists. Rewrite?</source>
+        <translation>Бумажник &apos;{}&apos; уже существует. Переписать?</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mainwindow.py" line="220"/>
         <source>Wallet &apos;{}&apos; was created</source>
-        <translation type="unfinished"></translation>
+        <translation>Бумажник &apos;{}&apos; успешно создан</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="239"/>
+        <location filename="mywallet/mainwindow.py" line="251"/>
         <source>Add sources dialog</source>
-        <translation type="unfinished">Диалог добавления источников</translation>
+        <translation>Диалог добавления источников</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="240"/>
+        <location filename="mywallet/mainwindow.py" line="252"/>
         <source>Failed to add sources: {}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка добавления источников: {}</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="254"/>
+        <location filename="mywallet/mainwindow.py" line="266"/>
         <source>Remove sources dialog</source>
-        <translation type="unfinished">Диалог удаления источников</translation>
+        <translation>Диалог удаления источников</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="255"/>
+        <location filename="mywallet/mainwindow.py" line="267"/>
         <source>Failed to remove sources: {}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка добавления источников: {}</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="270"/>
+        <location filename="mywallet/mainwindow.py" line="282"/>
         <source>About application</source>
-        <translation type="unfinished">О приложении</translation>
+        <translation>О приложении</translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="274"/>
+        <location filename="mywallet/mainwindow.py" line="286"/>
         <source>MyWallet developed in June 2015
 author: Dmitry Voronin
 email: carriingfate92@yandex.ru
 version: {}</source>
-        <translation type="unfinished"></translation>
+        <translation>Программа MyWallet (мой бумажник) разработана в Июне 2015
+автор: Дмитрий Воронин
+email: carriingfate92@yandex.ru
+версия: {}</translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="172"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="197"/>
         <source>Pay debt off</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Погасить задолженность</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Погасить задолженность</numerusform>
+            <numerusform>Погасить задолженность</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="294"/>
+        <location filename="mywallet/mainwindow.py" line="306"/>
         <source>You can not repay the debt by this amount</source>
-        <translation type="unfinished">Вы не можете погасить долги на эту величину</translation>
+        <translation>Вы не можете погасить долги на эту величину</translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="173"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="198"/>
         <source>Savings to incoming</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Перевести накопления в доход</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Перевести накопления в доход</numerusform>
+            <numerusform>Перевести накопления в доход</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="mywallet/mainwindow.py" line="310"/>
+        <location filename="mywallet/mainwindow.py" line="322"/>
         <source>You can not convert savings to incoming by this amount</source>
-        <translation type="unfinished">Вы не можете перевести накопления в доходы на эту величину</translation>
+        <translation>Вы не можете перевести накопления в доходы на эту величину</translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="147"/>
-        <source>MainWindow</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="148"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="180"/>
         <source>Balance at the beginning of month:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Остаток на начало месяца:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Остаток на начало месяца:</numerusform>
+            <numerusform>Остаток на начало месяца:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="159"/>
-        <source>0</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="151"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="183"/>
         <source>Expense:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Расходы:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Расходы:</numerusform>
+            <numerusform>Расходы:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="153"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="185"/>
         <source>In total:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Итого:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Итого:</numerusform>
+            <numerusform>Итого:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="154"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="184"/>
         <source>Debt:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Долги:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Долги:</numerusform>
+            <numerusform>Долги:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="156"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="181"/>
         <source>Incoming:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Доходы:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Доходы:</numerusform>
+            <numerusform>Доходы:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="158"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="182"/>
         <source>Saving:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Накопления:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Накопления:</numerusform>
+            <numerusform>Накопления:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="160"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="186"/>
         <source>File</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Файл</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Файл</numerusform>
+            <numerusform>Файл</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="161"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="187"/>
         <source>Wallet</source>
-        <translation type="unfinished">
-            <numerusform>Кошелек</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Бумажник</numerusform>
+            <numerusform>Бумажник</numerusform>
+            <numerusform>Бумажник</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="162"/>
-        <source>toolBar</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="163"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="188"/>
         <source>Open wallet</source>
-        <translation type="unfinished">
-            <numerusform>Открыть кошелек</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Открыть бумажник</numerusform>
+            <numerusform>Открыть бумажник</numerusform>
+            <numerusform>Открыть бумажник</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="164"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="189"/>
         <source>Exit</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Выход</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Выход</numerusform>
+            <numerusform>Выход</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="165"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="190"/>
         <source>Add item</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Добавить источники</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Добавить источники</numerusform>
+            <numerusform>Добавить источники</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="166"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="191"/>
         <source>Delete item</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Удалить источник</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Удалить источник</numerusform>
+            <numerusform>Удалить источник</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="167"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="192"/>
         <source>Settings</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Настройки</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Настройки</numerusform>
+            <numerusform>Настройки</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="168"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="193"/>
         <source>Show statistic</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Показать статистику</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Показать статистику</numerusform>
+            <numerusform>Показать статистику</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="169"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="194"/>
         <source>Change balance</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Изменить остаток на начало месяца</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Изменить остаток на начало месяца</numerusform>
+            <numerusform>Изменить остаток на начало месяца</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="170"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="195"/>
         <source>New wallet</source>
-        <translation type="unfinished">
-            <numerusform>Новый кошелек</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Новый бумажник</numerusform>
+            <numerusform>Новый бумажник</numerusform>
+            <numerusform>Новый бумажник</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_mainwindow.py" line="171"/>
+        <location filename="mywallet/ui/ui_mainwindow.py" line="196"/>
         <source>About</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>О программе</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>О программе</numerusform>
+            <numerusform>О программе</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="mywallet/mainwindow.py" line="71"/>
+        <source>Could not open wallet</source>
+        <translation>Ошибка открытия бумажника</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mainwindow.py" line="152"/>
+        <source>MyWallet</source>
+        <translation>MyWallet</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mainwindow.py" line="153"/>
+        <source>File &apos;{}&apos; does not exist</source>
+        <translation>Файл &apos;{}&apos; не существует</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_mainwindow.py" line="178"/>
+        <source>View items:</source>
+        <translation>
+            <numerusform>Показать записи:</numerusform>
+            <numerusform>Показать записи:</numerusform>
+            <numerusform>Показать записи:</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_mainwindow.py" line="179"/>
+        <source>till:</source>
+        <translation>
+            <numerusform>по:</numerusform>
+            <numerusform>по:</numerusform>
+            <numerusform>по:</numerusform>
         </translation>
     </message>
 </context>
@@ -624,43 +524,43 @@ version: {}</source>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_newwalletdialog.py" line="55"/>
         <source>New wallet</source>
-        <translation type="unfinished">
-            <numerusform>Новый кошелек</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_newwalletdialog.py" line="56"/>
-        <source>Directory</source>
-        <translation type="unfinished">
-            <numerusform>Рабочая директория</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_newwalletdialog.py" line="57"/>
-        <source>Wallet name</source>
-        <translation type="unfinished">
-            <numerusform>Имя кошелька</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Новый бумажник</numerusform>
+            <numerusform>Новый бумажник</numerusform>
+            <numerusform>Новый бумажник</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_newwalletdialog.py" line="58"/>
         <source>Change...</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Изменить...</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Изменить...</numerusform>
+            <numerusform>Изменить...</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="mywallet/dialogs/newwalletdialog.py" line="26"/>
+        <location filename="mywallet/dialogs/newwalletdialog.py" line="25"/>
         <source>Choose directory</source>
-        <translation>Изменить диркторию</translation>
+        <translation>Выбрать каталог</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_newwalletdialog.py" line="56"/>
+        <source>Directory:</source>
+        <translation>
+            <numerusform>Каталог:</numerusform>
+            <numerusform>Каталог:</numerusform>
+            <numerusform>Каталог:</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_newwalletdialog.py" line="57"/>
+        <source>Wallet name:</source>
+        <translation>
+            <numerusform>Имя бумажника:</numerusform>
+            <numerusform>Имя бумажника:</numerusform>
+            <numerusform>Имя бумажника:</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -668,37 +568,37 @@ version: {}</source>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_payoffdebtdialog.py" line="58"/>
         <source>Pay off debt</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Погасить задолженность</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Погасить задолженность</numerusform>
+            <numerusform>Погасить задолженность</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_payoffdebtdialog.py" line="59"/>
         <source>Pay off value:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Сумма погашения:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Сумма погашения:</numerusform>
+            <numerusform>Сумма погашения:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_payoffdebtdialog.py" line="60"/>
         <source>Comments:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Комментарии:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Комментарии:</numerusform>
+            <numerusform>Комментарии:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_payoffdebtdialog.py" line="61"/>
         <source>Current debt:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Текущий долг:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Текущий долг:</numerusform>
+            <numerusform>Текущий долг:</numerusform>
         </translation>
     </message>
 </context>
@@ -707,85 +607,67 @@ version: {}</source>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_savingstoincomingdialog.py" line="57"/>
         <source>Savings to incoming</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Накопления в доходы</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Накопления в доходы</numerusform>
+            <numerusform>Накопления в доходы</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_savingstoincomingdialog.py" line="58"/>
         <source>Comments:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Комментарии:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Комментарии:</numerusform>
+            <numerusform>Комментарии:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_savingstoincomingdialog.py" line="59"/>
         <source>Available savings:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Доступные накопления:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Доступные накопления:</numerusform>
+            <numerusform>Доступные накопления:</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_savingstoincomingdialog.py" line="60"/>
         <source>Convert to incoming:</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Перевести в доход:</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Перевести в доход:</numerusform>
+            <numerusform>Перевести в доход:</numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>SettingsDialog</name>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_settingsdialog.py" line="57"/>
-        <source>Settings</source>
-        <translation type="unfinished">
-            <numerusform>Настройки</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <location filename="mywallet/ui/ui_settingsdialog.py" line="58"/>
-        <source>Wallet Settings</source>
-        <translation type="unfinished">
-            <numerusform>Настройки кошелька</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <source>Settings</source>
+        <translation>
+            <numerusform>Настройки</numerusform>
+            <numerusform>Настройки</numerusform>
+            <numerusform>Настройки</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_settingsdialog.py" line="59"/>
-        <source>Wallet</source>
-        <translation type="unfinished">
-            <numerusform>Кошелек</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <source>Wallet Settings</source>
+        <translation>
+            <numerusform>Настройки бумажника</numerusform>
+            <numerusform>Настройки бумажника</numerusform>
+            <numerusform>Настройки бумажника</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_settingsdialog.py" line="60"/>
-        <source>Directory</source>
-        <translation type="unfinished">
-            <numerusform>Рабочая директория</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_settingsdialog.py" line="61"/>
+        <location filename="mywallet/ui/ui_settingsdialog.py" line="62"/>
         <source>Change...</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Изменить...</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Изменить...</numerusform>
+            <numerusform>Изменить...</numerusform>
         </translation>
     </message>
     <message>
@@ -793,89 +675,155 @@ version: {}</source>
         <source>Open directory</source>
         <translation>Открыть директорию</translation>
     </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_settingsdialog.py" line="60"/>
+        <source>Wallet:</source>
+        <translation>
+            <numerusform>Бумажник:</numerusform>
+            <numerusform>Бумажник:</numerusform>
+            <numerusform>Бумажник:</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_settingsdialog.py" line="61"/>
+        <source>Directory:</source>
+        <translation>
+            <numerusform>Каталог:</numerusform>
+            <numerusform>Каталог:</numerusform>
+            <numerusform>Каталог:</numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>StatisticDialog</name>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_statisticdialog.py" line="49"/>
         <source>Statistics</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Статистика</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Статистика</numerusform>
+            <numerusform>Статистика</numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>TableWidget</name>
     <message numerus="yes">
-        <location filename="mywallet/ui/ui_tablewidget.py" line="67"/>
-        <source>Form</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="mywallet/ui/ui_tablewidget.py" line="68"/>
-        <source>GroupBox</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <location filename="mywallet/ui/ui_tablewidget.py" line="69"/>
         <source>Sum</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Сумма</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Сумма</numerusform>
+            <numerusform>Сумма</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location filename="mywallet/ui/ui_tablewidget.py" line="70"/>
         <source>Description</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Описание</numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Описание</numerusform>
+            <numerusform>Описание</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>WalletDataRangeDIalog</name>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_walletdatarangedialog.py" line="68"/>
+        <source>Start date:</source>
+        <translation>
+            <numerusform>Начало:</numerusform>
+            <numerusform>Начало:</numerusform>
+            <numerusform>Начало:</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="mywallet/ui/ui_walletdatarangedialog.py" line="69"/>
+        <source>End date:</source>
+        <translation>
+            <numerusform>Окончание:</numerusform>
+            <numerusform>Окончание:</numerusform>
+            <numerusform>Окончание:</numerusform>
         </translation>
     </message>
 </context>
 <context>
     <name>WalletModel</name>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="38"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="91"/>
         <source>Incoming</source>
         <translation>Доходы</translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="39"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="92"/>
         <source>Expense</source>
         <translation>Расходы</translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="40"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="93"/>
         <source>Savings</source>
         <translation>Накопления</translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="41"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="94"/>
         <source>Debt</source>
         <translation>Долг</translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="43"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="98"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="mywallet/mvc/walletmodel.py" line="37"/>
+        <location filename="mywallet/mvc/walletmodel.py" line="90"/>
         <source>Date</source>
         <translation>Дата</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="171"/>
+        <source>Database connection is not open</source>
+        <translation>Подключение к базе данных не установлено</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="223"/>
+        <source>Failed to insert metadata: {}</source>
+        <translation>Ошибка добавления метаданных: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="235"/>
+        <source>Could not get metadata: {}</source>
+        <translation>Ошибка получения метаданных: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="299"/>
+        <source>Failed to create wallet: {}</source>
+        <translation>Ошибка создания бумажника: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="306"/>
+        <source>Execution &apos;{}&apos; failure: {}</source>
+        <translation>Ошибка исполнения запроса &apos;{}&apos;: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="343"/>
+        <source>Failed to insert item: {}</source>
+        <translation>Ошибка добавления записи: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="357"/>
+        <source>Failed to determine row ID: {}</source>
+        <translation>Ошибка определения идентификатора строки: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="362"/>
+        <source>Failed to remove item: {}</source>
+        <translation>Ошибка удаления записи: {}</translation>
+    </message>
+    <message>
+        <location filename="mywallet/mvc/walletmodel.py" line="396"/>
+        <source>Failed to update balance at start of month: {}</source>
+        <translation>Ошибка обновления баланса на начало месяца: {}</translation>
     </message>
 </context>
 </TS>

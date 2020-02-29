@@ -46,7 +46,7 @@
    <item row="0" column="2">
     <widget class="QDateEdit" name="date">
      <property name="displayFormat">
-      <string>d MMMM yyyy</string>
+      <string notr="true">d MMMM yyyy</string>
      </property>
     </widget>
    </item>
