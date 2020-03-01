@@ -348,9 +348,9 @@ class WalletModel(QAbstractTableModel):
     def _update_metadata(self, item, remove=False):
         current_metadata = self.metadata()
         multiple = 1 if not remove else -1
-        if item[WalletModelColumns.INDEX_INCOMING]:
+        if item.get(WalletModelColumns.INDEX_INCOMING, None):
             current_metadata.balance_at_end += multiple * item[WalletModelColumns.INDEX_INCOMING]
-        elif item[WalletModelColumns.INDEX_EXPENSE]:
+        elif item.get(WalletModelColumns.INDEX_EXPENS, None):
             current_metadata.balance_at_end -= multiple * item[WalletModelColumns.INDEX_EXPENSE]
         # TODO: Savings?
         update_metadata_query = '''UPDATE wallet_month_data
