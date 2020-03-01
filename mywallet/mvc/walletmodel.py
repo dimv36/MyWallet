@@ -1,6 +1,5 @@
 __author__ = 'dimv36'
 import sqlite3
-import functools
 from PySide2.QtCore import Qt, QAbstractTableModel, QDate, QFileInfo, Signal, Slot
 from PySide2.QtWidgets import QItemDelegate
 from mywallet.enums import *
@@ -28,6 +27,9 @@ class WalletDateRange:
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__,
                                    self.start, self.end)
+
+    def to_sqlite3_tuple(self):
+        return WalletDateRange.to_sqlite3(self.start, self.end)
 
     @staticmethod
     def to_sqlite3(first, second):
@@ -57,13 +59,27 @@ class WalletData:
         self.date_range = WalletDateRange()
 
     def __repr__(self):
-        return 'WalletData({}, {}, {}, {}, {}, {}})'.format(
-               (self.balance_at_start,
+        return 'WalletData({}, {}, {}, {}, {}, {}) at {}'\
+            .format(
+                self.balance_at_start,
                 self.balance_at_end,
                 self.incoming,
                 self.expense,
                 self.savings,
-                self.debt))
+                self.debt,
+                self.date_range)
+
+    @staticmethod
+    def from_raw(items, date_range):
+        result = WalletData()
+        result.balance_at_start = items[WalletMetaDataType.INDEX_BALANCE_AT_START]
+        result.balance_at_end = items[WalletMetaDataType.INDEX_BALANCE_AT_END]
+        result.incoming = items[WalletMetaDataType.INDEX_INCOMING]
+        result.expense = items[WalletMetaDataType.INDEX_EXPENSE]
+        result.savings = items[WalletMetaDataType.INDEX_SAVINGS]
+        result.debt = items[WalletMetaDataType.INDEX_DEBT]
+        result.date_range = date_range
+        return result
 
 
 class WalletModelException(Exception):
@@ -166,6 +182,35 @@ class WalletModel(QAbstractTableModel):
         # Отправляем сигнал на изменение данных
         self._data_changed.emit(date_range)
 
+    def metadata_by_range(self, date_range):
+        if not self.__connection:
+            raise WalletModelException(self.tr('Database connection is not open'))
+        try:
+            cursor = self.__connection.cursor()
+            query = '''
+                    SELECT
+                            (SELECT balance_at_start FROM wallet_month_data
+                                  WHERE date BETWEEN ? AND ?),
+                            (SELECT balance_at_end FROM wallet_month_data
+                                  WHERE date BETWEEN ? AND ?),
+                            (SELECT sum(incoming) FROM wallet_data
+                                  WHERE date BETWEEN ? AND ?),
+                            (SELECT sum(expense) FROM wallet_data
+                                  WHERE date BETWEEN ? AND ?),
+                            (SELECT sum(saving) FROM wallet_data
+                                  WHERE date BETWEEN ? AND ?),
+                            (SELECT sum(debt) FROM wallet_data
+                                  WHERE date BETWEEN ? AND ?)
+                    FROM (SELECT 1);
+                    '''
+            cursor.execute(query, date_range.to_sqlite3_tuple() * 6)
+            metadata = cursor.fetchone()
+            metadata = tuple(float(e) if e else float() for e in metadata)
+            result = WalletData.from_raw(metadata, date_range)
+        except sqlite3.Error as e:
+            raise WalletModelException(self.tr('Could not get metadata: {}').format(e))
+        return result
+
     def metadata(self, date_range=WalletDateRange()):
         if not self.__connection:
             raise WalletModelException(self.tr('Database connection is not open'))
@@ -233,14 +278,7 @@ class WalletModel(QAbstractTableModel):
             metadata = tuple(float(e) if e else float() for e in metadata)
         except sqlite3.Error as e:
             raise WalletModelException(self.tr('Could not get metadata: {}').format(e))
-        result = WalletData()
-        result.balance_at_start = metadata[WalletMetaDataType.INDEX_BALANCE_AT_START]
-        result.balance_at_end = metadata[WalletMetaDataType.INDEX_BALANCE_AT_END]
-        result.incoming = metadata[WalletMetaDataType.INDEX_INCOMING]
-        result.expense = metadata[WalletMetaDataType.INDEX_EXPENSE]
-        result.savings = metadata[WalletMetaDataType.INDEX_SAVINGS]
-        result.debt = metadata[WalletMetaDataType.INDEX_DEBT]
-        result.date_range = date_range
+        result = WalletData.from_raw(metadata, date_range)
         return result
 
     def open_wallet(self, path):

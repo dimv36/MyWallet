@@ -332,5 +332,7 @@ class MainWindow(QMainWindow):
         end = self.ui.end_date_edit.date()
         date_range = WalletDateRange(start, end)
         self.__model.collect_items(date_range)
+        new_metadata = self.__model.metadata_by_range(date_range)
+        self._on_update(new_metadata)
         self.ui.view.resizeColumnsToContents()
         self.ui.view.scrollToBottom()
