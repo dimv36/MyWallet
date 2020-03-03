@@ -350,7 +350,7 @@ class WalletModel(QAbstractTableModel):
         multiple = 1 if not remove else -1
         if item.get(WalletModelColumns.INDEX_INCOMING, None):
             current_metadata.balance_at_end += multiple * item[WalletModelColumns.INDEX_INCOMING]
-        elif item.get(WalletModelColumns.INDEX_EXPENS, None):
+        elif item.get(WalletModelColumns.INDEX_EXPENSE, None):
             current_metadata.balance_at_end -= multiple * item[WalletModelColumns.INDEX_EXPENSE]
         # TODO: Savings?
         update_metadata_query = '''UPDATE wallet_month_data
@@ -385,12 +385,14 @@ class WalletModel(QAbstractTableModel):
     def remove_entry(self, idx):
         """
         Удалить запись из бумажника
-        :param item: dict
+        :param idx: int
         :return: None
         """
         try:
             item = self.__data[idx]
             row_id, *unused = item
+            removed = {i: item[i] for i in range(WalletModelColumns.INDEX_DATE,
+                                                 WalletModelColumns.INDEX_DESCRIPTION + 1)}
         except Exception as e:
             raise WalletModelException(self.tr('Failed to determine row ID: {}').format(e))
         try:
@@ -398,7 +400,7 @@ class WalletModel(QAbstractTableModel):
             self._run_query(query, (row_id,))
         except WalletModelException as e:
             raise WalletModelException(self.tr('Failed to remove item: {}').format(e))
-        self._update_metadata(item, remove=True)
+        self._update_metadata(removed, remove=True)
         self.collect_items()
 
     def change_balance_at_start_of_month(self, balance):
