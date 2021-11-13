@@ -12,7 +12,7 @@ class EditingDelegate(QItemDelegate):
     def createEditor(self, parent, style=None, index=None):
         editor = QDoubleSpinBox(parent)
         editor.setMinimum(0.01)
-        editor.setMaximum(1000000.00)
+        editor.setMaximum(10000000.00)
         editor.setLocale(self.__locale)
         return editor
 
