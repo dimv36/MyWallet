@@ -453,7 +453,7 @@ class WalletModel(QAbstractTableModel):
 class WalletItemDelegate(QItemDelegate):
     import re
     _DATE_RE = re.compile(r'\d{4}-\d{2}-\d{2}')
-    _FLOAT_RE = re.compile(r'\d+[.\d]?')
+    _FLOAT_RE = re.compile(r'^\d+[.\d]?$')
 
     def drawDisplay(self, painter, option, rect, text):
         if self._DATE_RE.match(text):
